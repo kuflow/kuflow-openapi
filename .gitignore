@@ -1,0 +1,6 @@
+# Exclue all dot files except
+.*
+!.gitignore
+
+# Node
+node_modules/
