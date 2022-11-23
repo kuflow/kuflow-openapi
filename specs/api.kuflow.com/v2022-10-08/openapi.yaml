@@ -1176,13 +1176,13 @@ components:
     Page:
       type: object
       properties:
+        objectType:
+          $ref: "#/components/schemas/PagedObjectType"
         metadata:
           $ref: "#/components/schemas/PageMetadata"
-        modelType:
-          $ref: "#/components/schemas/PagedObjectType"
       required:
+        - objectType
         - metadata
-        - modelType
       discriminator:
         propertyName: modelType
         mapping:
@@ -1273,8 +1273,8 @@ components:
       discriminator:
         propertyName: type
         mapping:
-          STRING: "#/components/schemas/ProcessElementValueString"
-          NUMBER: "#/components/schemas/ProcessElementValueNumber"
+          "STRING": "#/components/schemas/ProcessElementValueString"
+          "NUMBER": "#/components/schemas/ProcessElementValueNumber"
 
     ProcessElementValueString:
       allOf:
@@ -1704,9 +1704,9 @@ components:
       discriminator:
         propertyName: objectType
         mapping:
-          PROCESS: "#/components/schemas/Process"
-          TASK: "#/components/schemas/Task"
-          AUTHENTICATION: "#/components/schemas/Authentication"
+          "PROCESS": "#/components/schemas/Process"
+          "TASK": "#/components/schemas/Task"
+          "AUTHENTICATION": "#/components/schemas/Authentication"
 
   responses:
     DefaultError:
