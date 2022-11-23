@@ -1184,7 +1184,7 @@ components:
         - objectType
         - metadata
       discriminator:
-        propertyName: modelType
+        propertyName: objectType
         mapping:
           "PROCESS_PAGE": "#/components/schemas/ProcessPage"
           "TASK_PAGE": "#/components/schemas/TaskPage"
