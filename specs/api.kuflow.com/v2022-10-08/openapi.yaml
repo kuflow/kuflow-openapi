@@ -40,7 +40,7 @@ info:
     # OpenAPI Specification
 
     This API is documented in OpenAPI format. This file allows you to create REST clients with the technology of your
-    choice automatically. In our code repositories you can find an example of this automation using Feign for JAVA.
+    choice automatically.
 
 externalDocs:
   description: Find out more about KuFlow
@@ -92,8 +92,9 @@ paths:
   /echo:
     get:
       summary: "Echo endpoint to test integration, return a DUMMY authentication token"
-      operationId: echo
+      operationId: requestEcho
       tags:
+        - apiRestExternalV20221008Echos
         - echo
       responses:
         "200":
@@ -101,7 +102,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthenticationToken"
+                $ref: "#/components/schemas/Authentication"
         default:
           $ref: "#/components/responses/DefaultError"
   /authentications:
@@ -109,6 +110,7 @@ paths:
       summary: Create an authentication for the current principal.
       operationId: createAuthentication
       tags:
+        - apiRestExternalV20221008Authentications
         - authentication
       requestBody:
         description: Authentication to be created.
@@ -116,7 +118,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AuthenticationToken"
+              $ref: "#/components/schemas/Authentication"
         x-ms-requestBody-name: authentication
       responses:
         "200":
@@ -124,7 +126,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthenticationToken"
+                $ref: "#/components/schemas/Authentication"
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -137,6 +139,7 @@ paths:
         Available sort query values: id, name
       operationId: findPrincipals
       tags:
+        - apiRestExternalV20221008Principals
         - principal
       parameters:
         - $ref: "#/components/parameters/SizeQueryParam"
@@ -171,6 +174,7 @@ paths:
       description: Returns the requested Principal when has access to do it.
       operationId: retrievePrincipal
       tags:
+        - apiRestExternalV20221008Principals
         - principal
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
@@ -193,6 +197,7 @@ paths:
         Available sort query values: id, createdAt, lastModifiedAt
       operationId: findProcesses
       tags:
+        - apiRestExternalV20221008Processes
         - process
       parameters:
         - $ref: "#/components/parameters/SizeQueryParam"
@@ -222,6 +227,7 @@ paths:
         If you want the method to be idempotent, please specify the `id` field in the request body.
       operationId: createProcess
       tags:
+        - apiRestExternalV20221008Processes
         - process
       requestBody:
         description: Process to create
@@ -253,6 +259,7 @@ paths:
       description: Returns the requested Process when has access to do it.
       operationId: retrieveProcess
       tags:
+        - apiRestExternalV20221008Processes
         - process
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
@@ -276,6 +283,7 @@ paths:
         Only one option will be necessary.
       operationId: actionsProcessChangeInitiator
       tags:
+        - apiRestExternalV20221008Processes
         - process
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
@@ -308,6 +316,7 @@ paths:
         If the process is already finished the invocations fails with an error.
       operationId: actionsProcessSaveElement
       tags:
+        - apiRestExternalV20221008Processes
         - process
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
@@ -338,6 +347,7 @@ paths:
         Remove all the element values.
       operationId: actionsProcessDeleteElement
       tags:
+        - apiRestExternalV20221008Processes
         - process
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
@@ -368,6 +378,7 @@ paths:
         If you are already in this state, no action is taken.
       operationId: actionsProcessComplete
       tags:
+        - apiRestExternalV20221008Processes
         - process
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
@@ -392,6 +403,7 @@ paths:
         If you are already in this state, no action is taken.
       operationId: actionsProcessCancel
       tags:
+        - apiRestExternalV20221008Processes
         - process
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
@@ -412,12 +424,26 @@ paths:
         Allow saving a user action document uploading the content.
       operationId: actionsProcessSaveUserActionValueDocument
       tags:
+        - apiRestExternalV20221008Processes
         - process
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
-        - name: userActionValueId
-          description: User action value Id
+        - name: fileContentType
+          description: Document content type
           in: query
+          required: true
+          schema:
+            type: string
+        - name: fileName
+          description: Document name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: userActionValueId
+          description: User action value ID related to de document
+          in: query
+          required: true
           schema:
             type: string
             format: uuid
@@ -429,7 +455,7 @@ paths:
             schema:
               type: string
               format: binary
-        x-ms-requestBody-name: document
+        x-ms-requestBody-name: file
       responses:
         "200":
           description: Document Saved in user action.
@@ -449,6 +475,7 @@ paths:
         Available sort query values: id, createdAt, lastModifiedAt, claimedAt, completedAt, cancelledAt
       operationId: findTasks
       tags:
+        - apiRestExternalV20221008Tasks
         - task
       parameters:
         - $ref: "#/components/parameters/SizeQueryParam"
@@ -502,6 +529,7 @@ paths:
         If you want the method to be idempotent, please specify the `id` field in the request body.
       operationId: createTask
       tags:
+        - apiRestExternalV20221008Tasks
         - task
       parameters:
         - name: activityToken
@@ -587,6 +615,7 @@ paths:
       description: Allow to get a task by ID.
       operationId: retrieveTask
       tags:
+        - apiRestExternalV20221008Tasks
         - task
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
@@ -604,6 +633,7 @@ paths:
       description: Allow to claim a task.
       operationId: actionsTaskClaim
       tags:
+        - apiRestExternalV20221008Tasks
         - task
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
@@ -623,6 +653,7 @@ paths:
       description: Allow to assign a task to a user or application. Only one option will be necessary.
       operationId: actionsTaskAssign
       tags:
+        - apiRestExternalV20221008Tasks
         - task
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
@@ -653,6 +684,7 @@ paths:
         In the case of document type elements, this method only allows references to be made to other existing document type elements for the purpose of copying that file into the element. To do this you need to pass a reference to the document using the 'uri' attribute. In case you want to add a new document, please use the corresponding API method. If values already exist for the provided element code, it replaces them with the new ones, otherwise it creates them. The values of the previous elements that no longer exist will be deleted. To remove an element, use the appropriate API method.
       operationId: actionsTaskSaveElement
       tags:
+        - apiRestExternalV20221008Tasks
         - task
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
@@ -683,24 +715,42 @@ paths:
         If it is a multiple element, and the ID referenced in the body does not exist or is empty, the document will be added to the element. If the element already exists (the ID referenced in the body corresponds to an existing one), it updates it.
       operationId: actionsTaskSaveElementValueDocument
       tags:
+        - apiRestExternalV20221008Tasks
         - task
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
+        - name: fileContentType
+          description: Document content type
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: fileName
+          description: Document name
+          in: query
+          required: true
+          schema:
+            type: string
         - name: elementDefinitionCode
-          description: Element definition code
+          description: Element Definition Code
           in: query
           required: true
           schema:
             type: string
         - name: elementValueId
+          description: Element Value ID
           in: query
+          required: false
           schema:
             type: string
             format: uuid
         - name: elementValueValid
+          description: Element Value ID
           in: query
+          required: false
           schema:
             type: boolean
+            default: true
       requestBody:
         description: Command to save a document element value.
         required: true
@@ -709,7 +759,7 @@ paths:
             schema:
               type: string
               format: binary
-        x-ms-requestBody-name: document
+        x-ms-requestBody-name: file
       responses:
         "200":
           description: Task with element filled
@@ -727,6 +777,7 @@ paths:
         Remove all the element values.
       operationId: actionsTaskDeleteElement
       tags:
+        - apiRestExternalV20221008Tasks
         - task
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
@@ -757,6 +808,7 @@ paths:
         Note: If it is a multiple item, it will only delete the specified document. If it is a single element, in addition to the document, it will also delete the element.
       operationId: actionsTaskDeleteElementValueDocument
       tags:
+        - apiRestExternalV20221008Tasks
         - task
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
@@ -784,6 +836,7 @@ paths:
       description: Given a task, download a document from an element of document type.
       operationId: actionsTaskDownloadElementValueDocument
       tags:
+        - apiRestExternalV20221008Tasks
         - task
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
@@ -798,7 +851,7 @@ paths:
         "200":
           description: Document requested
           content:
-            "*/*":
+            "application/octet-stream":
               schema:
                 type: string
                 format: binary
@@ -812,11 +865,12 @@ paths:
         Important!: To use this feature, please contact to kuflow@kuflow.com
       operationId: actionsTaskDownloadElementValueRendered
       tags:
+        - apiRestExternalV20221008Tasks
         - task
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
-        - name: code
-          description: Element code of a Form Element to download.
+        - name: elementDefinitionCode
+          description: Element definition code of a Form Element to download.
           in: query
           required: true
           schema:
@@ -840,6 +894,7 @@ paths:
       description: Allow to complete a claimed task by the principal.
       operationId: actionsTaskComplete
       tags:
+        - apiRestExternalV20221008Tasks
         - task
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
@@ -856,8 +911,9 @@ paths:
       summary: Append a log to the task
       description: |
         A log entry is added to the task. If the number of log entries is reached, the oldest log entry is removed.
-      operationId: actionsAppendTaskLog
+      operationId: actionsTaskAppendLog
       tags:
+        - apiRestExternalV20221008Tasks
         - task
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
@@ -946,17 +1002,17 @@ components:
       x-ms-parameter-location: method
 
   schemas:
-    AuditedModelType:
-      description: Audited Model types.
+    AuditedObjectType:
+      description: Audited object Types.
       type: string
       enum:
         - PROCESS
         - TASK
-        - AUTHENTICATION_TOKEN
+        - AUTHENTICATION
       x-ms-enum:
         modelAsString: false
 
-    PagedModelType:
+    PagedObjectType:
       description: Paged Model types.
       type: string
       enum:
@@ -1040,23 +1096,25 @@ components:
       description: Process Events
       allOf:
         - $ref: "#/components/schemas/WebhookEvent"
-      type: object
-      properties:
-        data:
-          $ref: "#/components/schemas/WebhookEventProcessStateChangedData"
-      required:
-        - data
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/WebhookEventProcessStateChangedData"
+          required:
+            - data
+      x-all-of-name: WebhookEventProcessStateChangedAllOf
 
     WebhookEventTaskStateChanged:
       description: Process Events
       allOf:
         - $ref: "#/components/schemas/WebhookEvent"
-      type: object
-      properties:
-        data:
-          $ref: "#/components/schemas/WebhookEventTaskStateChangedData"
-      required:
-        - data
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/WebhookEventTaskStateChangedData"
+          required:
+            - data
+      x-all-of-name: WebhookEventTaskStateChangedAllOf
 
     WebhookType:
       description: Type of the Event.
@@ -1121,7 +1179,7 @@ components:
         metadata:
           $ref: "#/components/schemas/PageMetadata"
         modelType:
-          $ref: "#/components/schemas/PagedModelType"
+          $ref: "#/components/schemas/PagedObjectType"
       required:
         - metadata
         - modelType
@@ -1139,24 +1197,25 @@ components:
       x-ms-enum:
         modelAsString: false
 
-    AuthenticationToken:
+    Authentication:
       allOf:
         - $ref: "#/components/schemas/AbstractAudited"
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          readOnly: true
-        type:
-          $ref: "#/components/schemas/AuthenticationType"
-        token:
-          type: string
-          readOnly: true
-        expiredAt:
-          type: string
-          format: date-time
-          readOnly: true
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              readOnly: true
+            type:
+              $ref: "#/components/schemas/AuthenticationType"
+            token:
+              type: string
+              readOnly: true
+            expiredAt:
+              type: string
+              format: date-time
+              readOnly: true
+      x-all-of-name: AuthenticationAllOf
 
     ProcessState:
       description: Process state
@@ -1192,12 +1251,14 @@ components:
       description: Command to save process element.
       type: object
       properties:
-        code:
+        elementDefinitionCode:
           type: string
-        value:
-          $ref: "#/components/schemas/ProcessElementValue"
+        elementValues:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProcessElementValue"
       required:
-        - code
+        - elementDefinitionCode
 
     ProcessElementValue:
       type: object
@@ -1212,37 +1273,39 @@ components:
       discriminator:
         propertyName: type
         mapping:
-          "STRING": "#/components/schemas/ProcessElementValueString"
-          "NUMBER": "#/components/schemas/ProcessElementValueNumber"
+          STRING: "#/components/schemas/ProcessElementValueString"
+          NUMBER: "#/components/schemas/ProcessElementValueNumber"
 
     ProcessElementValueString:
       allOf:
         - $ref: "#/components/schemas/ProcessElementValue"
-      type: object
-      properties:
-        value:
-          type: string
+        - type: object
+          properties:
+            value:
+              type: string
+      x-all-of-name: ProcessElementValueStringAllOf
 
     ProcessElementValueNumber:
       allOf:
         - $ref: "#/components/schemas/ProcessElementValue"
-      type: object
-      properties:
-        value:
-          type: number
-          format: double
+        - type: object
+          properties:
+            value:
+              type: number
+              format: double
+      x-all-of-name: ProcessElementValueNumberAllOf
 
     TaskSaveElementCommand:
       type: object
       properties:
-        code:
+        elementDefinitionCode:
           type: string
-        value:
+        elementValues:
           type: array
           items:
             $ref: "#/components/schemas/TaskElementValue"
       required:
-        - code
+        - elementDefinitionCode
 
     TaskElementValueType:
       type: string
@@ -1277,44 +1340,49 @@ components:
     TaskElementValueString:
       allOf:
         - $ref: "#/components/schemas/TaskElementValue"
-      type: object
-      properties:
-        value:
-          type: string
+        - type: object
+          properties:
+            value:
+              type: string
+      x-all-of-name: TaskElementValueStringAllOf
 
     TaskElementValueNumber:
       allOf:
         - $ref: "#/components/schemas/TaskElementValue"
-      type: object
-      properties:
-        value:
-          type: number
-          format: double
+        - type: object
+          properties:
+            value:
+              type: number
+              format: double
+      x-all-of-name: TaskElementValueNumberAllOf
 
     TaskElementValueObject:
       allOf:
         - $ref: "#/components/schemas/TaskElementValue"
-      type: object
-      properties:
-        value:
-          type: object
-          additionalProperties: true
+        - type: object
+          properties:
+            value:
+              type: object
+              additionalProperties: true
+      x-all-of-name: TaskElementValueObjectAllOf
 
     TaskElementValueDocument:
       allOf:
         - $ref: "#/components/schemas/TaskElementValue"
-      type: object
-      properties:
-        value:
-          $ref: "#/components/schemas/TaskElementValueDocumentItem"
+        - type: object
+          properties:
+            value:
+              $ref: "#/components/schemas/TaskElementValueDocumentItem"
+      x-all-of-name: TaskElementValueDocumentAllOf
 
     TaskElementValuePrincipal:
       allOf:
         - $ref: "#/components/schemas/TaskElementValue"
-      type: object
-      properties:
-        value:
-          $ref: "#/components/schemas/TaskElementValuePrincipalItem"
+        - type: object
+          properties:
+            value:
+              $ref: "#/components/schemas/TaskElementValuePrincipalItem"
+      x-all-of-name: TaskElementValuePrincipalAllOf
 
     TaskElementValueDocumentItem:
       type: object
@@ -1379,76 +1447,89 @@ components:
     Process:
       allOf:
         - $ref: "#/components/schemas/AbstractAudited"
-      type: object
-      properties:
-        id:
-          description: Process ID.
-          type: string
-          format: uuid
-        subject:
-          description: Process subject.
-          type: string
-          minLength: 1
-          maxLength: 255
-        state:
-          $ref: "#/components/schemas/ProcessState"
-        processDefinition:
-          $ref: "#/components/schemas/ProcessDefinitionSummary"
-        elementValues:
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              $ref: "#/components/schemas/ProcessElementValue"
-        initiator:
-          $ref: "#/components/schemas/Principal"
-      required:
-        - processDefinition
+        - type: object
+          properties:
+            id:
+              description: Process ID.
+              type: string
+              format: uuid
+            subject:
+              description: Process subject.
+              type: string
+              minLength: 1
+              maxLength: 255
+            state:
+              $ref: "#/components/schemas/ProcessState"
+            processDefinition:
+              $ref: "#/components/schemas/ProcessDefinitionSummary"
+            elementValues:
+              type: object
+              description: Process element values, an ElementValueDocument is not allowed.
+              additionalProperties:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProcessElementValue"
+            initiator:
+              $ref: "#/components/schemas/Principal"
+          required:
+            - processDefinition
+      x-all-of-name: ProcessAllOf
 
     ProcessPage:
       allOf:
         - $ref: "#/components/schemas/Page"
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: "#/components/schemas/Process"
+          required:
+            - content
+      x-all-of-name: ProcessPageAllOf
+
+    ProcessDeleteElementCommand:
       type: object
       properties:
-        content:
-          type: array
-          items:
-            $ref: "#/components/schemas/Process"
+        elementDefinitionCode:
+          description: Code of task element to delete.
+          type: string
       required:
-        - content
+        - elementDefinitionCode
 
     Task:
       allOf:
         - $ref: "#/components/schemas/AbstractAudited"
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        state:
-          $ref: "#/components/schemas/TaskState"
-        taskDefinition:
-          $ref: "#/components/schemas/TasksDefinitionSummary"
-        processId:
-          type: string
-          format: uuid
-        elementValues:
-          description: An ElementValueDocument or an array of ElementValueDocument is not allowed in any type of requests.
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              $ref: "#/components/schemas/TaskElementValue"
-        logs:
-          type: array
-          readOnly: true
-          items:
-            $ref: "#/components/schemas/Log"
-        owner:
-          $ref: "#/components/schemas/Principal"
-      required:
-        - taskDefinition
-        - processId
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            state:
+              $ref: "#/components/schemas/TaskState"
+            taskDefinition:
+              $ref: "#/components/schemas/TasksDefinitionSummary"
+            processId:
+              type: string
+              format: uuid
+            elementValues:
+              description: Task element values, en ElementValueDocument is not allowed.
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TaskElementValue"
+            logs:
+              type: array
+              readOnly: true
+              items:
+                $ref: "#/components/schemas/Log"
+            owner:
+              $ref: "#/components/schemas/Principal"
+          required:
+            - taskDefinition
+            - processId
+      x-all-of-name: TaskAllOf
 
     TasksDefinitionSummary:
       description: In creation task, one of 'id, version or code' is mandatory.
@@ -1471,14 +1552,45 @@ components:
     TaskPage:
       allOf:
         - $ref: "#/components/schemas/Page"
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: "#/components/schemas/Task"
+          required:
+            - content
+      x-all-of-name: TaskPageAllOf
+
+    TaskDeleteElementValueDocumentCommand:
       type: object
       properties:
-        content:
-          type: array
-          items:
-            $ref: "#/components/schemas/Task"
+        documentId:
+          description: Document ID to delete.
+          type: string
+          format: uuid
       required:
-        - content
+        - documentId
+
+    TaskAssignCommand:
+      description: Command to assign task, only one option is required.
+      type: object
+      properties:
+        principalId:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+
+    TaskDeleteElementCommand:
+      type: object
+      properties:
+        elementDefinitionCode:
+          description: Code of task element to delete.
+          type: string
+      required:
+        - elementDefinitionCode
 
     LogLevel:
       type: string
@@ -1511,14 +1623,15 @@ components:
     PrincipalPage:
       allOf:
         - $ref: "#/components/schemas/Page"
-      type: object
-      properties:
-        content:
-          type: array
-          items:
-            $ref: "#/components/schemas/Principal"
-      required:
-        - content
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: "#/components/schemas/Principal"
+          required:
+            - content
+      x-all-of-name: PrincipalPageAllOf
 
     Principal:
       type: object
@@ -1560,48 +1673,12 @@ components:
           type: string
           format: uuid
 
-    ProcessDeleteElementCommand:
-      type: object
-      properties:
-        code:
-          description: Code of task element to delete.
-          type: string
-      required:
-        - code
-
-    TaskDeleteElementValueDocumentCommand:
-      type: object
-      properties:
-        documentId:
-          description: Document ID to delete.
-          type: string
-          format: uuid
-      required:
-        - documentId
-
-    TaskAssignCommand:
-      description: Command to assign task, only one option is required.
-      type: object
-      properties:
-        principalId:
-          type: string
-          format: uuid
-        email:
-          type: string
-          format: email
-
-    TaskDeleteElementCommand:
-      type: object
-      properties:
-        code:
-          description: Code of task element to delete.
-          type: string
-      required:
-        - code
-
     AbstractAudited:
       type: object
       properties:
+        objectType:
+          description: Identifies the concrete type of the audited model.
+          $ref: "#/components/schemas/AuditedObjectType"
         createdBy:
           description: Who create this model.
           type: string
@@ -1622,16 +1699,14 @@ components:
           type: string
           format: date-time
           readOnly: true
-        modelType:
-          $ref: "#/components/schemas/AuditedModelType"
       required:
-        - modelType
+        - objectType
       discriminator:
-        propertyName: modelType
+        propertyName: objectType
         mapping:
-          "PROCESS": "#/components/schemas/Process"
-          "TASK": "#/components/schemas/Task"
-          "AUTHENTICATION_TOKEN": "#/components/schemas/AuthenticationToken"
+          PROCESS: "#/components/schemas/Process"
+          TASK: "#/components/schemas/Task"
+          AUTHENTICATION: "#/components/schemas/Authentication"
 
   responses:
     DefaultError:
