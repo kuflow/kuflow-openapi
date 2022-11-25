@@ -1647,6 +1647,10 @@ components:
           $ref: "#/components/schemas/PrincipalUser"
         application:
           $ref: "#/components/schemas/PrincipalApplication"
+      required:
+        - id
+        - type
+        - name
 
     PrincipalType:
       type: string
