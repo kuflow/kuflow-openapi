@@ -1156,7 +1156,7 @@ components:
           type: integer
           minimum: 0
           example: 25
-        number:
+        page:
           type: integer
           minimum: 0
           example: 0
@@ -1169,7 +1169,7 @@ components:
           example: 110
       required:
         - size
-        - number
+        - page
         - totalElements
         - totalPages
 
