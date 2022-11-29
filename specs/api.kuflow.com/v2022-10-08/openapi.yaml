@@ -158,6 +158,8 @@ paths:
             items:
               type: string
               format: uuid
+          style: form
+          explode: true
       responses:
         "200":
           description: Principals found paginated.
@@ -489,6 +491,8 @@ paths:
             items:
               type: string
               format: uuid
+          style: form
+          explode: true
         - name: state
           description:  Filter by an array of task states.
           in: query
@@ -496,6 +500,8 @@ paths:
             type: array
             items:
               $ref: "#/components/schemas/TaskState"
+          style: form
+          explode: true
         - name: taskDefinitionCode
           description:  Filter by an array of task definition codes.
           in: query
@@ -503,6 +509,8 @@ paths:
             type: array
             items:
               type: string
+          style: form
+          explode: true
 
       responses:
         "200":
@@ -999,6 +1007,8 @@ components:
         type: array
         items:
           type: string
+      style: form
+      explode: true
       x-ms-parameter-location: method
 
   schemas:
