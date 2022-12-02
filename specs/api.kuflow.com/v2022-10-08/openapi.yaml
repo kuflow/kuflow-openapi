@@ -467,6 +467,8 @@ paths:
                 $ref: "#/components/schemas/Process"
         "304":
           description: Untouched process
+        default:
+          $ref: "#/components/responses/DefaultError"
 
   /tasks:
     get:
@@ -634,6 +636,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Task"
+        default:
+          $ref: "#/components/responses/DefaultError"
 
   /tasks/{id}/~actions/claim:
     post:
@@ -775,6 +779,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Task"
+        default:
+          $ref: "#/components/responses/DefaultError"
 
   /tasks/{id}/~actions/delete-element:
     post:
@@ -863,6 +869,8 @@ paths:
               schema:
                 type: string
                 format: binary
+        default:
+          $ref: "#/components/responses/DefaultError"
 
   /tasks/{id}/~actions/download-element-value-form-rendered:
     get:
@@ -895,6 +903,8 @@ paths:
               schema:
                 type: string
                 format: binary
+        default:
+          $ref: "#/components/responses/DefaultError"
 
   /tasks/{id}/~actions/complete:
     post:
@@ -913,6 +923,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Task"
+        default:
+          $ref: "#/components/responses/DefaultError"
 
   /tasks/{id}/~actions/append-log:
     post:
@@ -940,6 +952,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Task"
+        default:
+          $ref: "#/components/responses/DefaultError"
 
 x-webhooks:
   events:
