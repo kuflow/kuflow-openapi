@@ -1532,7 +1532,7 @@ components:
             state:
               $ref: "#/components/schemas/TaskState"
             taskDefinition:
-              $ref: "#/components/schemas/TasksDefinitionSummary"
+              $ref: "#/components/schemas/TaskDefinitionSummary"
             processId:
               type: string
               format: uuid
@@ -1555,7 +1555,7 @@ components:
             - processId
       x-all-of-name: TaskAllOf
 
-    TasksDefinitionSummary:
+    TaskDefinitionSummary:
       description: In creation task, one of 'id, version or code' is mandatory.
       type: object
       properties:
