@@ -1464,7 +1464,6 @@ components:
           type: string
           minLength: 1
           maxLength: 50
-          readOnly: true
       required:
         - id
 
@@ -1545,7 +1544,6 @@ components:
                   $ref: "#/components/schemas/TaskElementValue"
             logs:
               type: array
-              readOnly: true
               items:
                 $ref: "#/components/schemas/Log"
             owner:
@@ -1571,7 +1569,6 @@ components:
           type: string
           minLength: 1
           maxLength: 50
-          readOnly: true
 
     TaskPage:
       allOf:
@@ -1635,7 +1632,6 @@ components:
           description: When this model was created.
           type: string
           format: date-time
-          readOnly: true
         message:
           type: string
         level:
@@ -1707,22 +1703,18 @@ components:
           description: Who create this model.
           type: string
           format: uuid
-          readOnly: true
         createdAt:
           description: When this model was created.
           type: string
           format: date-time
-          readOnly: true
         lastModifiedBy:
           description: Who was last update this model.
           type: string
           format: uuid
-          readOnly: true
         lastModifiedAt:
           description: When this model type was last updated.
           type: string
           format: date-time
-          readOnly: true
       required:
         - objectType
       discriminator:
