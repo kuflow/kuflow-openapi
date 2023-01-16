@@ -1494,9 +1494,27 @@ components:
                   $ref: "#/components/schemas/ProcessElementValue"
             initiator:
               $ref: "#/components/schemas/Principal"
+            relatedProcess:
+              $ref: "#/components/schemas/RelatedProcess"
           required:
             - processDefinition
       x-all-of-name: ProcessAllOf
+
+    RelatedProcess:
+      type: object
+      properties:
+        incoming:
+          description: Processes whose relationship target is the current process.
+          type: array
+          items:
+            type: string
+            format: uuid
+        outcoming:
+          description: Processes to which the current process relates.
+          type: array
+          items:
+            type: string
+            format: uuid
 
     ProcessPage:
       allOf:
