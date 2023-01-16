@@ -1501,21 +1501,20 @@ components:
       x-all-of-name: ProcessAllOf
 
     RelatedProcess:
-      allOf:
-        - type: object
-          properties:
-            incoming:
-              description: Processes whose relationship target is the current process.
-              type: array
-              items:
-                type: string
-                format: uuid
-            outcoming:
-              description: Processes to which the current process relates.
-              type: array
-              items:
-                type: string
-                format: uuid
+      type: object
+      properties:
+        incoming:
+          description: Processes whose relationship target is the current process.
+          type: array
+          items:
+            type: string
+            format: uuid
+        outcoming:
+          description: Processes to which the current process relates.
+          type: array
+          items:
+            type: string
+            format: uuid
 
     ProcessPage:
       allOf:
