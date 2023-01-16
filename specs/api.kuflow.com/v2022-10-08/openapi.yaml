@@ -1516,6 +1516,37 @@ components:
             type: string
             format: uuid
 
+    ProcessPageItem:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              description: Process ID.
+              type: string
+              format: uuid
+            subject:
+              description: Process subject.
+              type: string
+              minLength: 1
+              maxLength: 255
+            state:
+              $ref: "#/components/schemas/ProcessState"
+            processDefinition:
+              $ref: "#/components/schemas/ProcessDefinitionSummary"
+            elementValues:
+              type: object
+              description: Process element values, an ElementValueDocument is not allowed.
+              additionalProperties:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProcessElementValue"
+            initiator:
+              $ref: "#/components/schemas/Principal"
+          required:
+            - processDefinition
+      x-all-of-name: ProcessAllOf
+
     ProcessPage:
       allOf:
         - $ref: "#/components/schemas/Page"
@@ -1524,7 +1555,7 @@ components:
             content:
               type: array
               items:
-                $ref: "#/components/schemas/Process"
+                $ref: "#/components/schemas/ProcessPageItem"
           required:
             - content
       x-all-of-name: ProcessPageAllOf
@@ -1571,6 +1602,35 @@ components:
             - processId
       x-all-of-name: TaskAllOf
 
+    TaskPageItem:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            state:
+              $ref: "#/components/schemas/TaskState"
+            taskDefinition:
+              $ref: "#/components/schemas/TaskDefinitionSummary"
+            processId:
+              type: string
+              format: uuid
+            elementValues:
+              description: Task element values, en ElementValueDocument is not allowed.
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TaskElementValue"
+            owner:
+              $ref: "#/components/schemas/Principal"
+          required:
+            - taskDefinition
+            - processId
+      x-all-of-name: TaskAllOf
+      
     TaskDefinitionSummary:
       description: In creation task, one of 'id, version or code' is mandatory.
       type: object
@@ -1596,7 +1656,7 @@ components:
             content:
               type: array
               items:
-                $ref: "#/components/schemas/Task"
+                $ref: "#/components/schemas/TaskPageItem"
           required:
             - content
       x-all-of-name: TaskPageAllOf
