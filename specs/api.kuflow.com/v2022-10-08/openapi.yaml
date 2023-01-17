@@ -89,22 +89,6 @@ x-tagGroups:
       - authentication
 
 paths:
-  /echo:
-    get:
-      summary: "Echo endpoint to test integration, return a DUMMY authentication token"
-      operationId: requestEcho
-      tags:
-        - apiRestExternalV20221008Echos
-        - echo
-      responses:
-        "200":
-          description: DUMMY authentication token.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Authentication"
-        default:
-          $ref: "#/components/responses/DefaultError"
   /authentications:
     post:
       summary: Create an authentication for the current principal.
