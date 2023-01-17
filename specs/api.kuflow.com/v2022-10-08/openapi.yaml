@@ -1031,7 +1031,9 @@ components:
       type: string
       enum:
         - PROCESS
+        - PROCESS_PAGE_ITEM
         - TASK
+        - TASK_PAGE_ITEM
         - AUTHENTICATION
       x-ms-enum:
         modelAsString: false
@@ -1799,7 +1801,9 @@ components:
         propertyName: objectType
         mapping:
           "PROCESS": "#/components/schemas/Process"
+          "PROCESS_PAGE_ITEM": "#/components/schemas/ProcessPageItem"
           "TASK": "#/components/schemas/Task"
+          "TASK_PAGE_ITEM": "#/components/schemas/TaskPageItem"
           "AUTHENTICATION": "#/components/schemas/Authentication"
 
   responses:
