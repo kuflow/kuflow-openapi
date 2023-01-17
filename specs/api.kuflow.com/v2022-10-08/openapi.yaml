@@ -89,22 +89,6 @@ x-tagGroups:
       - authentication
 
 paths:
-  /echo:
-    get:
-      summary: "Echo endpoint to test integration, return a DUMMY authentication token"
-      operationId: requestEcho
-      tags:
-        - apiRestExternalV20221008Echos
-        - echo
-      responses:
-        "200":
-          description: DUMMY authentication token.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Authentication"
-        default:
-          $ref: "#/components/responses/DefaultError"
   /authentications:
     post:
       summary: Create an authentication for the current principal.
@@ -827,7 +811,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
       requestBody:
-        description: Command to delete a document elemente value.
+        description: Command to delete a document element value.
         required: true
         content:
           application/json:
@@ -900,6 +884,112 @@ paths:
                 type: string
                 format: binary
             "application/zip":
+              schema:
+                type: string
+                format: binary
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /tasks/{id}/~actions/save-json-forms-value-data:
+    post:
+      summary: Save JSON data
+      description: |
+        Allow to save a JSON data validating that the data follow the related schema. If the data is invalid, then 
+        the json form is marked as invalid.
+      operationId: actionsTaskSaveJsonFormsValueData
+      tags:
+        - apiRestExternalV20221008Tasks
+        - task
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      requestBody:
+        description: Command to save the JSON value.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskSaveJsonFormsValueDataCommand"
+        x-ms-requestBody-name: command
+      responses:
+        "200":
+          description: Task with json data saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /tasks/{id}/~actions/save-json-forms-value-document:
+    post:
+      summary: Save a JSON Forms document
+      description: |
+        Save a document in the task to later be linked into the JSON data.
+      operationId: actionsTaskSaveJsonFormsValueDocument
+      tags:
+        - apiRestExternalV20221008Tasks
+        - task
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - name: fileContentType
+          description: Document content type
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: fileName
+          description: Document name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: schemaPath
+          description: |
+            JSON Schema path related to the document. The uploaded document must be validated by the passed schema path.
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Document to save.
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+        x-ms-requestBody-name: file
+      responses:
+        "200":
+          description: Task with json data saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskSaveJsonFormsValueDocumentResponseCommand"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /tasks/{id}/~actions/download-json-forms-value-document:
+    get:
+      summary: Download document
+      description: Given a task, download a document from a json form data.
+      operationId: actionsTaskDownloadJsonFormsValueDocument
+      tags:
+        - apiRestExternalV20221008Tasks
+        - task
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - name: documentUri
+          description: Document URI to download.
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Document requested
+          content:
+            "application/octet-stream":
               schema:
                 type: string
                 format: binary
@@ -1031,7 +1121,9 @@ components:
       type: string
       enum:
         - PROCESS
+        - PROCESS_PAGE_ITEM
         - TASK
+        - TASK_PAGE_ITEM
         - AUTHENTICATION
       x-ms-enum:
         modelAsString: false
@@ -1440,6 +1532,40 @@ components:
         - id
         - type
 
+    JsonFormsValueData:
+      type: object
+      description: json value filled that complain with the related json schema.
+      additionalProperties: true
+
+    JsonFormsValue:
+      type: object
+      description: |
+        Json form values, used when the render type selected is JSON Forms.
+      properties:
+        valid:
+          type: boolean
+          description: true if the data complain the related json schema.
+        data:
+          $ref: "#/components/schemas/JsonFormsValueData"
+
+    TaskSaveJsonFormsValueDataCommand:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/JsonFormsValueData"
+
+    TaskSaveJsonFormsValueDocumentResponseCommand:
+      type: object
+      properties:
+        value:
+          type: string
+          description: |
+            JSON value representing the uploaded file.
+            
+            Example: `kuflow-file:uri=xxx-yyy-zzz;type=application/json;size=500;name=file.json;`
+      required:
+        - value
+
     ProcessChangeInitiatorCommand:
       description: Command to change the process initiator, only one option is required.
       type: object
@@ -1516,6 +1642,37 @@ components:
             type: string
             format: uuid
 
+    ProcessPageItem:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              description: Process ID.
+              type: string
+              format: uuid
+            subject:
+              description: Process subject.
+              type: string
+              minLength: 1
+              maxLength: 255
+            state:
+              $ref: "#/components/schemas/ProcessState"
+            processDefinition:
+              $ref: "#/components/schemas/ProcessDefinitionSummary"
+            elementValues:
+              type: object
+              description: Process element values, an ElementValueDocument is not allowed.
+              additionalProperties:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProcessElementValue"
+            initiator:
+              $ref: "#/components/schemas/Principal"
+          required:
+            - processDefinition
+      x-all-of-name: ProcessAllOf
+
     ProcessPage:
       allOf:
         - $ref: "#/components/schemas/Page"
@@ -1524,7 +1681,7 @@ components:
             content:
               type: array
               items:
-                $ref: "#/components/schemas/Process"
+                $ref: "#/components/schemas/ProcessPageItem"
           required:
             - content
       x-all-of-name: ProcessPageAllOf
@@ -1554,12 +1711,16 @@ components:
               type: string
               format: uuid
             elementValues:
-              description: Task element values, en ElementValueDocument is not allowed.
+              description: |
+                Task element values, en ElementValueDocument is not allowed, used when the task render type selected is 
+                JSON Forms
               type: object
               additionalProperties:
                 type: array
                 items:
                   $ref: "#/components/schemas/TaskElementValue"
+            jsonFormsValue:
+              $ref: "#/components/schemas/JsonFormsValue"
             logs:
               type: array
               items:
@@ -1571,6 +1732,37 @@ components:
             - processId
       x-all-of-name: TaskAllOf
 
+    TaskPageItem:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            state:
+              $ref: "#/components/schemas/TaskState"
+            taskDefinition:
+              $ref: "#/components/schemas/TaskDefinitionSummary"
+            processId:
+              type: string
+              format: uuid
+            elementValues:
+              description: Task element values, en ElementValueDocument is not allowed.
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TaskElementValue"
+            jsonFormsValue:
+              $ref: "#/components/schemas/JsonFormsValue"
+            owner:
+              $ref: "#/components/schemas/Principal"
+          required:
+            - taskDefinition
+            - processId
+      x-all-of-name: TaskAllOf
+      
     TaskDefinitionSummary:
       description: In creation task, one of 'id, version or code' is mandatory.
       type: object
@@ -1596,7 +1788,7 @@ components:
             content:
               type: array
               items:
-                $ref: "#/components/schemas/Task"
+                $ref: "#/components/schemas/TaskPageItem"
           required:
             - content
       x-all-of-name: TaskPageAllOf
@@ -1739,7 +1931,9 @@ components:
         propertyName: objectType
         mapping:
           "PROCESS": "#/components/schemas/Process"
+          "PROCESS_PAGE_ITEM": "#/components/schemas/ProcessPageItem"
           "TASK": "#/components/schemas/Task"
+          "TASK_PAGE_ITEM": "#/components/schemas/TaskPageItem"
           "AUTHENTICATION": "#/components/schemas/Authentication"
 
   responses:
