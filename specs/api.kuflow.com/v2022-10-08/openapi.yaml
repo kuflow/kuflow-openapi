@@ -890,13 +890,13 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /tasks/{id}/~actions/save-json-forms-data:
+  /tasks/{id}/~actions/save-json-forms-value-data:
     post:
       summary: Save JSON data
       description: |
         Allow to save a JSON data validating that the data follow the related schema. If the data is invalid, then 
         the json form is marked as invalid.
-      operationId: actionsTaskSaveJsonFormsData
+      operationId: actionsTaskSaveJsonFormsValueData
       tags:
         - apiRestExternalV20221008Tasks
         - task
@@ -908,7 +908,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TaskSaveJsonFormsValueCommand"
+              $ref: "#/components/schemas/TaskSaveJsonFormsValueDataCommand"
         x-ms-requestBody-name: command
       responses:
         "200":
@@ -920,12 +920,12 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /tasks/{id}/~actions/save-json-forms-document:
+  /tasks/{id}/~actions/save-json-forms-value-document:
     post:
       summary: Save a JSON Forms document
       description: |
         Save a document in the task to later be linked into the JSON data.
-      operationId: actionsTaskSaveJsonFormsDocument
+      operationId: actionsTaskSaveJsonFormsValueDocument
       tags:
         - apiRestExternalV20221008Tasks
         - task
@@ -965,15 +965,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TaskSaveJsonFormsDocumentResponseCommand"
+                $ref: "#/components/schemas/TaskSaveJsonFormsValueDocumentResponseCommand"
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /tasks/{id}/~actions/download-json-forms-document:
+  /tasks/{id}/~actions/download-json-forms-value-document:
     get:
       summary: Download document
       description: Given a task, download a document from a json form data.
-      operationId: actionsTaskDownloadJsonFormsDocument
+      operationId: actionsTaskDownloadJsonFormsValueDocument
       tags:
         - apiRestExternalV20221008Tasks
         - task
@@ -1548,13 +1548,13 @@ components:
         data:
           $ref: "#/components/schemas/JsonFormsValueData"
 
-    TaskSaveJsonFormsValueCommand:
+    TaskSaveJsonFormsValueDataCommand:
       type: object
       properties:
         data:
           $ref: "#/components/schemas/JsonFormsValueData"
 
-    TaskSaveJsonFormsDocumentResponseCommand:
+    TaskSaveJsonFormsValueDocumentResponseCommand:
       type: object
       properties:
         value:
@@ -1754,6 +1754,8 @@ components:
                 type: array
                 items:
                   $ref: "#/components/schemas/TaskElementValue"
+            jsonFormsValue:
+              $ref: "#/components/schemas/JsonFormsValue"
             owner:
               $ref: "#/components/schemas/Principal"
           required:
