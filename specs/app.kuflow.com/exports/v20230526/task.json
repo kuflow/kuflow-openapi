@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "extends": {
+    "$ref": "abstract-audited.json"
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "tenantId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "state": {
+      "$ref": "enums/task-state.json"
+    },
+    "taskDefinition": {
+      "$ref": "task-definition-summary.json"
+    },
+    "ownerId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "logs": {
+      "type": "array",
+      "items": {
+        "$ref": "log.json"
+      }
+    },
+    "elementValues": {
+      "type": "object",
+      "additionalProperties": false,
+      "$comment": "See task-element-value.json for the child schema definition",
+      "existingJavaType": "java.util.Map<String, java.util.List<com.kuflow.api.export.v20230526.resource.TaskElementValueResource>>"
+    },
+    "jsonFormsValue": {
+      "$ref": "#/definitions/jsonFormsValue"
+    }
+  },
+  "required": ["id", "tenantId", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate", "state", "taskDefinition"],
+  "definitions": {
+    "jsonFormsValue": {
+      "type": "object",
+      "properties": {
+        "valid": {
+          "type": "boolean",
+          "default": "true"
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": false,
+          "existingJavaType": "java.util.Map<String, Object>"
+        }
+      },
+      "required": ["value"]
+    }
+  }
+}

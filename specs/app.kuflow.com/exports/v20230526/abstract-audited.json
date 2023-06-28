@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "createdBy": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "createdDate": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "lastModifiedBy": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "lastModifiedDate": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": ["createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"],
+  "definitions": {}
+}

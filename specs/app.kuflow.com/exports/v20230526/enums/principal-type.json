@@ -1,0 +1,5 @@
+{
+  "javaType": "com.kuflow.api.export.v20230526.resource.enumeration.PrincipalType",
+  "type": "string",
+  "enum": ["USER", "APPLICATION", "SYSTEM"]
+}

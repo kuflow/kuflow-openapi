@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "type": {
+      "title": "The values are in accordance with this type",
+      "description": " Values can only be of one type at a time",
+      "$ref": "enums/process-element-value-type.json"
+    },
+    "valid": {
+      "type": "boolean",
+      "default": "true"
+    },
+    "valueString": {
+      "$ref": "#/definitions/processElementValueString"
+    },
+    "valueNumber": {
+      "$ref": "#/definitions/processElementValueNumber"
+    }
+  },
+  "required": ["type", "valid"],
+  "definitions": {
+    "processElementValueString": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": ["value"]
+    },
+    "processElementValueNumber": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "number"
+        }
+      },
+      "required": ["value"]
+    }
+  }
+}
