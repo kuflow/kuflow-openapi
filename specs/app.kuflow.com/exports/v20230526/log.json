@@ -3,8 +3,6 @@
   "type": "object",
   "properties": {
     "id": {
-      "title": "esto es un titulo",
-      "description": "esto e suna desc",
       "type": "string",
       "format": "uuid"
     },
