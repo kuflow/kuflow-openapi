@@ -1,0 +1,24 @@
+{
+  "javaType": "com.kuflow.api.export.v20230526.resource.enumeration.EventType",
+  "type": "string",
+  "enum": [
+    "PROCESS_START",
+    "PROCESS_UPDATE",
+    "PROCESS_COMPLETE",
+    "PROCESS_CANCEL",
+    "PROCESS_CHANGE_INITIATOR",
+    "PROCESS_READ",
+    "PROCESS_USER_ACTION_REQUEST",
+    "TASK_CREATE",
+    "TASK_CLAIM",
+    "TASK_ASSIGN",
+    "TASK_UNASSIGN",
+    "TASK_COMPLETE",
+    "TASK_CANCEL",
+    "TASK_ELEMENT_SAVE",
+    "TASK_ELEMENT_DELETE",
+    "TASK_ELEMENT_DOCUMENT_DOWNLOAD",
+    "TASK_JSON_FORMS_SAVE",
+    "TASK_JSON_FORMS_DOCUMENT_DOWNLOAD"
+  ]
+}

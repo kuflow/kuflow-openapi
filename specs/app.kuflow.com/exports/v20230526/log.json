@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "message": {
+      "type": "string"
+    },
+    "level": {
+      "$ref": "enums/log-level.json"
+    }
+  },
+  "required": ["id", "createdDate", "message", "level"],
+  "definitions": {}
+}

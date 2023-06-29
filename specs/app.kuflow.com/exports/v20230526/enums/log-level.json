@@ -1,0 +1,5 @@
+{
+  "javaType": "com.kuflow.api.export.v20230526.resource.enumeration.LogLevel",
+  "type": "string",
+  "enum": ["INFO", "WARN", "ERROR"]
+}

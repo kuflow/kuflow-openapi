@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "extends": {
+    "$ref": "abstract-audited.json"
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "tenantId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "state": {
+      "$ref": "enums/process-state.json"
+    },
+    "processDefinition": {
+      "$ref": "process-definition-summary.json"
+    },
+    "initiatorId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "relatedProcess": {
+      "$ref": "process-summary.json"
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "$ref": "task.json"
+      }
+    },
+    "elementValues": {
+      "type": "object",
+      "additionalProperties": false,
+      "$comment": "See process-element-value.json for the child schema definition",
+      "existingJavaType": "java.util.Map<String, java.util.List<com.kuflow.api.export.v20230526.resource.ProcessElementValueResource>>"
+    }
+  },
+  "required": [
+    "createdBy",
+    "createdDate",
+    "lastModifiedBy",
+    "lastModifiedDate",
+    "id",
+    "tenantId",
+    "state",
+    "processDefinition",
+    "initiator"
+  ],
+  "definitions": {}
+}

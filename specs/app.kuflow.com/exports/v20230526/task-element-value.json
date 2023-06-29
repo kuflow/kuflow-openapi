@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "type": {
+      "title": "The values are in accordance with this type",
+      "description": " Values can only be of one type at a time",
+      "$ref": "enums/task-element-value-type.json"
+    },
+    "valid": {
+      "type": "boolean",
+      "default": "true"
+    },
+    "valueString": {
+      "$ref": "#/definitions/taskElementValueString"
+    },
+    "valueNumber": {
+      "$ref": "#/definitions/taskElementValueNumber"
+    },
+    "valueDocument": {
+      "$ref": "#/definitions/taskElementValueDocumentResource"
+    },
+    "valueObject": {
+      "$ref": "#/definitions/taskElementValueObject"
+    },
+    "valuePrincipal": {
+      "$ref": "#/definitions/taskElementValuePrincipalResource"
+    }
+  },
+  "required": ["type", "valid"],
+  "definitions": {
+    "taskElementValueString": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": ["value"]
+    },
+    "taskElementValueNumber": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "number"
+        }
+      },
+      "required": ["value"]
+    },
+    "taskElementValueObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "existingJavaType": "java.util.Map<String, java.io.Serializable>"
+        }
+      },
+      "required": ["value"]
+    },
+    "taskElementValueDocumentResource": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "$ref": "#definitions/taskElementValueDocumentItemResource"
+        }
+      },
+      "required": ["value"]
+    },
+    "taskElementValueDocumentItemResource": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "uri": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "contentPath": {
+          "type": "string"
+        },
+        "contentType": {
+          "type": "string"
+        },
+        "contentLength": {
+          "type": "integer",
+          "existingJavaType": "Long"
+        }
+      }
+    },
+    "taskElementValuePrincipalResource": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "$ref": "#definitions/taskElementValuePrincipalItemResource"
+        }
+      },
+      "required": ["value"]
+    },
+    "taskElementValuePrincipalItemResource": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "type": {
+          "$ref": "enums/principal-type.json"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

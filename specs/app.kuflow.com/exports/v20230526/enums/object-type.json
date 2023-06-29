@@ -1,0 +1,17 @@
+{
+  "javaType": "com.kuflow.api.export.v20230526.resource.enumeration.ObjectType",
+  "type": "string",
+  "enum": [
+    "USER",
+    "TENANT",
+    "TENANT_USER",
+    "GROUP",
+    "PROCESS_DEFINITION",
+    "TASK_DEFINITION",
+    "PROCESS",
+    "TASK",
+    "TASK_ELEMENT",
+    "TASK_JSON_FORMS_DATA",
+    "TASK_JSON_FORMS_DATA_DOCUMENT"
+  ]
+}

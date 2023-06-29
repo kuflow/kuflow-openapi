@@ -1,0 +1,5 @@
+{
+  "javaType": "com.kuflow.api.export.v20230526.resource.enumeration.TaskElementValueType",
+  "type": "string",
+  "enum": ["STRING", "NUMBER", "OBJECT", "DOCUMENT", "PRINCIPAL"]
+}
