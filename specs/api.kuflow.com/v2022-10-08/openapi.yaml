@@ -1989,10 +1989,10 @@ components:
               minLength: 7
               maxLength: 40
           required:
-            - ip
-            - hostname
             - identity
             - taskQueue
+            - hostname
+            - ip
 
     AbstractAudited:
       type: object
