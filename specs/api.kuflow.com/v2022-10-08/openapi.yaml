@@ -1061,8 +1061,7 @@ paths:
     post:
       summary: Create or update a worker
       description: |
-        Create o update a worker into KuFlow, this allows to the platform to have a worker catalog of all registered 
-        ones.
+        Register a worker in KuFlow, this allows the platform to have a catalogue of all registered workers.
         
         If already exist a worker for the same identity, the worker will be updated.
       operationId: createWorker
