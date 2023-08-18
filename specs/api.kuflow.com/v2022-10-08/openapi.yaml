@@ -56,24 +56,35 @@ security:
 
 tags:
   - name: principal
-    description: Operations about principal.
+    description: Operations about principals.
     externalDocs:
       description: Find out more about our principal model.
       url: "https://docs.kuflow.com/fine-grained-concepts/users-groups-roles"
+    x-displayName: Principal
   - name: process
-    description: Operations about process.
+    description: Operations about processes.
     externalDocs:
-      description: Find out more about our processes.
+      description: Find out more about our process model.
       url: "https://kuflow.com"
+    x-displayName: Process
   - name: task
-    description: Operations about task.
+    description: Operations about tasks.
     externalDocs:
-      description: Find out more about our task.
+      description: Find out more about our task model.
       url: "https://kuflow.com"
+    x-displayName: Task
+  - name: worker
+    description: Operations about workers.
+    externalDocs:
+      description: Find out more about our workers.
+      url: "https://kuflow.com"
+    x-displayName: Worker
   - name: webhook
     description: Operations that Kuflow invokes towards external systems.
+    x-displayName: Webhook
   - name: authentication
     description: Operations for handling authentication tokens.
+    x-displayName: Authentication
 
 x-tagGroups:
   - name: General
@@ -81,6 +92,7 @@ x-tagGroups:
       - principal
       - process
       - task
+      - worker
   - name: Notification
     tags:
       - webhook
@@ -1045,6 +1057,42 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
+  /workers:
+    post:
+      summary: Create or update a worker
+      description: |
+        Create o update a worker into KuFlow, this allows to the platform to have a worker catalog of all registered 
+        ones.
+        
+        If already exist a worker for the same identity, the worker will be updated.
+      operationId: createWorker
+      tags:
+        - apiRestExternalV20221008Workers
+        - worker
+      requestBody:
+        description: Worker to create or update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Worker"
+        x-ms-requestBody-name: worker
+      responses:
+        "200":
+          description: Worker updated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Worker"
+        "201":
+          description: Worker created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Worker"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
 x-webhooks:
   events:
     post:
@@ -1120,11 +1168,12 @@ components:
       description: Audited object Types.
       type: string
       enum:
+        - AUTHENTICATION
         - PROCESS
         - PROCESS_PAGE_ITEM
         - TASK
         - TASK_PAGE_ITEM
-        - AUTHENTICATION
+        - WORKER
       x-ms-enum:
         modelAsString: false
 
@@ -1903,6 +1952,48 @@ components:
           type: string
           format: uuid
 
+    Worker:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            identity:
+              type: string
+              minLength: 1
+              maxLength: 255
+            taskQueue:
+              type: string
+              minLength: 1
+              maxLength: 255
+            workflowTypes:
+              type: array
+              items:
+                 type: string
+                 minLength: 1
+                 maxLength: 255
+            activityTypes:
+              type: array
+              items:
+                type: string
+                minLength: 1
+                maxLength: 255
+            hostname:
+              type: string
+              minLength: 1
+              maxLength: 255
+            ip:
+              type: string
+              minLength: 7
+              maxLength: 40
+          required:
+            - ip
+            - hostname
+            - identity
+            - taskQueue
+
     AbstractAudited:
       type: object
       properties:
@@ -1930,11 +2021,12 @@ components:
       discriminator:
         propertyName: objectType
         mapping:
+          "AUTHENTICATION": "#/components/schemas/Authentication"
           "PROCESS": "#/components/schemas/Process"
           "PROCESS_PAGE_ITEM": "#/components/schemas/ProcessPageItem"
           "TASK": "#/components/schemas/Task"
           "TASK_PAGE_ITEM": "#/components/schemas/TaskPageItem"
-          "AUTHENTICATION": "#/components/schemas/Authentication"
+          "WORKER": "#/components/schemas/Worker"
 
   responses:
     DefaultError:
