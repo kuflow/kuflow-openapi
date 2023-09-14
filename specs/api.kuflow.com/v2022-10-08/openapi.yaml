@@ -1358,6 +1358,8 @@ components:
       type: string
       enum:
         - ENGINE
+        - ENGINE_TOKEN
+        - ENGINE_CERTIFICATE
       x-ms-enum:
         modelAsString: false
 
@@ -1375,11 +1377,55 @@ components:
             token:
               type: string
               readOnly: true
+              deprecated: true
+              description: |
+                Engine authentication token. 
+                @deprecated use engineConfig.token
             expiredAt:
               type: string
               format: date-time
               readOnly: true
+              deprecated: true
+              description: |
+                Engine authentication token expiration.
+                @deprecated use engineConfig.expiredAt
+            engineToken:
+              $ref: "#/components/schemas/AuthenticationEngineToken"
+            engineCertificate:
+              $ref: "#/components/schemas/AuthenticationEngineCertificate"
       x-all-of-name: AuthenticationAllOf
+
+    AuthenticationEngineToken:
+      type: object
+      readOnly: true
+      properties:
+        token:
+          type: string
+          description: Engine authentication token
+          readOnly: true
+        expiredAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    AuthenticationEngineCertificate:
+      type: object
+      readOnly: true
+      properties:
+        namespace:
+          type: string
+        tls:
+          type: object
+          properties:
+            serverRootCaCertificate:
+              type: string
+              readOnly: true
+            clientCertificate:
+              type: string
+              readOnly: true
+            clientPrivateKey:
+              type: string
+              readOnly: true
 
     ProcessState:
       description: Process state
