@@ -1407,6 +1407,9 @@ components:
           type: string
           format: date-time
           readOnly: true
+      required:
+        - token
+        - expiredAt
 
     AuthenticationEngineCertificate:
       type: object
@@ -1426,6 +1429,13 @@ components:
             clientPrivateKey:
               type: string
               readOnly: true
+          required:
+            - serverRootCaCertificate
+            - clientCertificate
+            - clientPrivateKey
+      required:
+        - namespace
+        - tls
 
     ProcessState:
       description: Process state
