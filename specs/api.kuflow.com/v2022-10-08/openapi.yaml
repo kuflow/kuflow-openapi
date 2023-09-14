@@ -1371,12 +1371,10 @@ components:
             id:
               type: string
               format: uuid
-              readOnly: true
             type:
               $ref: "#/components/schemas/AuthenticationType"
             token:
               type: string
-              readOnly: true
               deprecated: true
               description: |
                 Engine authentication token. 
@@ -1384,7 +1382,6 @@ components:
             expiredAt:
               type: string
               format: date-time
-              readOnly: true
               deprecated: true
               description: |
                 Engine authentication token expiration.
@@ -1397,23 +1394,19 @@ components:
 
     AuthenticationEngineToken:
       type: object
-      readOnly: true
       properties:
         token:
           type: string
           description: Engine authentication token
-          readOnly: true
         expiredAt:
           type: string
           format: date-time
-          readOnly: true
       required:
         - token
         - expiredAt
 
     AuthenticationEngineCertificate:
       type: object
-      readOnly: true
       properties:
         namespace:
           type: string
@@ -1422,13 +1415,10 @@ components:
           properties:
             serverRootCaCertificate:
               type: string
-              readOnly: true
             clientCertificate:
               type: string
-              readOnly: true
             clientPrivateKey:
               type: string
-              readOnly: true
           required:
             - serverRootCaCertificate
             - clientCertificate
