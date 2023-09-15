@@ -1378,14 +1378,16 @@ components:
               deprecated: true
               description: |
                 Engine authentication token. 
-                @deprecated use engineConfig.token
+                
+                @deprecated use engineToken.token
             expiredAt:
               type: string
               format: date-time
               deprecated: true
               description: |
                 Engine authentication token expiration.
-                @deprecated use engineConfig.expiredAt
+                
+                @deprecated use engineToken.expiredAt
             engineToken:
               $ref: "#/components/schemas/AuthenticationEngineToken"
             engineCertificate:
