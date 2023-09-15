@@ -539,10 +539,14 @@ paths:
         - task
       parameters:
         - name: activityToken
-          description: When create a Kuflow Task backed with a Temporal.io servers, this value is required and must be set with the context task token of Temporal.io activity.
+          description: |
+            When create a KuFlow Task backed with a Temporal.io servers, this value is required and must be set with the context task token of Temporal.io activity.
+            
+            @deprecated It is no longer necessary because it will be never used for the latest SDKs versions
           in: query
           schema:
             type: string
+          deprecated: true
       requestBody:
         description: Task to be created
         required: true
