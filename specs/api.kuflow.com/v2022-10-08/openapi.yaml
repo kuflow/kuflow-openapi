@@ -1242,6 +1242,7 @@ components:
       type: string
       enum:
         - AUTHENTICATION
+        - TENANT_USER
         - PROCESS
         - PROCESS_PAGE_ITEM
         - TASK
@@ -2082,18 +2083,20 @@ components:
         - value
 
     TenantUser:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        metadata:
-          $ref: "#/components/schemas/TenantUserMetadata"
-        principal:
-          $ref: "#/components/schemas/Principal"
-      required:
-        - id
-        - principal
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            metadata:
+              $ref: "#/components/schemas/TenantUserMetadata"
+            principal:
+              $ref: "#/components/schemas/Principal"
+          required:
+            - id
+            - principal
 
     TenantUserPage:
       allOf:
