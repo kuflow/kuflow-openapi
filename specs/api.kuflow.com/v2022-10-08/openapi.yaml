@@ -1252,6 +1252,28 @@ components:
       x-ms-enum:
         modelAsString: false
 
+    AbstractAudited:
+      type: object
+      properties:
+        objectType:
+          $ref: "#/components/schemas/AuditedObjectType"
+        createdBy:
+          description: Who create this model.
+          type: string
+          format: uuid
+        createdAt:
+          description: When this model was created.
+          type: string
+          format: date-time
+        lastModifiedBy:
+          description: Who was last update this model.
+          type: string
+          format: uuid
+        lastModifiedAt:
+          description: When this model type was last updated.
+          type: string
+          format: date-time
+
     PagedObjectType:
       description: Paged Model types.
       type: string
@@ -2097,6 +2119,7 @@ components:
           required:
             - id
             - principal
+      x-all-of-name: TenantUserAllOf
 
     TenantUserPage:
       allOf:
@@ -2152,28 +2175,7 @@ components:
             - taskQueue
             - hostname
             - ip
-
-    AbstractAudited:
-      type: object
-      properties:
-        objectType:
-          $ref: "#/components/schemas/AuditedObjectType"
-        createdBy:
-          description: Who create this model.
-          type: string
-          format: uuid
-        createdAt:
-          description: When this model was created.
-          type: string
-          format: date-time
-        lastModifiedBy:
-          description: Who was last update this model.
-          type: string
-          format: uuid
-        lastModifiedAt:
-          description: When this model type was last updated.
-          type: string
-          format: date-time
+      x-all-of-name: WorkerAllOf
 
   responses:
     DefaultError:
