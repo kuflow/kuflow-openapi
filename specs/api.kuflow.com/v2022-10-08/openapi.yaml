@@ -205,7 +205,7 @@ paths:
       description: |
         List all the Tenant Users that have been created and the used credentials has access.
 
-        Available sort query values: id, name
+        Available sort query values: id, createdAt, lastModifiedAt
       operationId: findTenantUsers
       tags:
         - apiRestExternalV20221008TenantUser
