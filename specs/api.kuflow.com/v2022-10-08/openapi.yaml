@@ -61,44 +61,57 @@ tags:
       description: Find out more about our principal model.
       url: "https://docs.kuflow.com/fine-grained-concepts/users-groups-roles"
     x-displayName: Principal
+  - name: tenantUser
+    description: Operations about tenant users.
+    externalDocs:
+      description: Find out more about our principal model.
+      url: "https://docs.kuflow.com"
+    x-displayName: Tenant User
   - name: process
     description: Operations about processes.
     externalDocs:
       description: Find out more about our process model.
-      url: "https://kuflow.com"
+      url: "https://docs.kuflow.com"
     x-displayName: Process
   - name: task
     description: Operations about tasks.
     externalDocs:
       description: Find out more about our task model.
-      url: "https://kuflow.com"
+      url: "https://docs.kuflow.com"
     x-displayName: Task
   - name: worker
     description: Operations about workers.
     externalDocs:
       description: Find out more about our workers.
-      url: "https://kuflow.com"
+      url: "https://docs.kuflow.com"
     x-displayName: Worker
   - name: webhook
     description: Operations that Kuflow invokes towards external systems.
+    externalDocs:
+      description: Find out more about our webhooks.
+      url: "https://docs.kuflow.com"
     x-displayName: Webhook
   - name: authentication
     description: Operations for handling authentication tokens.
+    externalDocs:
+      description: Find out more about our authentication process.
+      url: "https://docs.kuflow.com/developers/authentication"
     x-displayName: Authentication
 
 x-tagGroups:
   - name: General
     tags:
       - principal
+      - tenantUser
       - process
       - task
       - worker
-  - name: Notification
-    tags:
-      - webhook
   - name: Authentication management
     tags:
       - authentication
+  - name: Notification
+    tags:
+      - webhook
 
 paths:
   /authentications:
@@ -183,6 +196,69 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Principal"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /tenant-users:
+    get:
+      summary: Find all accessible Tenant Users
+      description: |
+        List all the Tenant Users that have been created and the used credentials has access.
+
+        Available sort query values: id, name
+      operationId: findTenantUsers
+      tags:
+        - apiRestExternalV20221008TenantUser
+        - tenantUser
+      parameters:
+        - $ref: "#/components/parameters/SizeQueryParam"
+        - $ref: "#/components/parameters/PageQueryParam"
+        - $ref: "#/components/parameters/SortQueryParam"
+        - name: groupId
+          description: Filter tenant users that exists in one of the group ids.
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+          style: form
+          explode: true
+        - name: email
+          description: Filter tenant users that have one of the emails.
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              format: email
+      responses:
+        "200":
+          description: Tenant users found paginated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantUserPage"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /tenant-users/{id}:
+    get:
+      summary: Get a Tenant User by ID
+      description: Returns the requested TenantUser when has access to do it.
+      operationId: retrieveTenantUser
+      tags:
+        - apiRestExternalV20221008TenantUser
+        - tenantUser
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantUser"
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -1172,21 +1248,47 @@ components:
       type: string
       enum:
         - AUTHENTICATION
+        - TENANT_USER
         - PROCESS
         - PROCESS_PAGE_ITEM
         - TASK
         - TASK_PAGE_ITEM
         - WORKER
+      deprecated: true
       x-ms-enum:
         modelAsString: false
+
+    AbstractAudited:
+      type: object
+      properties:
+        objectType:
+          $ref: "#/components/schemas/AuditedObjectType"
+        createdBy:
+          description: Who create this model.
+          type: string
+          format: uuid
+        createdAt:
+          description: When this model was created.
+          type: string
+          format: date-time
+        lastModifiedBy:
+          description: Who was last update this model.
+          type: string
+          format: uuid
+        lastModifiedAt:
+          description: When this model type was last updated.
+          type: string
+          format: date-time
 
     PagedObjectType:
       description: Paged Model types.
       type: string
       enum:
         - PRINCIPAL_PAGE
+        - TENANT_USER_PAGE
         - PROCESS_PAGE
         - TASK_PAGE
+      deprecated: true
       x-ms-enum:
         modelAsString: false
 
@@ -1349,14 +1451,7 @@ components:
         metadata:
           $ref: "#/components/schemas/PageMetadata"
       required:
-        - objectType
         - metadata
-      discriminator:
-        propertyName: objectType
-        mapping:
-          "PROCESS_PAGE": "#/components/schemas/ProcessPage"
-          "TASK_PAGE": "#/components/schemas/TaskPage"
-          "PRINCIPAL_PAGE": "#/components/schemas/PrincipalPage"
 
     AuthenticationType:
       type: string
@@ -2003,6 +2098,48 @@ components:
           type: string
           format: uuid
 
+    TenantUserMetadata:
+      type: object
+      properties:
+        valid:
+          type: boolean
+        value:
+          type: object
+          additionalProperties: true
+      required:
+        - valid
+        - value
+
+    TenantUser:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            metadata:
+              $ref: "#/components/schemas/TenantUserMetadata"
+            principal:
+              $ref: "#/components/schemas/Principal"
+          required:
+            - id
+            - principal
+      x-all-of-name: TenantUserAllOf
+
+    TenantUserPage:
+      allOf:
+        - $ref: "#/components/schemas/Page"
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: "#/components/schemas/TenantUser"
+          required:
+            - content
+      x-all-of-name: TenantUserPageAllOf
+
     Worker:
       allOf:
         - $ref: "#/components/schemas/AbstractAudited"
@@ -2044,40 +2181,7 @@ components:
             - taskQueue
             - hostname
             - ip
-
-    AbstractAudited:
-      type: object
-      properties:
-        objectType:
-          description: Identifies the concrete type of the audited model.
-          $ref: "#/components/schemas/AuditedObjectType"
-        createdBy:
-          description: Who create this model.
-          type: string
-          format: uuid
-        createdAt:
-          description: When this model was created.
-          type: string
-          format: date-time
-        lastModifiedBy:
-          description: Who was last update this model.
-          type: string
-          format: uuid
-        lastModifiedAt:
-          description: When this model type was last updated.
-          type: string
-          format: date-time
-      required:
-        - objectType
-      discriminator:
-        propertyName: objectType
-        mapping:
-          "AUTHENTICATION": "#/components/schemas/Authentication"
-          "PROCESS": "#/components/schemas/Process"
-          "PROCESS_PAGE_ITEM": "#/components/schemas/ProcessPageItem"
-          "TASK": "#/components/schemas/Task"
-          "TASK_PAGE_ITEM": "#/components/schemas/TaskPageItem"
-          "WORKER": "#/components/schemas/Worker"
+      x-all-of-name: WorkerAllOf
 
   responses:
     DefaultError:
