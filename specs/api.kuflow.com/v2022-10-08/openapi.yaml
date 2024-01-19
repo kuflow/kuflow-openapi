@@ -65,25 +65,25 @@ tags:
     description: Operations about tenant users.
     externalDocs:
       description: Find out more about our principal model.
-      url: "https://kuflow.com"
+      url: "https://docs.kuflow.com"
     x-displayName: Tenant User
   - name: process
     description: Operations about processes.
     externalDocs:
       description: Find out more about our process model.
-      url: "https://kuflow.com"
+      url: "https://docs.kuflow.com"
     x-displayName: Process
   - name: task
     description: Operations about tasks.
     externalDocs:
       description: Find out more about our task model.
-      url: "https://kuflow.com"
+      url: "https://docs.kuflow.com"
     x-displayName: Task
   - name: worker
     description: Operations about workers.
     externalDocs:
       description: Find out more about our workers.
-      url: "https://kuflow.com"
+      url: "https://docs.kuflow.com"
     x-displayName: Worker
   - name: webhook
     description: Operations that Kuflow invokes towards external systems.
