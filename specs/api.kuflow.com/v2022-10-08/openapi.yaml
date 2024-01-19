@@ -87,9 +87,15 @@ tags:
     x-displayName: Worker
   - name: webhook
     description: Operations that Kuflow invokes towards external systems.
+    externalDocs:
+      description: Find out more about our webhooks.
+      url: "https://docs.kuflow.com"
     x-displayName: Webhook
   - name: authentication
     description: Operations for handling authentication tokens.
+    externalDocs:
+      description: Find out more about our authentication process.
+      url: "https://docs.kuflow.com/developers/authentication"
     x-displayName: Authentication
 
 x-tagGroups:
