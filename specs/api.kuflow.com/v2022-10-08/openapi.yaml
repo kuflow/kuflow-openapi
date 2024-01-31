@@ -53,6 +53,7 @@ servers:
 security:
   - BasicAuth: []
   - BearerAuth: []
+  - OAuth2Auth: []
 
 tags:
   - name: principal
@@ -159,16 +160,8 @@ paths:
           in: query
           schema:
             $ref: "#/components/schemas/PrincipalType"
-        - name: groupId
-          description: Filter principals that exists in one of group ids.
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-              format: uuid
-          style: form
-          explode: true
+        - $ref: "#/components/parameters/GroupIdQueryParam"
+        - $ref: "#/components/parameters/TenantIdQueryParam"
       responses:
         "200":
           description: Principals found paginated.
@@ -214,24 +207,9 @@ paths:
         - $ref: "#/components/parameters/SizeQueryParam"
         - $ref: "#/components/parameters/PageQueryParam"
         - $ref: "#/components/parameters/SortQueryParam"
-        - name: groupId
-          description: Filter tenant users that exists in one of the group ids.
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-              format: uuid
-          style: form
-          explode: true
-        - name: email
-          description: Filter tenant users that have one of the emails.
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-              format: email
+        - $ref: "#/components/parameters/GroupIdQueryParam"
+        - $ref: "#/components/parameters/EmailQueryParam"
+        - $ref: "#/components/parameters/TenantIdQueryParam"
       responses:
         "200":
           description: Tenant users found paginated.
@@ -277,6 +255,7 @@ paths:
         - $ref: "#/components/parameters/SizeQueryParam"
         - $ref: "#/components/parameters/PageQueryParam"
         - $ref: "#/components/parameters/SortQueryParam"
+        - $ref: "#/components/parameters/TenantIdQueryParam"
       responses:
         "200":
           description: Processes found paginated
@@ -585,7 +564,7 @@ paths:
               type: string
           style: form
           explode: true
-
+        - $ref: "#/components/parameters/TenantIdQueryParam"
       responses:
         "200":
           description: Tasks found paginated.
@@ -677,6 +656,7 @@ paths:
                             },
                           ],
                       },
+                    tenantId: '859f5585-493f-44f8-b9b4-beb633bd9ac7'
                   }
         x-ms-requestBody-name: task
       responses:
@@ -1238,6 +1218,45 @@ components:
         type: array
         items:
           type: string
+      style: form
+      explode: true
+      x-ms-parameter-location: method
+
+    GroupIdQueryParam:
+      name: groupId
+      description: Filter by group ids.
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+          format: uuid
+      style: form
+      explode: true
+      x-ms-parameter-location: method
+
+    EmailQueryParam:
+      name: email
+      description: Filter by email.
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+          format: email
+      style: form
+      explode: true
+      x-ms-parameter-location: method
+
+    TenantIdQueryParam:
+      name: tenantId
+      description: Filter by tenantId.
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+          format: uuid
       style: form
       explode: true
       x-ms-parameter-location: method
@@ -1817,6 +1836,10 @@ components:
               $ref: "#/components/schemas/Principal"
             relatedProcess:
               $ref: "#/components/schemas/RelatedProcess"
+            tenantId:
+              description: Tenant ID.
+              type: string
+              format: uuid
           required:
             - processDefinition
       x-all-of-name: ProcessAllOf
@@ -1864,6 +1887,10 @@ components:
                   $ref: "#/components/schemas/ProcessElementValue"
             initiator:
               $ref: "#/components/schemas/Principal"
+            tenantId:
+              description: Tenant ID.
+              type: string
+              format: uuid
           required:
             - processDefinition
       x-all-of-name: ProcessAllOf
@@ -1922,6 +1949,10 @@ components:
                 $ref: "#/components/schemas/Log"
             owner:
               $ref: "#/components/schemas/Principal"
+            tenantId:
+              description: Tenant ID.
+              type: string
+              format: uuid
           required:
             - taskDefinition
             - processId
@@ -1953,6 +1984,10 @@ components:
               $ref: "#/components/schemas/JsonFormsValue"
             owner:
               $ref: "#/components/schemas/Principal"
+            tenantId:
+              description: Tenant ID.
+              type: string
+              format: uuid
           required:
             - taskDefinition
             - processId
@@ -2122,6 +2157,9 @@ components:
               $ref: "#/components/schemas/TenantUserMetadata"
             principal:
               $ref: "#/components/schemas/Principal"
+            tenantId:
+              type: string
+              format: uuid
           required:
             - id
             - principal
@@ -2176,6 +2214,10 @@ components:
               type: string
               minLength: 7
               maxLength: 40
+            tenantId:
+              description: Tenant ID.
+              type: string
+              format: uuid
           required:
             - identity
             - taskQueue
@@ -2198,3 +2240,12 @@ components:
     BearerAuth:
       type: http
       scheme: bearer
+    OAuth2Auth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.kuflow.com/realms/KuFlow/protocol/openid-connect/auth
+          tokenUrl: https://auth.kuflow.com/realms/KuFlow/protocol/openid-connect/token
+          scopes:
+            openid: Grants read openid data access
+            email: Grants read email data access
