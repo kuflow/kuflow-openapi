@@ -1888,7 +1888,7 @@ components:
             initiator:
               $ref: "#/components/schemas/Principal"
             tenantId:
-              description: Tenant Id.
+              description: Tenant ID.
               type: string
               format: uuid
           required:
