@@ -86,6 +86,12 @@ tags:
       description: Find out more about our workers.
       url: "https://docs.kuflow.com"
     x-displayName: Worker
+  - name: robot
+    description: Operations about robots.
+    externalDocs:
+      description: Find out more about our robots.
+      url: "https://docs.kuflow.com"
+    x-displayName: Robot
   - name: webhook
     description: Operations that Kuflow invokes towards external systems.
     externalDocs:
@@ -107,6 +113,7 @@ x-tagGroups:
       - process
       - task
       - worker
+      - robot
   - name: Authentication management
     tags:
       - authentication
@@ -1152,6 +1159,52 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
+  /robots:
+    get:
+      summary: Find all accessible Robots
+      description: |
+        List all the Robots that have been created and the credentials has access.
+
+        Available sort query values: createdAt, lastModifiedAt
+      operationId: findRobots
+      tags:
+        - apiRestExternalV20221008Robots
+        - robot
+      parameters:
+        - $ref: "#/components/parameters/SizeQueryParam"
+        - $ref: "#/components/parameters/PageQueryParam"
+        - $ref: "#/components/parameters/SortQueryParam"
+        - $ref: "#/components/parameters/TenantIdQueryParam"
+      responses:
+        "200":
+          description: Robots found paginated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RobotPage"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /robots/{id}:
+    get:
+      summary: Get a Robot by ID
+      description: Returns the requested Robot when has access to do it.
+      operationId: retrieveRobot
+      tags:
+        - apiRestExternalV20221008Robots
+        - robot
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Robot"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
 x-webhooks:
   events:
     post:
@@ -1273,6 +1326,7 @@ components:
         - TASK
         - TASK_PAGE_ITEM
         - WORKER
+        - ROBOT
       deprecated: true
       x-ms-enum:
         modelAsString: false
@@ -1307,6 +1361,7 @@ components:
         - TENANT_USER_PAGE
         - PROCESS_PAGE
         - TASK_PAGE
+        - ROBOT_PAGE
       deprecated: true
       x-ms-enum:
         modelAsString: false
@@ -2224,6 +2279,101 @@ components:
             - hostname
             - ip
       x-all-of-name: WorkerAllOf
+
+    Robot:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              description: Robot ID.
+              type: string
+              format: uuid
+            code:
+              description: Robot Code.
+              type: string
+              minLength: 1
+              maxLength: 50
+            name:
+              description: Robot name.
+              type: string
+              minLength: 1
+              maxLength: 50
+            description:
+              description: Robot description.
+              type: string
+              minLength: 1
+              maxLength: 4000
+            sourceType:
+              $ref: "#/components/schemas/RobotSourceType"
+            sourceFile:
+              $ref: "#/components/schemas/RobotSourceFile"
+            environmentVariables:
+              description: Environment variables to load when the robot is executed.
+              type: object
+              additionalProperties:
+                type: string
+                minLength: 1
+                maxLength: 4000
+            tenantId:
+              description: Tenant ID.
+              type: string
+              format: uuid
+          required:
+            - id
+            - code
+            - name
+            - sourceType
+      x-all-of-name: RobotAllOf
+
+    RobotSourceType:
+      type: string
+      description: Robot source type
+      enum:
+        - ROBOT_FRAMEWORK_PYTHON_WHEEL
+      x-ms-enum:
+        modelAsString: false
+
+    RobotSourceFile:
+      type: object
+      description: Robot source type
+      properties:
+        id:
+          description: Robot ID.
+          type: string
+          format: uuid
+        name:
+          description: Source file name.
+          type: string
+        contentType:
+          description: Source file content type.
+          type: string
+        contentLength:
+          description: Source file length.
+          type: integer
+          format: int64
+        contentHash:
+          description: Source file to check the integrity.
+          type: string
+      required:
+        - id
+        - name
+        - contentType
+        - contentLength
+        - contentHash
+
+    RobotPage:
+      allOf:
+        - $ref: "#/components/schemas/Page"
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: "#/components/schemas/Robot"
+          required:
+            - content
+      x-all-of-name: RobotPageAllOf
 
   responses:
     DefaultError:
