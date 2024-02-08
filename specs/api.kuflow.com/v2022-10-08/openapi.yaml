@@ -1546,6 +1546,14 @@ components:
               format: uuid
             type:
               $ref: "#/components/schemas/AuthenticationType"
+            tenantId:
+              type: string
+              format: uuid
+              description: Tenant id. This attribute is required when an OAuth2 authentication is used.
+            robotId:
+              type: string
+              format: uuid
+              description: Robot id. This attribute is required when an OAuth2 authentication is used.
             token:
               type: string
               deprecated: true
