@@ -1205,6 +1205,28 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
+
+  /robots/{id}/~actions/download-source-code:
+    get:
+      summary: Download robot code
+      description: Given a robot, download the source code.
+      operationId: actionsRobotDownloadSourceCode
+      tags:
+        - apiRestExternalV20221008Robots
+        - robot
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: Source code requested
+          content:
+            "application/octet-stream":
+              schema:
+                type: string
+                format: binary
+        default:
+          $ref: "#/components/responses/DefaultError"
+
 x-webhooks:
   events:
     post:
