@@ -1205,7 +1205,6 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-
   /robots/{id}/~actions/download-source-code:
     get:
       summary: Download robot code
@@ -1216,6 +1215,55 @@ paths:
         - robot
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: Source code requested
+          content:
+            "application/octet-stream":
+              schema:
+                type: string
+                format: binary
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /robots/{id}/~actions/download-asset:
+    get:
+      summary: Download robot asset
+      description: Given a robot, download the requested asset.
+      operationId: actionsRobotDownloadAsset
+      tags:
+        - apiRestExternalV20221008Robots
+        - robot
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - name: type
+          description: The asset type.
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/RobotAssetType"
+          x-ms-parameter-location: method
+        - name: version
+          description: The asset version.
+          in: query
+          required: true
+          schema:
+            type: string
+          x-ms-parameter-location: method
+        - name: platform
+          description: The asset platform.
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/RobotAssetPlatform"
+          x-ms-parameter-location: method
+        - name: architecture
+          description: The asset platform architecture.
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/RobotAssetArchitecture"
+          x-ms-parameter-location: method
       responses:
         "200":
           description: Source code requested
@@ -2363,6 +2411,38 @@ components:
         - ROBOT_FRAMEWORK_PYTHON_WHEEL
       x-ms-enum:
         modelAsString: false
+
+    RobotAssetType:
+      type: string
+      description: Robot asset type
+      enum:
+        - PYTHON
+        - PYTHON_PIP
+        - NODEJS
+      x-ms-enum:
+        modelAsString: false
+
+    RobotAssetPlatform:
+      type: string
+      description: Robot asset platform
+      enum:
+        - WINDOWS
+        - MAC_OS
+        - LINUX
+      x-ms-enum:
+        modelAsString: false
+
+    RobotAssetArchitecture:
+      type: string
+      description: Robot asset platform architecture
+      enum:
+        - X86_32
+        - X86_64
+      x-ms-enum:
+        modelAsString: false
+      x-enum-varnames:
+        - X86_32
+        - X86_64
 
     RobotSourceFile:
       type: object
