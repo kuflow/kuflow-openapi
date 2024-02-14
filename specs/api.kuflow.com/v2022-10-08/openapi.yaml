@@ -2421,6 +2421,13 @@ components:
         - NODEJS
       x-ms-enum:
         modelAsString: false
+        values:
+          - value: PYTHON
+            name: Python
+          - value: PYTHON_PIP
+            name: PythonPip
+          - value: NODEJS
+            name: NodeJS
 
     RobotAssetPlatform:
       type: string
@@ -2431,7 +2438,13 @@ components:
         - LINUX
       x-ms-enum:
         modelAsString: false
-
+        values:
+          - value: WINDOWS
+            name: Windows
+          - value: MAC_OS
+            name: MacOS
+          - value: LINUX
+            name: Linux
     RobotAssetArchitecture:
       type: string
       description: Robot asset platform architecture
@@ -2440,6 +2453,11 @@ components:
         - X86_64
       x-ms-enum:
         modelAsString: false
+        values:
+          - value: X86_32
+            name: X86Bit32
+          - value: X86_64
+            name: X86Bit64
       x-enum-varnames:
         - X86_32
         - X86_64
