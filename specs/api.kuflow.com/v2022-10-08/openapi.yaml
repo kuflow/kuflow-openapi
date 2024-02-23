@@ -1350,6 +1350,7 @@ components:
       name: groupId
       description: Filter by group ids.
       in: query
+      required: false
       schema:
         type: array
         items:
@@ -1363,6 +1364,7 @@ components:
       name: email
       description: Filter by email.
       in: query
+      required: false
       schema:
         type: array
         items:
@@ -1376,6 +1378,7 @@ components:
       name: tenantId
       description: Filter by tenantId.
       in: query
+      required: false
       schema:
         type: array
         items:
@@ -1386,13 +1389,13 @@ components:
       x-ms-parameter-location: method
 
     RobotContextQueryParam:
-      name: context
+      name: filterContext
       description: Filter by the specified context.
       in: query
+      required: false
       schema:
-        $ref: "#/components/schemas/RobotFilterContext"
+        $ref: '#/components/schemas/RobotFilterContext'
       style: form
-      explode: true
       x-ms-parameter-location: method
 
   schemas:
