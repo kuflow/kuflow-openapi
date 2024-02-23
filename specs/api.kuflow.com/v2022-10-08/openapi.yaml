@@ -1175,6 +1175,7 @@ paths:
         - $ref: "#/components/parameters/PageQueryParam"
         - $ref: "#/components/parameters/SortQueryParam"
         - $ref: "#/components/parameters/TenantIdQueryParam"
+        - $ref: "#/components/parameters/RobotContextQueryParam"
       responses:
         "200":
           description: Robots found paginated
@@ -1380,6 +1381,16 @@ components:
         items:
           type: string
           format: uuid
+      style: form
+      explode: true
+      x-ms-parameter-location: method
+
+    RobotContextQueryParam:
+      name: context
+      description: Filter by the specified context.
+      in: query
+      schema:
+        $ref: "#/components/schemas/RobotFilterContext"
       style: form
       explode: true
       x-ms-parameter-location: method
@@ -2502,6 +2513,16 @@ components:
           required:
             - content
       x-all-of-name: RobotPageAllOf
+
+    RobotFilterContext:
+      type: string
+      description: |
+        Robot filter context:
+        * READY: filters out robots ready for execution for the current credentials
+      enum:
+        - READY
+      x-ms-enum:
+        modelAsString: false
 
   responses:
     DefaultError:
