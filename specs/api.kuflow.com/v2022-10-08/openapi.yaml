@@ -2422,7 +2422,7 @@ components:
       type: string
       description: Robot source type
       enum:
-        - ZIP_FILE
+        - PACKAGE
         - ROBOT_FRAMEWORK_PYTHON_WHEEL
       x-ms-enum:
         modelAsString: false
