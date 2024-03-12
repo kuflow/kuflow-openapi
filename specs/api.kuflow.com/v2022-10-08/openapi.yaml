@@ -1634,10 +1634,6 @@ components:
               type: string
               format: uuid
               description: Tenant id. This attribute is required when an OAuth2 authentication is used.
-            robotId:
-              type: string
-              format: uuid
-              description: Robot id. This attribute is required when an OAuth2 authentication is used.
             token:
               type: string
               deprecated: true
@@ -2307,9 +2303,11 @@ components:
             tenantId:
               type: string
               format: uuid
+              readOnly: true
           required:
             - id
             - principal
+            - tenantId
       x-all-of-name: TenantUserAllOf
 
     TenantUserPage:
@@ -2361,6 +2359,16 @@ components:
               type: string
               minLength: 7
               maxLength: 40
+            installationId:
+              description: Installation Id.
+              type: string
+              format: uuid
+            robotIds:
+              description: Robot Ids that this worker implements.
+              type: array
+              items:
+                type: string
+                format: uuid
             tenantId:
               description: Tenant ID.
               type: string
