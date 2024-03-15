@@ -2531,8 +2531,10 @@ components:
       description: |
         Robot filter context:
         * READY: filters out robots ready for execution for the current credentials
+        * DEFAULT: filters out robots accessible for the current credentials (if no set this is the default option)
       enum:
         - READY
+        - DEFAULT
       x-ms-enum:
         modelAsString: false
 
