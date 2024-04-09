@@ -537,7 +537,7 @@ paths:
       operationId: actionsProcessSaveEntityData
       tags:
         - apiRestExternalV20221008Processes
-        - task
+        - process
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
       requestBody:
@@ -566,7 +566,7 @@ paths:
       operationId: actionsProcessSaveEntityDocument
       tags:
         - apiRestExternalV20221008Processes
-        - task
+        - process
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
         - name: fileContentType
@@ -614,7 +614,7 @@ paths:
       operationId: actionsProcessDownloadEntityDocument
       tags:
         - apiRestExternalV20221008Processes
-        - task
+        - process
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
         - name: documentUri
