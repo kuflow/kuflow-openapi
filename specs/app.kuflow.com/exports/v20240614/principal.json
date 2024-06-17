@@ -1,0 +1,27 @@
+{
+  "$id": "https://raw.githubusercontent.com/kuflow/kuflow-openapi/main/specs/app.kuflow.com/exports/v20240614/principal.json",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "type": {
+      "$ref": "enums/principal-type.json"
+    },
+    "name": {
+      "type": "string"
+    },
+    "user": {
+      "$ref": "principal-user.json"
+    },
+    "application": {
+      "$ref": "principal-application.json"
+    }
+  },
+  "required": ["$schema", "id", "type", "name"]
+}

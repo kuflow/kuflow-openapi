@@ -1,0 +1,19 @@
+{
+  "$id": "https://raw.githubusercontent.com/kuflow/kuflow-openapi/main/specs/app.kuflow.com/exports/v20240614/enums/object-type.json",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "javaType": "com.kuflow.api.export.v20240614.resource.enumeration.ObjectType",
+  "type": "string",
+  "enum": [
+    "USER",
+    "TENANT",
+    "TENANT_USER",
+    "GROUP",
+    "PROCESS_DEFINITION",
+    "TASK_DEFINITION",
+    "PROCESS",
+    "TASK",
+    "TASK_ELEMENT",
+    "TASK_JSON_FORMS_DATA",
+    "TASK_JSON_FORMS_DATA_DOCUMENT"
+  ]
+}

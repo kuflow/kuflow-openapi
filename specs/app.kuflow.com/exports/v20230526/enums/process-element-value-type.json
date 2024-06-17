@@ -1,5 +1,0 @@
-{
-  "javaType": "com.kuflow.api.export.v20230526.resource.enumeration.ProcessElementValueType",
-  "type": "string",
-  "enum": ["STRING", "NUMBER"]
-}

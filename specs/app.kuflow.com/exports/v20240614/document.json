@@ -1,0 +1,23 @@
+{
+  "$id": "https://raw.githubusercontent.com/kuflow/kuflow-openapi/main/specs/app.kuflow.com/exports/v20240614/document.json",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "type": "object",
+  "properties": {
+    "uri": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "contentType": {
+      "type": "string"
+    },
+    "contentLength": {
+      "type": "number"
+    },
+    "path": {
+      "type": "string"
+    }
+  },
+  "required": ["uri", "name", "contentType", "contentLength", "path"]
+}
