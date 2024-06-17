@@ -1,0 +1,29 @@
+{
+  "$id": "https://raw.githubusercontent.com/kuflow/kuflow-openapi/main/specs/app.kuflow.com/exports/v20240614/process-item.json",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "type": "object",
+  "extends": {
+    "$ref": "abstract-audited.json"
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "type": {
+      "$ref": "enums/process-item-type.json"
+    },
+    "tenantId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "ownerId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "task": {
+      "$ref": "process-item-task.json"
+    }
+  },
+  "required": ["id", "type", "tenantId"]
+}

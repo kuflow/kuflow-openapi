@@ -1,0 +1,7 @@
+{
+  "$id": "https://raw.githubusercontent.com/kuflow/kuflow-openapi/main/specs/app.kuflow.com/exports/v20240614/enums/process-item-task-log-level.json",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "javaType": "com.kuflow.api.export.v20240614.resource.enumeration.ProcessItemTaskLogLevel",
+  "type": "string",
+  "enum": ["INFO", "WARN", "ERROR"]
+}

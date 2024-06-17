@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "type": "object",
+  "properties": {
+    "createdBy": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "lastModifiedBy": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "lastModifiedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": ["createdBy", "createdAt", "lastModifiedBy", "lastModifiedAt"]
+}

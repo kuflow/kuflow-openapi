@@ -1,0 +1,30 @@
+{
+  "$id": "https://raw.githubusercontent.com/kuflow/kuflow-openapi/main/specs/app.kuflow.com/exports/v20240614/enums/event-type.json",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "javaType": "com.kuflow.api.export.v20240614.resource.enumeration.EventType",
+  "type": "string",
+  "enum": [
+    "PROCESS_START",
+    "PROCESS_UPDATE",
+    "PROCESS_COMPLETE",
+    "PROCESS_CANCEL",
+    "PROCESS_CHANGE_INITIATOR",
+    "PROCESS_READ",
+    "PROCESS_USER_ACTION_REQUEST",
+    "PROCESS_ENTITY_SAVE",
+    "PROCESS_ITEM_CREATE",
+    "PROCESS_ITEM_TASK_CLAIM",
+    "PROCESS_ITEM_TASK_ASSIGN",
+    "PROCESS_ITEM_TASK_UNASSIGN",
+    "PROCESS_ITEM_TASK_COMPLETE",
+    "PROCESS_ITEM_TASK_CANCEL",
+    "PROCESS_ITEM_TASK_ELEMENT_SAVE",
+    "PROCESS_ITEM_TASK_ELEMENT_DELETE",
+    "PROCESS_ITEM_TASK_ELEMENT_DOCUMENT_DOWNLOAD",
+    "PROCESS_ITEM_TASK_JSON_FORMS_SAVE",
+    "PROCESS_ITEM_TASK_JSON_FORMS_DOCUMENT_DOWNLOAD",
+    "PROCESS_ITEM_TASK_ROBOT_START",
+    "PROCESS_ITEM_TASK_ROBOT_COMPLETE",
+    "PROCESS_ITEM_TASK_ROBOT_CANCEL"
+  ]
+}

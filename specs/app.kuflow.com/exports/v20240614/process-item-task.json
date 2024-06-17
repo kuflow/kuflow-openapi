@@ -1,0 +1,35 @@
+{
+  "$id": "https://raw.githubusercontent.com/kuflow/kuflow-openapi/main/specs/app.kuflow.com/exports/v20240614/process-item-task.json",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "tenantId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "state": {
+      "$ref": "enums/process-item-task-state.json"
+    },
+    "taskDefinition": {
+      "$ref": "task-definition-summary.json"
+    },
+    "ownerId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "logs": {
+      "type": "array",
+      "items": {
+        "$ref": "process-item-task-log.json"
+      }
+    },
+    "value": {
+      "$ref": "json-value.json"
+    }
+  },
+  "required": ["id", "tenantId", "state", "taskDefinition"]
+}

@@ -1,0 +1,17 @@
+{
+  "$id": "https://raw.githubusercontent.com/kuflow/kuflow-openapi/main/specs/app.kuflow.com/exports/v20240614/json-value.json",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "type": "object",
+  "properties": {
+    "valid": {
+      "type": "boolean",
+      "default": "true"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": true,
+      "existingJavaType": "java.util.Map<String, Object>"
+    }
+  },
+  "required": ["value"]
+}

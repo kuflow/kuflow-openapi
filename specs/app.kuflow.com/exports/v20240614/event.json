@@ -1,0 +1,42 @@
+{
+  "$id": "https://raw.githubusercontent.com/kuflow/kuflow-openapi/main/specs/app.kuflow.com/exports/v20240614/event.json",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "tenantId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "principalId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "objectType": {
+      "$ref": "enums/object-type.json"
+    },
+    "objectId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "type": {
+      "$ref": "enums/event-type.json"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "existingJavaType": "java.util.Map<String,java.io.Serializable>"
+    }
+  },
+  "required": ["$schema", "id", "tenantId", "timestamp", "principal", "objectType", "objectId", "type"]
+}
