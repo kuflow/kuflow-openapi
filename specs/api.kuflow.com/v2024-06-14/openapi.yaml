@@ -56,42 +56,42 @@ security:
   - OAuth2Auth: []
 
 tags:
-#  - name: principal
-#    description: Operations about principals.
-#    externalDocs:
-#      description: Find out more about our principal model.
-#      url: "https://docs.kuflow.com/fine-grained-concepts/users-groups-roles"
-#    x-displayName: Principal
-#  - name: tenantUser
-#    description: Operations about tenant users.
-#    externalDocs:
-#      description: Find out more about our principal model.
-#      url: "https://docs.kuflow.com"
-#    x-displayName: Tenant User
-#  - name: process
-#    description: Operations about processes.
-#    externalDocs:
-#      description: Find out more about our process model.
-#      url: "https://docs.kuflow.com"
-#    x-displayName: Process
-#  - name: processItem
-#    description: Operations about process items.
-#    externalDocs:
-#      description: Find out more about our process item model.
-#      url: "https://docs.kuflow.com"
-#    x-displayName: Process Item
-#  - name: worker
-#    description: Operations about workers.
-#    externalDocs:
-#      description: Find out more about our workers.
-#      url: "https://docs.kuflow.com"
-#    x-displayName: Worker
-#  - name: robot
-#    description: Operations about robots.
-#    externalDocs:
-#      description: Find out more about our robots.
-#      url: "https://docs.kuflow.com"
-#    x-displayName: Robot
+  - name: principal
+    description: Operations about principals.
+    externalDocs:
+      description: Find out more about our principal model.
+      url: "https://docs.kuflow.com/fine-grained-concepts/users-groups-roles"
+    x-displayName: Principal
+  - name: tenantUser
+    description: Operations about tenant users.
+    externalDocs:
+      description: Find out more about our principal model.
+      url: "https://docs.kuflow.com"
+    x-displayName: Tenant User
+  - name: process
+    description: Operations about processes.
+    externalDocs:
+      description: Find out more about our process model.
+      url: "https://docs.kuflow.com"
+    x-displayName: Process
+  - name: processItem
+    description: Operations about process items.
+    externalDocs:
+      description: Find out more about our process item model.
+      url: "https://docs.kuflow.com"
+    x-displayName: Process Item
+  - name: worker
+    description: Operations about workers.
+    externalDocs:
+      description: Find out more about our workers.
+      url: "https://docs.kuflow.com"
+    x-displayName: Worker
+  - name: robot
+    description: Operations about robots.
+    externalDocs:
+      description: Find out more about our robots.
+      url: "https://docs.kuflow.com"
+    x-displayName: Robot
   - name: webhook
     description: Operations that Kuflow invokes towards external systems.
     externalDocs:
@@ -106,14 +106,14 @@ tags:
     x-displayName: Authentication
 
 x-tagGroups:
-#  - name: General
-#    tags:
-#      - principal
-#      - tenantUser
-#      - process
-#      - processItem
-#      - worker
-#      - robot
+  - name: General
+    tags:
+      - principal
+      - tenantUser
+      - process
+      - processItem
+      - worker
+      - robot
   - name: Authentication management
     tags:
       - authentication
@@ -135,8 +135,8 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Authentication"
-        x-ms-requestBody-name: authentication
+              $ref: "#/components/schemas/AuthenticationCreateParams"
+        x-ms-requestBody-name: params
       responses:
         "200":
           description: Authentication Created.
@@ -147,546 +147,573 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-#  /principals:
-#    get:
-#      summary: Find all accessible Principals
-#      description: |
-#        List all the Principals that have been created and the used credentials has access.
-#
-#        Available sort query values: id, name
-#      operationId: findPrincipals
-#      tags:
-#        - apiRestExternalV20240614Principals
-#        - principal
-#      parameters:
-#        - $ref: "#/components/parameters/SizeQueryParam"
-#        - $ref: "#/components/parameters/PageQueryParam"
-#        - $ref: "#/components/parameters/SortQueryParam"
-#        - name: type
-#          description: Filter principals by type.
-#          in: query
-#          schema:
-#            $ref: "#/components/schemas/PrincipalType"
-#        - $ref: "#/components/parameters/GroupIdQueryParam"
-#        - $ref: "#/components/parameters/TenantIdQueryParam"
-#      responses:
-#        "200":
-#          description: Principals found paginated.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/PrincipalPage"
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
-#  /principals/{id}:
-#    get:
-#      summary: Get a Principal by ID
-#      description: Returns the requested Principal when has access to do it.
-#      operationId: retrievePrincipal
-#      tags:
-#        - apiRestExternalV20240614Principals
-#        - principal
-#      parameters:
-#        - $ref: "#/components/parameters/IdPathParam"
-#      responses:
-#        "200":
-#          description: Successful operation
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/Principal"
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
-#  /tenant-users:
-#    get:
-#      summary: Find all accessible Tenant Users
-#      description: |
-#        List all the Tenant Users that have been created and the used credentials has access.
-#
-#        Available sort query values: id, createdAt, lastModifiedAt
-#      operationId: findTenantUsers
-#      tags:
-#        - apiRestExternalV20240614TenantUser
-#        - tenantUser
-#      parameters:
-#        - $ref: "#/components/parameters/SizeQueryParam"
-#        - $ref: "#/components/parameters/PageQueryParam"
-#        - $ref: "#/components/parameters/SortQueryParam"
-#        - $ref: "#/components/parameters/GroupIdQueryParam"
-#        - $ref: "#/components/parameters/EmailQueryParam"
-#        - $ref: "#/components/parameters/TenantIdQueryParam"
-#      responses:
-#        "200":
-#          description: Tenant users found paginated.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/TenantUserPage"
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
-#  /tenant-users/{id}:
-#    get:
-#      summary: Get a Tenant User by ID
-#      description: Returns the requested TenantUser when has access to do it.
-#      operationId: retrieveTenantUser
-#      tags:
-#        - apiRestExternalV20240614TenantUser
-#        - tenantUser
-#      parameters:
-#        - $ref: "#/components/parameters/IdPathParam"
-#      responses:
-#        "200":
-#          description: Successful operation
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/TenantUser"
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
-#  /processes:
-#    get:
-#      summary: Find all accessible Processes
-#      description: |
-#        List all the Processes that have been created and the credentials has access.
-#
-#        Available sort query values: id, createdAt, lastModifiedAt
-#      operationId: findProcesses
-#      tags:
-#        - apiRestExternalV20240614Processes
-#        - process
-#      parameters:
-#        - $ref: "#/components/parameters/SizeQueryParam"
-#        - $ref: "#/components/parameters/PageQueryParam"
-#        - $ref: "#/components/parameters/SortQueryParam"
-#        - $ref: "#/components/parameters/TenantIdQueryParam"
-#      responses:
-#        "200":
-#          description: Processes found paginated
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/ProcessPage"
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#    # TODO Review the ProcessCreateProcessRequest command
-#    post:
-#      summary: Create a new process
-#      description: |
-#        Creates a process. This option has direct correspondence to the action of starting a process in the Kuflow GUI.
-#
-#        If you want the method to be idempotent, please specify the `id` field in the request body.
-#      operationId: createProcess
-#      tags:
-#        - apiRestExternalV20240614Processes
-#        - process
-#      requestBody:
-#        description: Process to create
-#        required: true
-#        content:
-#          application/json:
-#            schema:
-#              $ref: "#/components/schemas/ProcessCreateProcessRequest"
-#        x-ms-requestBody-name: command
-#      responses:
-#        "200":
-#          description: Process already created
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/ProcessCreateProcessResponse"
-#        "201":
-#          description: Process created
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/ProcessCreateProcessResponse"
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
-#  /processes/{id}:
-#    get:
-#      summary: Get a Process by ID
-#      description: Returns the requested Process when has access to do it.
-#      operationId: retrieveProcess
-#      tags:
-#        - apiRestExternalV20240614Processes
-#        - process
-#      parameters:
-#        - $ref: "#/components/parameters/IdPathParam"
-#      responses:
-#        "200":
-#          description: Successful operation
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/Process"
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
-#  /processes/{id}/~actions/change-initiator:
-#    post:
-#      summary: Change process initiator
-#      description: |
-#        Change the current initiator of a process.
-#
-#        Allows you to choose a user (by email or principal identifier) or an application (principal identifier).
-#        Only one option will be necessary.
-#      operationId: actionsProcessChangeInitiator
-#      tags:
-#        - apiRestExternalV20240614Processes
-#        - process
-#      parameters:
-#        - $ref: "#/components/parameters/IdPathParam"
-#      requestBody:
-#        description: Command to change the process initiator.
-#        required: true
-#        content:
-#          application/json:
-#            schema:
-#              $ref: "#/components/schemas/ProcessChangeInitiatorRequest"
-#        x-ms-requestBody-name: command
-#      responses:
-#        "200":
-#          description: Process with the new initiator.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/ProcessChangeInitiatorResponse"
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
-#  /processes/{id}/~actions/complete:
-#    post:
-#      summary: Complete a Process
-#      description: |
-#        Complete a Process. The state of Process is set to 'completed'.
-#
-#        If you are already in this state, no action is taken.
-#      operationId: actionsProcessComplete
-#      tags:
-#        - apiRestExternalV20240614Processes
-#        - process
-#      parameters:
-#        - $ref: "#/components/parameters/IdPathParam"
-#      responses:
-#        "200":
-#          description: Process completed.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/Process"
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
-#  /processes/{id}/~actions/cancel:
-#    post:
-#      summary: Cancel a Process
-#      description: |
-#        Cancel a Process. The Process state is set to 'cancelled'.
-#
-#        All the active tasks will be marked as cancelled too.
-#
-#        If you are already in this state, no action is taken.
-#      operationId: actionsProcessCancel
-#      tags:
-#        - apiRestExternalV20240614Processes
-#        - process
-#      parameters:
-#        - $ref: "#/components/parameters/IdPathParam"
-#      responses:
-#        "200":
-#          description: Process cancelled.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/Process"
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
-#  /processes/{id}/~actions/save-user-action-value-document:
-#    post:
-#      summary: Upload and save a document in a user action
-#      description: |
-#        Allow saving a user action document uploading the content.
-#      operationId: actionsProcessSaveUserActionValueDocument
-#      tags:
-#        - apiRestExternalV20240614Processes
-#        - process
-#      parameters:
-#        - $ref: "#/components/parameters/IdPathParam"
-#        - name: fileContentType
-#          description: Document content type
-#          in: query
-#          required: true
-#          schema:
-#            type: string
-#        - name: fileName
-#          description: Document name
-#          in: query
-#          required: true
-#          schema:
-#            type: string
-#        - name: userActionValueId
-#          description: User action value ID related to de document
-#          in: query
-#          required: true
-#          schema:
-#            type: string
-#            format: uuid
-#      requestBody:
-#        description: Document to save.
-#        required: true
-#        content:
-#          application/octet-stream:
-#            schema:
-#              type: string
-#              format: binary
-#        x-ms-requestBody-name: file
-#      responses:
-#        "200":
-#          description: Document Saved in user action.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/Process"
-#        "304":
-#          description: Untouched process
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
-#  /processes/{id}/~actions/save-entity-data:
-#    post:
-#      summary: Save JSON data
-#      description: |
-#        Allow to save a JSON validating that the data follow the related schema. If the data is invalid, then
-#        the json form is marked as invalid.
-#      operationId: actionsProcessSaveEntityData
-#      tags:
-#        - apiRestExternalV20240614Processes
-#        - process
-#      parameters:
-#        - $ref: "#/components/parameters/IdPathParam"
-#      requestBody:
-#        description: Command to save the JSON value.
-#        required: true
-#        content:
-#          application/json:
-#            schema:
-#              $ref: "#/components/schemas/ProcessSaveEntityDataRequest"
-#        x-ms-requestBody-name: command
-#      responses:
-#        "200":
-#          description: Process with the entity json data saved
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/ProcessSaveEntityDataResponse"
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
-#  /processes/{id}/~actions/save-entity-document:
-#    post:
-#      summary: Save an entity value document
-#      description: |
-#        Save a document in the process to later be linked into the JSON data.
-#      operationId: actionsProcessSaveEntityDocument
-#      tags:
-#        - apiRestExternalV20240614Processes
-#        - process
-#      parameters:
-#        - $ref: "#/components/parameters/IdPathParam"
-#        - name: fileContentType
-#          description: Document content type
-#          in: query
-#          required: true
-#          schema:
-#            type: string
-#        - name: fileName
-#          description: Document name
-#          in: query
-#          required: true
-#          schema:
-#            type: string
-#        - name: schemaPath
-#          description: |
-#            JSON Schema path related to the document. The uploaded document will be validated by the passed schema path.
-#          in: query
-#          required: true
-#          schema:
-#            type: string
-#      requestBody:
-#        description: Document to save.
-#        required: true
-#        content:
-#          application/octet-stream:
-#            schema:
-#              type: string
-#              format: binary
-#        x-ms-requestBody-name: file
-#      responses:
-#        "200":
-#          description: Save document response
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/ProcessSaveEntityDocumentResponse"
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
-#  /processes/{id}/~actions/download-entity-document:
-#    get:
-#      summary: Download document
-#      description: Given a process and a documentUri, download a document.
-#      operationId: actionsProcessDownloadEntityDocument
-#      tags:
-#        - apiRestExternalV20240614Processes
-#        - process
-#      parameters:
-#        - $ref: "#/components/parameters/IdPathParam"
-#          # TODO allow downloading the document using what comes in the JSON WITHOUT having to parse it in the method see what happens and get the uri
-#          # TODO accept this: "kuflow-file:uri=ku:2407ae0f;type=application/pdf;size=44966;name=file-2407ae0f.pdf;"
-#          # TODO and this: "ku:2407ae0f"
-#        - name: documentUri
-#          description: Document URI to download.
-#          in: query
-#          required: true
-#          schema:
-#            type: string
-#      responses:
-#        "200":
-#          description: Document requested
-#          content:
-#            "application/octet-stream":
-#              schema:
-#                type: string
-#                format: binary
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
-#  /process-items:
-#    get:
-#      summary: Find all accessible Process Items
-#      description: |
-#        List all Process Items that have been created and the credentials has access.
-#
-#        Available sort query values: id, createdAt, lastModifiedAt, claimedAt, completedAt, cancelledAt
-#      operationId: findProcessItems
-#      tags:
-#        - apiRestExternalV20240614ProcessItems
-#        - processItem
-#      parameters:
-#        - $ref: "#/components/parameters/SizeQueryParam"
-#        - $ref: "#/components/parameters/PageQueryParam"
-#        - $ref: "#/components/parameters/SortQueryParam"
-#        - name: processId
-#          description: Filter by an array of process ids.
-#          in: query
-#          schema:
-#            type: array
-#            items:
-#              type: string
-#              format: uuid
-#          style: form
-#          explode: true
-#        - name: type
-#          description:  Filter by an array of type.
-#          in: query
-#          schema:
-#            type: array
-#            items:
-#              $ref: "#/components/schemas/ProcessItemType"
-#          style: form
-#          explode: true
-#        - name: taskState
-#          description:  Filter by an array of task states.
-#          in: query
-#          schema:
-#            type: array
-#            items:
-#              $ref: "#/components/schemas/ProcessItemTaskState"
-#          style: form
-#          explode: true
-#        - name: taskDefinitionCode
-#          description:  Filter by an array of task definition codes.
-#          in: query
-#          schema:
-#            type: array
-#            items:
-#              type: string
-#          style: form
-#          explode: true
-#        - $ref: "#/components/parameters/TenantIdQueryParam"
-#      responses:
-#        "200":
-#          description: Tasks found paginated.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/ProcessItemPage"
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#    post:
-#      summary: Create a new Process Item in the selected Process
-#      description: |
-#        Create a Process Item and optionally fill its value.
-#
-#        If you want to add document type elements, you can pass a reference to an existing document type element
-#        indicating its 'uri'. This will copy that document into the element. In case you want to add a new document,
-#        please use the corresponding API method.
-#
-#        If you want the method to be idempotent, please specify the `id` field in the request body.
-#      operationId: createProcessItem
-#      tags:
-#        - apiRestExternalV20240614ProcessItems
-#        - processItem
-#      requestBody:
-#        description: Process Item to be created
-#        required: true
-#        content:
-#          application/json:
-#            schema:
-#              $ref: "#/components/schemas/ProcessItemCreateProcessItemRequest"
-#        x-ms-requestBody-name: task
-#      responses:
-#        "200":
-#          description: Process Item already created.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/ProcessItemCreateProcessItemRequest"
-#        "201":
-#          description: Process Item created.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/ProcessItemCreateProcessItemRequest"
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
-#  /process-items/{id}:
-#    get:
-#      summary: Get a process item given it ID
-#      description: Allow to get a process item by ID.
-#      operationId: retrieveProcessItem
-#      tags:
-#        - apiRestExternalV20240614ProcessItems
-#        - processItem
-#      parameters:
-#        - $ref: "#/components/parameters/IdPathParam"
-#      responses:
-#        "200":
-#          description: Process Item requested.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/ProcessItem"
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
+  /principals:
+    get:
+      summary: Find all accessible Principals
+      description: |
+        List all the Principals that have been created and the used credentials has access.
+
+        Available sort query values: id, name
+      operationId: findPrincipals
+      tags:
+        - apiRestExternalV20240614Principals
+        - principal
+      parameters:
+        - $ref: "#/components/parameters/SizeQueryParam"
+        - $ref: "#/components/parameters/PageQueryParam"
+        - $ref: "#/components/parameters/SortQueryParam"
+        - name: type
+          description: Filter principals by type.
+          in: query
+          schema:
+            $ref: "#/components/schemas/PrincipalType"
+        - $ref: "#/components/parameters/GroupIdQueryParam"
+        - $ref: "#/components/parameters/TenantIdQueryParam"
+      responses:
+        "200":
+          description: Principals found paginated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PrincipalPage"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /principals/{id}:
+    get:
+      summary: Get a Principal by ID
+      description: Returns the requested Principal when has access to do it.
+      operationId: retrievePrincipal
+      tags:
+        - apiRestExternalV20240614Principals
+        - principal
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Principal"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /tenant-users:
+    get:
+      summary: Find all accessible Tenant Users
+      description: |
+        List all the Tenant Users that have been created and the used credentials has access.
+
+        Available sort query values: id, createdAt, lastModifiedAt
+      operationId: findTenantUsers
+      tags:
+        - apiRestExternalV20240614TenantUser
+        - tenantUser
+      parameters:
+        - $ref: "#/components/parameters/SizeQueryParam"
+        - $ref: "#/components/parameters/PageQueryParam"
+        - $ref: "#/components/parameters/SortQueryParam"
+        - $ref: "#/components/parameters/GroupIdQueryParam"
+        - $ref: "#/components/parameters/EmailQueryParam"
+        - $ref: "#/components/parameters/TenantIdQueryParam"
+      responses:
+        "200":
+          description: Tenant users found paginated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantUserPage"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /tenant-users/{id}:
+    get:
+      summary: Get a Tenant User by ID
+      description: Returns the requested TenantUser when has access to do it.
+      operationId: retrieveTenantUser
+      tags:
+        - apiRestExternalV20240614TenantUser
+        - tenantUser
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantUser"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /processes:
+    get:
+      summary: Find all accessible Processes
+      description: |
+        List all the Processes that have been created and the credentials has access.
+
+        Available sort query values: id, createdAt, lastModifiedAt
+      operationId: findProcesses
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/SizeQueryParam"
+        - $ref: "#/components/parameters/PageQueryParam"
+        - $ref: "#/components/parameters/SortQueryParam"
+        - $ref: "#/components/parameters/TenantIdQueryParam"
+      responses:
+        "200":
+          description: Processes found paginated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessPage"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+    post:
+      summary: Create a new process
+      description: |
+        Creates a process. This option has direct correspondence to the action of starting a process in the Kuflow GUI.
+
+        If you want the method to be idempotent, please specify the `id` field in the request body.
+      operationId: createProcess
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      requestBody:
+        description: Process to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProcessCreateParams"
+        x-ms-requestBody-name: params
+      responses:
+        "200":
+          description: Process already created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Process"
+        "201":
+          description: Process created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Process"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /processes/{id}:
+    get:
+      summary: Get a Process by ID
+      description: Returns the requested Process when has access to do it.
+      operationId: retrieveProcess
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Process"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /processes/{id}/~actions/complete:
+    post:
+      summary: Complete a Process
+      description: |
+        Complete a Process. The state of Process is set to 'completed'.
+  
+        If you are already in this state, no action is taken.
+      operationId: actionsProcessComplete
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: Process completed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Process"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /processes/{id}/~actions/cancel:
+    post:
+      summary: Cancel a Process
+      description: |
+        Cancel a Process. The Process state is set to 'cancelled'.
+   
+        All the active process items will be marked as cancelled too.
+    
+        If you are already in this state, no action is taken.
+      operationId: actionsProcessCancel
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: Process cancelled.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Process"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /processes/{id}/~actions/change-initiator:
+    post:
+      summary: Change process initiator
+      description: |
+        Change the current initiator of a process.
+
+        Allows you to choose a user (by email or principal identifier) or an application (principal identifier).
+        Only one option will be necessary.
+      operationId: actionsProcessChangeInitiator
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      requestBody:
+        description: Command to change the process initiator.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProcessChangeInitiatorParams"
+        x-ms-requestBody-name: params
+      responses:
+        "200":
+          description: Process with the new initiator.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Process"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /processes/{id}/~actions/save-metadata-data:
+    post:
+      summary: Save entity data
+      operationId: actionsProcessSaveMetadataData
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      requestBody:
+        description: Params to save de entity data.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProcessSaveMetadataDataParams"
+        x-ms-requestBody-name: params
+      responses:
+        "200":
+          description: Process with the new initiator.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Process"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /processes/{id}/~actions/save-user-action-value-document:
+    post:
+      summary: Upload and save a document in a user action
+      description: |
+        Allow saving a user action document uploading the content.
+      operationId: actionsProcessSaveUserActionValueDocument
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - name: fileContentType
+          description: Document content type
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: fileName
+          description: Document name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: userActionValueId
+          description: User action value ID related to de document
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Document to save.
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+        x-ms-requestBody-name: file
+      responses:
+        "200":
+          description: Document Saved in user action.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Process"
+        "304":
+          description: Untouched process
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /processes/{id}/~actions/save-entity-data:
+    post:
+      summary: Save JSON data
+      description: |
+        Allow to save a JSON validating that the data follow the related schema. If the data is invalid, then
+        the json form is marked as invalid.
+      operationId: actionsProcessSaveEntityData
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      requestBody:
+        description: Command to save the JSON value.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProcessSaveEntityDataParams"
+        x-ms-requestBody-name: command
+      responses:
+        "200":
+          description: Process with the entity json data saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Process"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /processes/{id}/~actions/save-entity-document:
+    post:
+      summary: Save an entity value document
+      description: |
+        Save a document in the process to later be linked into the JSON data.
+      operationId: actionsProcessSaveEntityDocument
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - name: fileContentType
+          description: Document content type
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: fileName
+          description: Document name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: schemaPath
+          description: |
+            JSON Schema path related to the document. The uploaded document will be validated by the passed schema path.
+            
+            ie: "#/properties/file"
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Document to save.
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+        x-ms-requestBody-name: file
+      responses:
+        "200":
+          description: Save document response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentReference"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /processes/{id}/~actions/download-entity-document:
+    get:
+      summary: Download document
+      description: Given a process and a documentUri, download a document.
+      operationId: actionsProcessDownloadEntityDocument
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - name: documentUri
+          description: Document URI to download.
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Document requested
+          content:
+            "application/octet-stream":
+              schema:
+                type: string
+                format: binary
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /process-items:
+    get:
+      summary: Find all accessible Process Items
+      description: |
+        List all Process Items that have been created and the credentials has access.
+
+        Available sort query values: id, createdAt, lastModifiedAt, claimedAt, completedAt, cancelledAt
+      operationId: findProcessItems
+      tags:
+        - apiRestExternalV20240614ProcessItems
+        - processItem
+      parameters:
+        - $ref: "#/components/parameters/SizeQueryParam"
+        - $ref: "#/components/parameters/PageQueryParam"
+        - $ref: "#/components/parameters/SortQueryParam"
+        - name: processId
+          description: Filter by an array of process ids.
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+          style: form
+          explode: true
+        - name: type
+          description:  Filter by an array of type.
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/ProcessItemType"
+          style: form
+          explode: true
+        - name: taskState
+          description:  Filter by an array of task states.
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/ProcessItemTaskState"
+          style: form
+          explode: true
+        - name: taskDefinitionCode
+          description:  Filter by an array of task definition codes.
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - $ref: "#/components/parameters/TenantIdQueryParam"
+      responses:
+        "200":
+          description: Process itemas found paginated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessItemPage"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+    post:
+      summary: Create a new Process Item in the selected Process
+      description: |
+        Create a Process Item and optionally fill its value.
+
+        If you want to add document type elements, you can pass a reference to an existing document type element
+        indicating its 'uri'. This will copy that document into the element. In case you want to add a new document,
+        please use the corresponding API method.
+
+        If you want the method to be idempotent, please specify the `id` field in the request body.
+      operationId: createProcessItem
+      tags:
+        - apiRestExternalV20240614ProcessItems
+        - processItem
+      requestBody:
+        description: Process Item to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProcessItemCreateParams"
+        x-ms-requestBody-name: processItem
+      responses:
+        "200":
+          description: Process Item already created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessItem"
+        "201":
+          description: Process Item created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessItem"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /process-items/{id}:
+    get:
+      summary: Get a process item given it ID
+      description: Allow to get a process item by ID.
+      operationId: retrieveProcessItem
+      tags:
+        - apiRestExternalV20240614ProcessItems
+        - processItem
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: Process Item requested.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessItem"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
 #  /process-items/{id}/~actions/task-claim:
 #    post:
 #      summary: Claim a process item task
@@ -798,56 +825,56 @@ paths:
 #                $ref: "#/components/schemas/ProcessItemTaskSaveValueDataResponse"
 #        default:
 #          $ref: "#/components/responses/DefaultError"
-#
-#  /process-items/{id}/~actions/task-save-value-document:
-#    post:
-#      summary: Save a JSON document
-#      description: |
-#        Save a document in the task to later be linked into the JSON data.
-#      operationId: actionsProcessItemTaskSaveValueDocument
-#      tags:
-#        - apiRestExternalV20240614ProcessItems
-#        - processItem
-#      parameters:
-#        - $ref: "#/components/parameters/IdPathParam"
-#        - name: fileContentType
-#          description: Document content type
-#          in: query
-#          required: true
-#          schema:
-#            type: string
-#        - name: fileName
-#          description: Document name
-#          in: query
-#          required: true
-#          schema:
-#            type: string
-#        - name: schemaPath
-#          description: |
-#            JSON Schema path related to the document. The uploaded document will be validated by the passed schema path.
-#          in: query
-#          required: true
-#          schema:
-#            type: string
-#      requestBody:
-#        description: Document to save.
-#        required: true
-#        content:
-#          application/octet-stream:
-#            schema:
-#              type: string
-#              format: binary
-#        x-ms-requestBody-name: file
-#      responses:
-#        "200":
-#          description: Save document response
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/ProcessItemTaskSaveValueDocumentResponse"
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
+
+  /process-items/{id}/~actions/task-save-value-document:
+    post:
+      summary: Save a JSON document
+      description: |
+        Save a document in the task to later be linked into the JSON data.
+      operationId: actionsProcessItemTaskSaveValueDocument
+      tags:
+        - apiRestExternalV20240614ProcessItems
+        - processItem
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - name: fileContentType
+          description: Document content type
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: fileName
+          description: Document name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: schemaPath
+          description: |
+            JSON Schema path related to the document. The uploaded document will be validated by the passed schema path.
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Document to save.
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+        x-ms-requestBody-name: file
+      responses:
+        "200":
+          description: Save document response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentReference"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
 #  /process-items/{id}/~actions/task-download-value-document:
 #    get:
 #      summary: Download document
@@ -926,158 +953,158 @@ paths:
 #                $ref: "#/components/schemas/ProcessItem"
 #        default:
 #          $ref: "#/components/responses/DefaultError"
-#
-#  /workers:
-#    post:
-#      summary: Create or update a worker
-#      description: |
-#        Register a worker in KuFlow, this allows the platform to have a catalogue of all registered workers.
-#
-#        If already exist a worker for the same identity, the worker will be updated.
-#      operationId: createWorker
-#      tags:
-#        - apiRestExternalV20240614Workers
-#        - worker
-#      requestBody:
-#        description: Worker to create or update
-#        required: true
-#        content:
-#          application/json:
-#            schema:
-#              $ref: "#/components/schemas/Worker"
-#        x-ms-requestBody-name: worker
-#      responses:
-#        "200":
-#          description: Worker updated.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/Worker"
-#        "201":
-#          description: Worker created.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/Worker"
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
-#  /robots:
-#    get:
-#      summary: Find all accessible Robots
-#      description: |
-#        List all the Robots that have been created and the credentials has access.
-#
-#        Available sort query values: createdAt, lastModifiedAt
-#      operationId: findRobots
-#      tags:
-#        - apiRestExternalV20240614Robots
-#        - robot
-#      parameters:
-#        - $ref: "#/components/parameters/SizeQueryParam"
-#        - $ref: "#/components/parameters/PageQueryParam"
-#        - $ref: "#/components/parameters/SortQueryParam"
-#        - $ref: "#/components/parameters/TenantIdQueryParam"
-#        - $ref: "#/components/parameters/RobotContextQueryParam"
-#      responses:
-#        "200":
-#          description: Robots found paginated
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/RobotPage"
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
-#  /robots/{id}:
-#    get:
-#      summary: Get a Robot by ID
-#      description: Returns the requested Robot when has access to do it.
-#      operationId: retrieveRobot
-#      tags:
-#        - apiRestExternalV20240614Robots
-#        - robot
-#      parameters:
-#        - $ref: "#/components/parameters/IdPathParam"
-#      responses:
-#        "200":
-#          description: Successful operation
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/Robot"
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
-#  /robots/{id}/~actions/download-source-code:
-#    get:
-#      summary: Download robot code
-#      description: Given a robot, download the source code.
-#      operationId: actionsRobotDownloadSourceCode
-#      tags:
-#        - apiRestExternalV20240614Robots
-#        - robot
-#      parameters:
-#        - $ref: "#/components/parameters/IdPathParam"
-#      responses:
-#        "200":
-#          description: Source code requested
-#          content:
-#            "application/octet-stream":
-#              schema:
-#                type: string
-#                format: binary
-#        default:
-#          $ref: "#/components/responses/DefaultError"
-#
-#  /robots/{id}/~actions/download-asset:
-#    get:
-#      summary: Download robot asset
-#      description: Given a robot, download the requested asset.
-#      operationId: actionsRobotDownloadAsset
-#      tags:
-#        - apiRestExternalV20240614Robots
-#        - robot
-#      parameters:
-#        - $ref: "#/components/parameters/IdPathParam"
-#        - name: type
-#          description: The asset type.
-#          in: query
-#          required: true
-#          schema:
-#            $ref: "#/components/schemas/RobotAssetType"
-#          x-ms-parameter-location: method
-#        - name: version
-#          description: The asset version.
-#          in: query
-#          required: true
-#          schema:
-#            type: string
-#          x-ms-parameter-location: method
-#        - name: platform
-#          description: The asset platform.
-#          in: query
-#          required: true
-#          schema:
-#            $ref: "#/components/schemas/RobotAssetPlatform"
-#          x-ms-parameter-location: method
-#        - name: architecture
-#          description: The asset platform architecture.
-#          in: query
-#          required: true
-#          schema:
-#            $ref: "#/components/schemas/RobotAssetArchitecture"
-#          x-ms-parameter-location: method
-#      responses:
-#        "200":
-#          description: Source code requested
-#          content:
-#            "application/octet-stream":
-#              schema:
-#                type: string
-#                format: binary
-#        default:
-#          $ref: "#/components/responses/DefaultError"
+
+  /workers:
+    post:
+      summary: Create or update a worker
+      description: |
+        Register a worker in KuFlow, this allows the platform to have a catalogue of all registered workers.
+
+        If already exist a worker for the same identity, the worker will be updated.
+      operationId: createWorker
+      tags:
+        - apiRestExternalV20240614Workers
+        - worker
+      requestBody:
+        description: Worker to create or update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkerCreateParams"
+        x-ms-requestBody-name: worker
+      responses:
+        "200":
+          description: Worker updated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Worker"
+        "201":
+          description: Worker created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Worker"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /robots:
+    get:
+      summary: Find all accessible Robots
+      description: |
+        List all the Robots that have been created and the credentials has access.
+
+        Available sort query values: createdAt, lastModifiedAt
+      operationId: findRobots
+      tags:
+        - apiRestExternalV20240614Robots
+        - robot
+      parameters:
+        - $ref: "#/components/parameters/SizeQueryParam"
+        - $ref: "#/components/parameters/PageQueryParam"
+        - $ref: "#/components/parameters/SortQueryParam"
+        - $ref: "#/components/parameters/TenantIdQueryParam"
+        - $ref: "#/components/parameters/RobotContextQueryParam"
+      responses:
+        "200":
+          description: Robots found paginated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RobotPage"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /robots/{id}:
+    get:
+      summary: Get a Robot by ID
+      description: Returns the requested Robot when has access to do it.
+      operationId: retrieveRobot
+      tags:
+        - apiRestExternalV20240614Robots
+        - robot
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Robot"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /robots/{id}/~actions/download-source-code:
+    get:
+      summary: Download robot code
+      description: Given a robot, download the source code.
+      operationId: actionsRobotDownloadSourceCode
+      tags:
+        - apiRestExternalV20240614Robots
+        - robot
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: Source code requested
+          content:
+            "application/octet-stream":
+              schema:
+                type: string
+                format: binary
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /robots/{id}/~actions/download-asset:
+    get:
+      summary: Download robot asset
+      description: Given a robot, download the requested asset.
+      operationId: actionsRobotDownloadAsset
+      tags:
+        - apiRestExternalV20240614Robots
+        - robot
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - name: type
+          description: The asset type.
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/RobotAssetType"
+          x-ms-parameter-location: method
+        - name: version
+          description: The asset version.
+          in: query
+          required: true
+          schema:
+            type: string
+          x-ms-parameter-location: method
+        - name: platform
+          description: The asset platform.
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/RobotAssetPlatform"
+          x-ms-parameter-location: method
+        - name: architecture
+          description: The asset platform architecture.
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/RobotAssetArchitecture"
+          x-ms-parameter-location: method
+      responses:
+        "200":
+          description: Source code requested
+          content:
+            "application/octet-stream":
+              schema:
+                type: string
+                format: binary
+        default:
+          $ref: "#/components/responses/DefaultError"
 
 x-webhooks:
   events:
@@ -1097,111 +1124,175 @@ x-webhooks:
           description: Return a 200 status to indicate that the data was received successfully
 
 components:
-#  parameters:
-#    IdPathParam:
-#      name: id
-#      description: The resource ID.
-#      in: path
-#      required: true
-#      schema:
-#        type: string
-#        format: uuid
-#      x-ms-parameter-location: method
-#
-#    SizeQueryParam:
-#      name: size
-#      description: The number of records returned within a single API call.
-#      in: query
-#      required: false
-#      schema:
-#        type: integer
-#        default: 25
-#        minimum: 0
-#        maximum: 1000
-#      x-ms-parameter-location: method
-#
-#    PageQueryParam:
-#      name: page
-#      description: The page number of the current page in the returned records, 0 is the first page.
-#      in: query
-#      required: false
-#      schema:
-#        type: integer
-#        default: 0
-#        minimum: 0
-#      x-ms-parameter-location: method
-#
-#    SortQueryParam:
-#      name: sort
-#      description: |
-#        Sorting criteria in the format: property{,asc|desc}. Example: createdAt,desc
-#
-#        Default sort order is ascending. Multiple sort criteria are supported.
-#
-#        Please refer to the method description for supported properties.
-#      in: query
-#      required: false
-#      schema:
-#        type: array
-#        items:
-#          type: string
-#      style: form
-#      explode: true
-#      x-ms-parameter-location: method
-#
-#    GroupIdQueryParam:
-#      name: groupId
-#      description: Filter by group ids.
-#      in: query
-#      required: false
-#      schema:
-#        type: array
-#        items:
-#          type: string
-#          format: uuid
-#      style: form
-#      explode: true
-#      x-ms-parameter-location: method
-#
-#    EmailQueryParam:
-#      name: email
-#      description: Filter by email.
-#      in: query
-#      required: false
-#      schema:
-#        type: array
-#        items:
-#          type: string
-#          format: email
-#      style: form
-#      explode: true
-#      x-ms-parameter-location: method
-#
-#    TenantIdQueryParam:
-#      name: tenantId
-#      description: Filter by tenantId.
-#      in: query
-#      required: false
-#      schema:
-#        type: array
-#        items:
-#          type: string
-#          format: uuid
-#      style: form
-#      explode: true
-#      x-ms-parameter-location: method
-#
-#    RobotContextQueryParam:
-#      name: filterContext
-#      description: Filter by the specified context.
-#      in: query
-#      required: false
-#      schema:
-#        $ref: '#/components/schemas/RobotFilterContext'
-#      style: form
-#      x-ms-parameter-location: method
-#
+  parameters:
+    IdPathParam:
+      name: id
+      description: The resource ID.
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      x-ms-parameter-location: method
+
+    SizeQueryParam:
+      name: size
+      description: The number of records returned within a single API call.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 25
+        minimum: 0
+        maximum: 1000
+      x-ms-parameter-location: method
+
+    PageQueryParam:
+      name: page
+      description: The page number of the current page in the returned records, 0 is the first page.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+      x-ms-parameter-location: method
+
+    SortQueryParam:
+      name: sort
+      description: |
+        Sorting criteria in the format: property{,asc|desc}. Example: createdAt,desc
+
+        Default sort order is ascending. Multiple sort criteria are supported.
+
+        Please refer to the method description for supported properties.
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+      style: form
+      explode: true
+      x-ms-parameter-location: method
+
+    GroupIdQueryParam:
+      name: groupId
+      description: Filter by group ids.
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          format: uuid
+      style: form
+      explode: true
+      x-ms-parameter-location: method
+
+    EmailQueryParam:
+      name: email
+      description: Filter by email.
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          format: email
+      style: form
+      explode: true
+      x-ms-parameter-location: method
+
+    TenantIdQueryParam:
+      name: tenantId
+      description: Filter by tenantId.
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          format: uuid
+      style: form
+      explode: true
+      x-ms-parameter-location: method
+
+    RobotContextQueryParam:
+      name: filterContext
+      description: Filter by the specified context.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/RobotFilterContext'
+      style: form
+      x-ms-parameter-location: method
+
   schemas:
+    AbstractAudited:
+      type: object
+      properties:
+        createdBy:
+          description: Who create this model.
+          type: string
+          format: uuid
+        createdAt:
+          description: When this model was created.
+          type: string
+          format: date-time
+        lastModifiedBy:
+          description: Who was last update this model.
+          type: string
+          format: uuid
+        lastModifiedAt:
+          description: When this model type was last updated.
+          type: string
+          format: date-time
+
+    Page:
+      type: object
+      properties:
+        metadata:
+          $ref: "#/components/schemas/PageMetadata"
+      required:
+        - metadata
+
+    PageMetadata:
+      type: object
+      properties:
+        size:
+          type: integer
+          minimum: 0
+          example: 25
+        page:
+          type: integer
+          minimum: 0
+          example: 0
+        totalElements:
+          type: integer
+          format: int64
+          example: 1096
+        totalPages:
+          type: integer
+          example: 110
+      required:
+        - size
+        - page
+        - totalElements
+        - totalPages
+
+    JsonValue:
+      type: object
+      description: Json value.
+      properties:
+        valid:
+          type: boolean
+          description: true if the data complain the related json schema.
+        data:
+          type: object
+          description: json value filled that complain with the related json schema.
+          additionalProperties: true
+
     DefaultError:
       description: Default error
       type: object
@@ -1241,26 +1332,6 @@ components:
         - code
         - message
 
-    AbstractAudited:
-      type: object
-      properties:
-        createdBy:
-          description: Who create this model.
-          type: string
-          format: uuid
-        createdAt:
-          description: When this model was created.
-          type: string
-          format: date-time
-        lastModifiedBy:
-          description: Who was last update this model.
-          type: string
-          format: uuid
-        lastModifiedAt:
-          description: When this model type was last updated.
-          type: string
-          format: date-time
-
     ProcessState:
       description: Process state
       type: string
@@ -1290,6 +1361,21 @@ components:
         - CANCELLED
       x-ms-enum:
         modelAsString: false
+
+    DocumentReference:
+      type: object
+      properties:
+        schemaPath:
+          type: string
+        documentUri:
+          type: string
+          description: |
+            JSON value representing the uploaded file.
+            
+            Example: `kuflow-file:uri=xxx-yyy-zzz;type=application/json;size=500;name=file.json;`
+      required:
+        - schemaPath
+        - documentUri
 
     Authentication:
       allOf:
@@ -1353,6 +1439,775 @@ components:
       required:
         - namespace
         - tls
+
+    AuthenticationCreateParams:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/AuthenticationType"
+        tenantId:
+          type: string
+          format: uuid
+          description: Tenant id. This attribute is required when an OAuth2 authentication is used.
+      required:
+        - type
+
+    Principal:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          $ref: "#/components/schemas/PrincipalType"
+        name:
+          type: string
+        user:
+          $ref: "#/components/schemas/PrincipalUser"
+        application:
+          $ref: "#/components/schemas/PrincipalApplication"
+
+    PrincipalType:
+      type: string
+      enum:
+        - USER
+        - APPLICATION
+        - SYSTEM
+      x-ms-enum:
+        modelAsString: false
+
+    PrincipalUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+
+    PrincipalApplication:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+
+    PrincipalPage:
+      allOf:
+        - $ref: "#/components/schemas/Page"
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: "#/components/schemas/PrincipalPageItem"
+          required:
+            - content
+
+    PrincipalPageItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          $ref: "#/components/schemas/PrincipalType"
+        name:
+          type: string
+
+    TenantUser:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            metadata:
+              $ref: "#/components/schemas/JsonValue"
+            principal:
+              $ref: "#/components/schemas/Principal"
+            tenantId:
+              type: string
+              format: uuid
+              readOnly: true
+          required:
+            - id
+            - principal
+            - tenantId
+
+    TenantUserPage:
+      allOf:
+        - $ref: "#/components/schemas/Page"
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: "#/components/schemas/TenantUserPageItem"
+          required:
+            - content
+
+    TenantUserPageItem:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              readOnly: true
+            principalId:
+              type: string
+              format: uuid
+              readOnly: true
+            principalName: # TODO Export in page item ?
+              type: string
+              readOnly: true
+            tenantId:
+              type: string
+              format: uuid
+              readOnly: true
+          required:
+            - id
+            - principalId
+            - tenantId
+
+    ProcessPage:
+      allOf:
+        - $ref: "#/components/schemas/Page"
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: "#/components/schemas/ProcessPageItem"
+          required:
+            - content
+
+    ProcessPageItem:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              description: Process ID.
+              type: string
+              format: uuid
+            state:
+              $ref: "#/components/schemas/ProcessState"
+            processDefinition:
+              $ref: "#/components/schemas/ProcessDefinitionSummary" # TODO Rethink the summary suffix
+            initiatorId:
+              description: Principal ID.
+              type: string
+              format: uuid
+            tenantId:
+              description: Tenant ID.
+              type: string
+              format: uuid
+          required:
+            - id
+            - state
+            - processDefinition
+            - initiator
+            - tenantId
+
+    ProcessCreateParams:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        processDefinitionId:
+          type: string
+          format: uuid
+        metadata:
+          $ref: "#/components/schemas/JsonValue"
+        initiatorId:
+          type: string
+          format: uuid
+        initiatorEmail:
+          type: string
+          format: email
+      required:
+        - processDefinitionId
+
+    ProcessChangeInitiatorParams:
+      description: Params to change the process initiator, only one option is required.
+      type: object
+      properties:
+        initiatorId:
+          type: string
+          format: uuid
+        initiatorEmail:
+          type: string
+          format: email
+
+    ProcessSaveMetadataDataParams:
+      description: Params to save metadata data.
+      type: object
+      properties:
+        metadata:
+          $ref: "#/components/schemas/JsonValue"
+      required:
+        - metadata
+
+    ProcessSaveEntityDataParams:
+      type: object
+      properties:
+        entity:
+          $ref: "#/components/schemas/JsonValue"
+      required:
+        - entity
+
+    Process:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              description: Process ID.
+              type: string
+              format: uuid
+            state:
+              $ref: "#/components/schemas/ProcessState"
+            processDefinition:
+              $ref: "#/components/schemas/ProcessDefinitionSummary"
+            metadata:
+              $ref: "#/components/schemas/JsonValue"
+            entity:
+              $ref: "#/components/schemas/JsonValue"
+            processRelated:
+              $ref: "#/components/schemas/ProcessRelated"
+            initiatorId:
+              description: Process initiator id, Principal ID.
+              type: string
+              format: uuid
+            tenantId:
+              description: Tenant ID.
+              type: string
+              format: uuid
+          required:
+            - id
+            - state
+            - processDefinition
+            - initiator
+            - tenantId
+
+    ProcessRelated:
+      type: object
+      properties:
+        incoming:
+          description: Processes whose relationship target is the current process.
+          type: array
+          items:
+            type: string
+            format: uuid
+        outcoming:
+          description: Processes to which the current process relates.
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    ProcessDefinitionSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        version:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+      required:
+        - id
+        - version
+        - name
+
+    ProcessItemPage:
+      allOf:
+        - $ref: "#/components/schemas/Page"
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: "#/components/schemas/ProcessItemPageItem"
+          required:
+            - content
+
+    ProcessItemPageItem:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            type:
+              $ref: "#/components/schemas/ProcessItemType"
+            processId:
+              type: string
+              format: uuid
+            ownerId:
+              description: Principal ID.
+              type: string
+              format: uuid
+            tenantId:
+              description: Tenant ID.
+              type: string
+              format: uuid
+            task:
+              $ref: "#/components/schemas/ProcessItemTaskPageItem"
+          required:
+            - id
+            - type
+            - processId
+            - tenantId
+
+    ProcessItemTaskPageItem:
+      type: object
+      properties:
+        state:
+          $ref: "#/components/schemas/ProcessItemTaskState"
+        taskDefinition:
+          $ref: "#/components/schemas/TaskDefinitionSummary"
+      required:
+        - id
+        - state
+        - taskDefinition
+
+    ProcessItemCreateParams:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          $ref: "#/components/schemas/ProcessItemType"
+        processId:
+          type: string
+          format: uuid
+        task:
+          $ref: "#/components/schemas/ProcessItemTaskCreateParams"
+      required:
+        - type
+        - processId
+
+    ProcessItemTaskCreateParams:
+      type: object
+      properties:
+        taskDefinitionCode:
+          type: string
+        value:
+          $ref: "#/components/schemas/JsonValue"
+        ownerId:
+          type: string
+          format: uuid
+        ownerEmail:
+          type: string
+          format: email
+      required:
+        - taskDefinitionCode
+
+    ProcessItem:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            type:
+              $ref: "#/components/schemas/ProcessItemType"
+            processId:
+              type: string
+              format: uuid
+            tenantId:
+              description: Tenant ID.
+              type: string
+              format: uuid
+            task:
+              $ref: "#/components/schemas/ProcessItemTask"
+          required:
+            - type
+            - processId
+
+    ProcessItemTask:
+      type: object
+      properties:
+        state:
+          $ref: "#/components/schemas/ProcessItemTaskState"
+        taskDefinition:
+          $ref: "#/components/schemas/TaskDefinitionSummary"
+        value:
+          $ref: "#/components/schemas/JsonValue"
+        logs:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProcessItemTaskLog"
+        ownerId:
+          description: Owner Principal ID.
+          type: string
+          format: uuid
+      required:
+        - state
+        - taskDefinition
+
+    ProcessItemTaskLog:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        timestamp:
+          description: When this model was created.
+          type: string
+          format: date-time
+        message:
+          type: string
+        level:
+          $ref: "#/components/schemas/ProcessItemTaskLogLevel"
+      required:
+        - id
+        - timestamp
+        - message
+        - level
+
+    ProcessItemTaskLogLevel:
+      type: string
+      enum:
+        - INFO
+        - WARN
+        - ERROR
+      x-ms-enum:
+        modelAsString: false
+
+    TaskDefinitionSummary: # TODO Rethink the summary suffix
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        version:
+          type: string
+          format: uuid
+        code:
+          type: string
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+      required:
+        - id
+        - version
+        - code
+        - name
+
+    Worker:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            identity:
+              type: string
+              minLength: 1
+              maxLength: 255
+            taskQueue:
+              type: string
+              minLength: 1
+              maxLength: 255
+            workflowTypes:
+              type: array
+              items:
+                 type: string
+                 minLength: 1
+                 maxLength: 255
+            activityTypes:
+              type: array
+              items:
+                type: string
+                minLength: 1
+                maxLength: 255
+            hostname:
+              type: string
+              minLength: 1
+              maxLength: 255
+            ip:
+              type: string
+              minLength: 7
+              maxLength: 40
+            installationId:
+              description: Installation Id.
+              type: string
+              format: uuid
+            robotIds:
+              description: Robot Ids that this worker implements.
+              type: array
+              items:
+                type: string
+                format: uuid
+            tenantId:
+              description: Tenant ID.
+              type: string
+              format: uuid
+          required:
+            - identity
+            - taskQueue
+            - hostname
+            - ip
+
+    WorkerCreateParams:
+      type: object
+      properties:
+        identity:
+          type: string
+          minLength: 1
+          maxLength: 255
+        taskQueue:
+          type: string
+          minLength: 1
+          maxLength: 255
+        workflowTypes:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 255
+        activityTypes:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 255
+        hostname:
+          type: string
+          minLength: 1
+          maxLength: 255
+        ip:
+          type: string
+          minLength: 7
+          maxLength: 40
+        installationId:
+          description: Installation Id.
+          type: string
+          format: uuid
+        robotIds:
+          description: Robot Ids that this worker implements.
+          type: array
+          items:
+            type: string
+            format: uuid
+        tenantId:
+          description: Tenant ID.
+          type: string
+          format: uuid
+      required:
+        - identity
+        - taskQueue
+        - hostname
+        - ip
+
+    RobotFilterContext:
+      type: string
+      description: |
+        Robot filter context:
+        * READY: filters out robots ready for execution for the current credentials
+        * DEFAULT: filters out robots accessible for the current credentials (if no set this is the default option)
+      enum:
+        - READY
+        - DEFAULT
+      x-ms-enum:
+        modelAsString: false
+
+    RobotPage:
+      allOf:
+        - $ref: "#/components/schemas/Page"
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: "#/components/schemas/RobotPageItem"
+          required:
+            - content
+
+    RobotPageItem:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              description: Robot ID.
+              type: string
+              format: uuid
+            code:
+              description: Robot Code.
+              type: string
+              minLength: 1
+              maxLength: 50
+            name:
+              description: Robot name.
+              type: string
+              minLength: 1
+              maxLength: 50
+            description:
+              description: Robot description.
+              type: string
+              minLength: 1
+              maxLength: 4000
+            tenantId:
+              description: Tenant ID.
+              type: string
+              format: uuid
+          required:
+            - id
+            - code
+            - name
+            - tenantId
+
+    Robot:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              description: Robot ID.
+              type: string
+              format: uuid
+            code:
+              description: Robot Code.
+              type: string
+              minLength: 1
+              maxLength: 50
+            name:
+              description: Robot name.
+              type: string
+              minLength: 1
+              maxLength: 50
+            description:
+              description: Robot description.
+              type: string
+              minLength: 1
+              maxLength: 4000
+            sourceType:
+              $ref: "#/components/schemas/RobotSourceType"
+            sourceFile:
+              $ref: "#/components/schemas/RobotSourceFile"
+            environmentVariables:
+              description: Environment variables to load when the robot is executed.
+              type: object
+              additionalProperties:
+                type: string
+                minLength: 1
+                maxLength: 4000
+            tenantId:
+              description: Tenant ID.
+              type: string
+              format: uuid
+          required:
+            - id
+            - code
+            - name
+            - sourceType
+            - sourceFile
+            - tenantId
+
+    RobotSourceType:
+      type: string
+      description: Robot source type
+      enum:
+        - PACKAGE
+        - ROBOT_FRAMEWORK_PYTHON_WHEEL
+      x-ms-enum:
+        modelAsString: false
+
+    RobotAssetType:
+      type: string
+      description: Robot asset type
+      enum:
+        - PYTHON
+        - PYTHON_PIP
+        - NODEJS
+      x-ms-enum:
+        modelAsString: false
+        values:
+          - value: PYTHON
+            name: Python
+          - value: PYTHON_PIP
+            name: PythonPip
+          - value: NODEJS
+            name: NodeJS
+
+    RobotAssetPlatform:
+      type: string
+      description: Robot asset platform
+      enum:
+        - WINDOWS
+        - MAC_OS
+        - LINUX
+      x-ms-enum:
+        modelAsString: false
+        values:
+          - value: WINDOWS
+            name: Windows
+          - value: MAC_OS
+            name: MacOS
+          - value: LINUX
+            name: Linux
+
+    RobotAssetArchitecture:
+      type: string
+      description: Robot asset platform architecture
+      enum:
+        - X86_32
+        - X86_64
+      x-ms-enum:
+        modelAsString: false
+        values:
+          - value: X86_32
+            name: X86Bit32
+          - value: X86_64
+            name: X86Bit64
+      x-enum-varnames:
+        - X86_32
+        - X86_64
+
+    RobotSourceFile:
+      type: object
+      description: Robot source type
+      properties:
+        id:
+          description: Robot ID.
+          type: string
+          format: uuid
+        name:
+          description: Source file name.
+          type: string
+        contentType:
+          description: Source file content type.
+          type: string
+        contentLength:
+          description: Source file length.
+          type: integer
+          format: int64
+        contentHash:
+          description: Source file to check the integrity.
+          type: string
+      required:
+        - id
+        - name
+        - contentType
+        - contentLength
+        - contentHash
 
     WebhookEvent:
       type: object
@@ -1511,50 +2366,6 @@ components:
 #    # TODO create two classes to pair KuFlowFile and KuFlowPrincipal.
 #    # TODO Do not provide utilities for reading and modifying JSON, use the tools provided by the system. At most,
 #    # TODO create two classes to pair KuFlowFile and KuFlowPrincipal.
-#    JsonValue:
-#      type: object
-#      description: Json value.
-#      properties:
-#        valid:
-#          type: boolean
-#          description: true if the data complain the related json schema.
-#        data:
-#          type: object
-#          description: json value filled that complain with the related json schema.
-#          additionalProperties: true
-#
-#    PageMetadata:
-#      type: object
-#      properties:
-#        size:
-#          type: integer
-#          minimum: 0
-#          example: 25
-#        page:
-#          type: integer
-#          minimum: 0
-#          example: 0
-#        totalElements:
-#          type: integer
-#          format: int64
-#          example: 1096
-#        totalPages:
-#          type: integer
-#          example: 110
-#      required:
-#        - size
-#        - page
-#        - totalElements
-#        - totalPages
-#
-#    Page:
-#      type: object
-#      properties:
-#        metadata:
-#          $ref: "#/components/schemas/PageMetadata"
-#      required:
-#        - metadata
-#
 #    ProcessItemCreateProcessItemRequest:
 #      type: object
 #      properties:
@@ -1638,32 +2449,6 @@ components:
 #      required:
 #        - process
 #
-#    ProcessSaveEntityDocumentResponse:
-#      type: object
-#      properties:
-#        schemaPath:
-#          type: string
-#        documentUri:
-#          type: string
-#          description: |
-#            JSON value representing the uploaded file.
-#
-#            Example: `kuflow-file:uri=xxx-yyy-zzz;type=application/json;size=500;name=file.json;`
-#      required:
-#        - schemaPath
-#        - documentUri
-#
-#    ProcessChangeInitiatorRequest:
-#      description: Command to change the process initiator, only one option is required.
-#      type: object
-#      properties:
-#        principalId:
-#          type: string
-#          format: uuid
-#        email:
-#          type: string
-#          format: email
-#
 #    ProcessChangeInitiatorResponse:
 #      type: object
 #      properties:
@@ -1671,208 +2456,10 @@ components:
 #          $ref: "#/components/schemas/Process"
 #      required:
 #        - process
-#
-#    ProcessDefinitionSummary:
-#      type: object
-#      properties:
-#        id:
-#          type: string
-#          format: uuid
-#        version:
-#          type: string
-#          format: uuid
-#        name:
-#          type: string
-#          minLength: 1
-#          maxLength: 50
-#      required:
-#        - id
-#
-#    Process:
-#      allOf:
-#        - $ref: "#/components/schemas/AbstractAudited"
-#        - type: object
-#          properties:
-#            id:
-#              description: Process ID.
-#              type: string
-#              format: uuid
-#            state:
-#              $ref: "#/components/schemas/ProcessState"
-#            processDefinition:
-#              $ref: "#/components/schemas/ProcessDefinitionSummary"
-#            metadata:
-#              $ref: "#/components/schemas/JsonValue"
-#            entity:
-#              $ref: "#/components/schemas/JsonValue"
-#            initiator:
-#              description: Principal ID.
-#              type: string
-#              format: uuid
-#            tenantId:
-#              description: Tenant ID.
-#              type: string
-#              format: uuid
-#          required:
-#            - processDefinition
 
-#
-#    ProcessPageItem:
-#      allOf:
-#        - $ref: "#/components/schemas/AbstractAudited"
-#        - type: object
-#          properties:
-#            id:
-#              description: Process ID.
-#              type: string
-#              format: uuid
-#            state:
-#              $ref: "#/components/schemas/ProcessState"
-#            processDefinition:
-#              $ref: "#/components/schemas/ProcessDefinitionSummary"
-#            initiator:
-#              description: Principal ID.
-#              type: string
-#              format: uuid
-#            tenantId:
-#              description: Tenant ID.
-#              type: string
-#              format: uuid
-#          required:
-#            - processDefinition
 
-#
-#    ProcessPage:
-#      allOf:
-#        - $ref: "#/components/schemas/Page"
-#        - type: object
-#          properties:
-#            content:
-#              type: array
-#              items:
-#                $ref: "#/components/schemas/ProcessPageItem"
-#          required:
-#            - content
 
-#
-#    ProcessItem:
-#      allOf:
-#        - $ref: "#/components/schemas/AbstractAudited"
-#        - type: object
-#          properties:
-#            id:
-#              type: string
-#              format: uuid
-#            type:
-#              $ref: "#/components/schemas/ProcessItemType"
-#            processId:
-#              type: string
-#              format: uuid
-#            owner:
-#              description: Principal ID.
-#              type: string
-#              format: uuid
-#            tenantId:
-#              description: Tenant ID.
-#              type: string
-#              format: uuid
-#            task:
-#              $ref: "#/components/schemas/ProcessItemTask"
-#          required:
-#            - type
-#            - processId
 
-#
-#    ProcessItemTask:
-#      type: object
-#      properties:
-#        state:
-#          $ref: "#/components/schemas/ProcessItemTaskState"
-#        taskDefinition:
-#          $ref: "#/components/schemas/TaskDefinitionSummary"
-#        value:
-#          $ref: "#/components/schemas/JsonValue"
-#        logs:
-#          type: array
-#          items:
-#            $ref: "#/components/schemas/Log"
-#      required:
-#        - taskDefinition
-#        - processId
-#
-#    ProcessItemPageItem:
-#      allOf:
-#        - $ref: "#/components/schemas/AbstractAudited"
-#        - type: object
-#          properties:
-#            id:
-#              type: string
-#              format: uuid
-#            type:
-#              $ref: "#/components/schemas/ProcessItemType"
-#            processId:
-#              type: string
-#              format: uuid
-#            owner:
-#              description: Principal ID.
-#              type: string
-#              format: uuid
-#            tenantId:
-#              description: Tenant ID.
-#              type: string
-#              format: uuid
-#            task:
-#              $ref: "#/components/schemas/ProcessItemTaskPageItem"
-#          required:
-#            - id
-#            - type
-#            - processId
-#            - tenantId
-
-#
-#    ProcessItemTaskPageItem:
-#      type: object
-#      properties:
-#        id:
-#          type: string
-#          format: uuid
-#        state:
-#          $ref: "#/components/schemas/ProcessItemTaskState"
-#        taskDefinition:
-#          $ref: "#/components/schemas/TaskDefinitionSummary"
-#      required:
-#        - id
-#        - state
-#        - taskDefinition
-#
-#    TaskDefinitionSummary:
-#      description: In creation task, one of 'id, version or code' is mandatory.
-#      type: object
-#      properties:
-#        id:
-#          type: string
-#          format: uuid
-#        version:
-#          type: string
-#          format: uuid
-#        code:
-#          type: string
-#        name:
-#          type: string
-#          minLength: 1
-#          maxLength: 50
-#
-#    ProcessItemPage:
-#      allOf:
-#        - $ref: "#/components/schemas/Page"
-#        - type: object
-#          properties:
-#            content:
-#              type: array
-#              items:
-#                $ref: "#/components/schemas/ProcessItemPageItem"
-#          required:
-#            - content
 
 #
 #    ProcessItemTaskAssignRequest:
@@ -1920,311 +2507,6 @@ components:
 #      required:
 #        - message
 #        - level
-#
-#    PrincipalPage:
-#      allOf:
-#        - $ref: "#/components/schemas/Page"
-#        - type: object
-#          properties:
-#            content:
-#              type: array
-#              items:
-#                $ref: "#/components/schemas/Principal"
-#          required:
-#            - content
-
-#
-#    Principal:
-#      type: object
-#      properties:
-#        id:
-#          type: string
-#          format: uuid
-#        type:
-#          $ref: "#/components/schemas/PrincipalType"
-#        name:
-#          type: string
-#        user:
-#          $ref: "#/components/schemas/PrincipalUser"
-#        application:
-#          $ref: "#/components/schemas/PrincipalApplication"
-#
-#    PrincipalType:
-#      type: string
-#      enum:
-#        - USER
-#        - APPLICATION
-#        - SYSTEM
-#      x-ms-enum:
-#        modelAsString: false
-#
-#    PrincipalUser:
-#      type: object
-#      properties:
-#        id:
-#          type: string
-#          format: uuid
-#        email:
-#          type: string
-#
-#    PrincipalApplication:
-#      type: object
-#      properties:
-#        id:
-#          type: string
-#          format: uuid
-#
-#    TenantUser:
-#      allOf:
-#        - $ref: "#/components/schemas/AbstractAudited"
-#        - type: object
-#          properties:
-#            id:
-#              type: string
-#              format: uuid
-#            metadata:
-#              $ref: "#/components/schemas/JsonValue"
-#            principal:
-#              type: string
-#              format: uuid
-#              readOnly: true
-#            tenantId:
-#              type: string
-#              format: uuid
-#              readOnly: true
-#          required:
-#            - id
-#            - principal
-#            - tenantId
-
-#
-#    TenantUserPage:
-#      allOf:
-#        - $ref: "#/components/schemas/Page"
-#        - type: object
-#          properties:
-#            content:
-#              type: array
-#              items:
-#                $ref: "#/components/schemas/TenantUser"
-#          required:
-#            - content
-
-#
-#    Worker:
-#      allOf:
-#        - $ref: "#/components/schemas/AbstractAudited"
-#        - type: object
-#          properties:
-#            id:
-#              type: string
-#              format: uuid
-#            identity:
-#              type: string
-#              minLength: 1
-#              maxLength: 255
-#            taskQueue:
-#              type: string
-#              minLength: 1
-#              maxLength: 255
-#            workflowTypes:
-#              type: array
-#              items:
-#                 type: string
-#                 minLength: 1
-#                 maxLength: 255
-#            activityTypes:
-#              type: array
-#              items:
-#                type: string
-#                minLength: 1
-#                maxLength: 255
-#            hostname:
-#              type: string
-#              minLength: 1
-#              maxLength: 255
-#            ip:
-#              type: string
-#              minLength: 7
-#              maxLength: 40
-#            installationId:
-#              description: Installation Id.
-#              type: string
-#              format: uuid
-#            robotIds:
-#              description: Robot Ids that this worker implements.
-#              type: array
-#              items:
-#                type: string
-#                format: uuid
-#            tenantId:
-#              description: Tenant ID.
-#              type: string
-#              format: uuid
-#          required:
-#            - identity
-#            - taskQueue
-#            - hostname
-#            - ip
-
-#
-#    Robot:
-#      allOf:
-#        - $ref: "#/components/schemas/AbstractAudited"
-#        - type: object
-#          properties:
-#            id:
-#              description: Robot ID.
-#              type: string
-#              format: uuid
-#            code:
-#              description: Robot Code.
-#              type: string
-#              minLength: 1
-#              maxLength: 50
-#            name:
-#              description: Robot name.
-#              type: string
-#              minLength: 1
-#              maxLength: 50
-#            description:
-#              description: Robot description.
-#              type: string
-#              minLength: 1
-#              maxLength: 4000
-#            sourceType:
-#              $ref: "#/components/schemas/RobotSourceType"
-#            sourceFile:
-#              $ref: "#/components/schemas/RobotSourceFile"
-#            environmentVariables:
-#              description: Environment variables to load when the robot is executed.
-#              type: object
-#              additionalProperties:
-#                type: string
-#                minLength: 1
-#                maxLength: 4000
-#            tenantId:
-#              description: Tenant ID.
-#              type: string
-#              format: uuid
-#          required:
-#            - id
-#            - code
-#            - name
-#            - sourceType
-
-#
-#    RobotSourceType:
-#      type: string
-#      description: Robot source type
-#      enum:
-#        - PACKAGE
-#        - ROBOT_FRAMEWORK_PYTHON_WHEEL
-#      x-ms-enum:
-#        modelAsString: false
-#
-#    RobotAssetType:
-#      type: string
-#      description: Robot asset type
-#      enum:
-#        - PYTHON
-#        - PYTHON_PIP
-#        - NODEJS
-#      x-ms-enum:
-#        modelAsString: false
-#        values:
-#          - value: PYTHON
-#            name: Python
-#          - value: PYTHON_PIP
-#            name: PythonPip
-#          - value: NODEJS
-#            name: NodeJS
-#
-#    RobotAssetPlatform:
-#      type: string
-#      description: Robot asset platform
-#      enum:
-#        - WINDOWS
-#        - MAC_OS
-#        - LINUX
-#      x-ms-enum:
-#        modelAsString: false
-#        values:
-#          - value: WINDOWS
-#            name: Windows
-#          - value: MAC_OS
-#            name: MacOS
-#          - value: LINUX
-#            name: Linux
-#    RobotAssetArchitecture:
-#      type: string
-#      description: Robot asset platform architecture
-#      enum:
-#        - X86_32
-#        - X86_64
-#      x-ms-enum:
-#        modelAsString: false
-#        values:
-#          - value: X86_32
-#            name: X86Bit32
-#          - value: X86_64
-#            name: X86Bit64
-#      x-enum-varnames:
-#        - X86_32
-#        - X86_64
-#
-#    RobotSourceFile:
-#      type: object
-#      description: Robot source type
-#      properties:
-#        id:
-#          description: Robot ID.
-#          type: string
-#          format: uuid
-#        name:
-#          description: Source file name.
-#          type: string
-#        contentType:
-#          description: Source file content type.
-#          type: string
-#        contentLength:
-#          description: Source file length.
-#          type: integer
-#          format: int64
-#        contentHash:
-#          description: Source file to check the integrity.
-#          type: string
-#      required:
-#        - id
-#        - name
-#        - contentType
-#        - contentLength
-#        - contentHash
-#
-#    RobotPage:
-#      allOf:
-#        - $ref: "#/components/schemas/Page"
-#        - type: object
-#          properties:
-#            content:
-#              type: array
-#              items:
-#                $ref: "#/components/schemas/Robot"
-#          required:
-#            - content
-
-#
-#    RobotFilterContext:
-#      type: string
-#      description: |
-#        Robot filter context:
-#        * READY: filters out robots ready for execution for the current credentials
-#        * DEFAULT: filters out robots accessible for the current credentials (if no set this is the default option)
-#      enum:
-#        - READY
-#        - DEFAULT
-#      x-ms-enum:
-#        modelAsString: false
 
   responses:
     DefaultError:
