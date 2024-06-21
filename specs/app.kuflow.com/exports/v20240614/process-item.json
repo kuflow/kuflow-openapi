@@ -17,10 +17,6 @@
       "type": "string",
       "format": "uuid"
     },
-    "ownerId": {
-      "type": "string",
-      "format": "uuid"
-    },
     "task": {
       "$ref": "process-item-task.json"
     }
