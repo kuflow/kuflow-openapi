@@ -37,10 +37,10 @@
       }
     },
     "entity": {
-      "$ref": "json-value.json"
+      "$ref": "json-data.json"
     },
     "metadata": {
-      "$ref": "json-value.json"
+      "$ref": "json-data.json"
     }
   },
   "required": [

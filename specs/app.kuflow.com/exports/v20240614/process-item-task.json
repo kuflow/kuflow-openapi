@@ -27,8 +27,8 @@
         "$ref": "process-item-task-log.json"
       }
     },
-    "value": {
-      "$ref": "json-value.json"
+    "data": {
+      "$ref": "json-data.json"
     }
   },
   "required": ["id", "tenantId", "state", "taskDefinition"]
