@@ -334,7 +334,7 @@ paths:
         Complete a Process. The state of Process is set to 'completed'.
   
         If you are already in this state, no action is taken.
-      operationId: actionsProcessComplete
+      operationId: completeProcess
       tags:
         - apiRestExternalV20240614Processes
         - process
@@ -359,7 +359,7 @@ paths:
         All the active process items will be marked as cancelled too.
     
         If you are already in this state, no action is taken.
-      operationId: actionsProcessCancel
+      operationId: cancelProcess
       tags:
         - apiRestExternalV20240614Processes
         - process
@@ -383,14 +383,14 @@ paths:
 
         Allows you to choose a user (by email or principal identifier) or an application (principal identifier).
         Only one option will be necessary.
-      operationId: actionsProcessChangeInitiator
+      operationId: changeProcessInitiator
       tags:
         - apiRestExternalV20240614Processes
         - process
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
       requestBody:
-        description: Command to change the process initiator.
+        description: Params to change the process initiator.
         required: true
         content:
           application/json:
@@ -407,39 +407,12 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /processes/{id}/~actions/save-metadata-data:
-    post:
-      summary: Save entity data
-      operationId: actionsProcessSaveMetadataData
-      tags:
-        - apiRestExternalV20240614Processes
-        - process
-      parameters:
-        - $ref: "#/components/parameters/IdPathParam"
-      requestBody:
-        description: Params to save de entity data.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ProcessSaveMetadataDataParams"
-        x-ms-requestBody-name: params
-      responses:
-        "200":
-          description: Process with the new initiator.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Process"
-        default:
-          $ref: "#/components/responses/DefaultError"
-
-  /processes/{id}/~actions/save-user-action-value-document:
+  /processes/{id}/~actions/upload-user-action-document:
     post:
       summary: Upload and save a document in a user action
       description: |
         Allow saving a user action document uploading the content.
-      operationId: actionsProcessSaveUserActionValueDocument
+      operationId: uploadProcessUserActionDocument
       tags:
         - apiRestExternalV20240614Processes
         - process
@@ -485,26 +458,81 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /processes/{id}/~actions/save-entity-data:
-    post:
-      summary: Save JSON data
-      description: |
-        Allow to save a JSON validating that the data follow the related schema. If the data is invalid, then
-        the json form is marked as invalid.
-      operationId: actionsProcessSaveEntityData
+  /processes/{id}/metadata:
+    put:
+      summary: Save process metadata
+      operationId: updateProcessMetadata
       tags:
         - apiRestExternalV20240614Processes
         - process
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
       requestBody:
-        description: Command to save the JSON value.
+        description: Params to save de entity data.
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ProcessSaveEntityDataParams"
-        x-ms-requestBody-name: command
+              $ref: "#/components/schemas/ProcessMetadataUpdateParams"
+        x-ms-requestBody-name: params
+      responses:
+        "200":
+          description: Process with the metadata updated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Process"
+        default:
+          $ref: "#/components/responses/DefaultError"
+    patch:
+      summary: Patch JSON data
+      description: |
+        Allow to patch a JSON data validating that the data follow the related schema. If the data is invalid, then
+        the json is marked as invalid.
+      operationId: patchProcessMetadata
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      requestBody:
+        description: Params to save the JSON value.
+        required: true
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: "#/components/schemas/JsonPatch"
+        x-ms-requestBody-name: params
+      responses:
+        "200":
+          description: Process with the metadata updated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Process"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /processes/{id}/entity:
+    put:
+      summary: Save JSON data
+      description: |
+        Allow to save a JSON validating that the data follow the related schema. If the data is invalid, then
+        the json form is marked as invalid.
+      operationId: updateProcessEntity
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      requestBody:
+        description: Params to save the JSON value.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProcessEntityUpdateParams"
+        x-ms-requestBody-name: params
       responses:
         "200":
           description: Process with the entity json data saved
@@ -514,13 +542,41 @@ paths:
                 $ref: "#/components/schemas/Process"
         default:
           $ref: "#/components/responses/DefaultError"
+    patch:
+      summary: Patch JSON data
+      description: |
+        Allow to patch a JSON data validating that the data follow the related schema. If the data is invalid, then
+        the json is marked as invalid.
+      operationId: patchProcessEntity
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      requestBody:
+        description: Params to save the JSON value.
+        required: true
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: "#/components/schemas/JsonPatch"
+        x-ms-requestBody-name: params
+      responses:
+        "200":
+          description: Process with the entity updated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Process"
+        default:
+          $ref: "#/components/responses/DefaultError"
 
-  /processes/{id}/~actions/save-entity-document:
+  /processes/{id}/entity/~actions/upload-document:
     post:
-      summary: Save an entity value document
+      summary: Upload an entity document
       description: |
         Save a document in the process to later be linked into the JSON data.
-      operationId: actionsProcessSaveEntityDocument
+      operationId: uploadProcessEntityDocument
       tags:
         - apiRestExternalV20240614Processes
         - process
@@ -566,11 +622,11 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /processes/{id}/~actions/download-entity-document:
+  /processes/{id}/entity/~actions/download-document:
     get:
-      summary: Download document
+      summary: Download entity document
       description: Given a process and a documentUri, download a document.
-      operationId: actionsProcessDownloadEntityDocument
+      operationId: downloadProcessEntityDocument
       tags:
         - apiRestExternalV20240614Processes
         - process
@@ -714,11 +770,11 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /process-items/{id}/~actions/task--claim:
+  /process-items/{id}/task/~actions/claim:
     post:
       summary: Claim a process item task
       description: Allow to claim a task.
-      operationId: actionsProcessItemTaskClaim
+      operationId: claimProcessItemTask
       tags:
         - apiRestExternalV20240614ProcessItems
         - processItem
@@ -734,11 +790,11 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /process-items/{id}/~actions/task--assign:
+  /process-items/{id}/task/~actions/assign:
     post:
       summary: Assign a process item task
       description: Allow to assign a process item task to a user or application. Only one option will be necessary.
-      operationId: actionsProcessItemTaskAssign
+      operationId: assignProcessItemTask
       tags:
         - apiRestExternalV20240614ProcessItems
         - processItem
@@ -762,11 +818,11 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /process-items/{id}/~actions/task--complete:
+  /process-items/{id}/task/~actions/complete:
     post:
       summary: Complete a process item task
       description: Allow to complete a claimed task by the principal.
-      operationId: actionsProcessItemTaskComplete
+      operationId: completeProcessItemTask
       tags:
         - apiRestExternalV20240614ProcessItems
         - processItem
@@ -782,62 +838,82 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /process-items/{id}/~actions/task--download-value-webform-rendered:
-    get:
-      summary: Download a Form rendered as PDF or Zip of PDFs (when the element is multiple)
-      description: |
-        Given a task, generate a PDF from a Form type element with the data filled in, if any. If there are multiple form values, they are packed into a ZIP.
-
-        Important!: To use this feature, please contact to kuflow@kuflow.com
-      operationId: actionsProcessItemTaskDownloadValueWebformRendered
-      tags:
-        - apiRestExternalV20240614ProcessItems
-        - processItem
-      parameters:
-        - $ref: "#/components/parameters/IdPathParam"
-        - name: task--download-value-webform-rendered
-          description: |
-            JSON pointer to the property with the error. See: https://datatracker.ietf.org/doc/html/rfc6901
-
-            ie: /user/name or /users/1/name
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Form requested as PDF or ZIP of PDFs.
-          content:
-            "application/pdf":
-              schema:
-                type: string
-                format: binary
-            "application/zip":
-              schema:
-                type: string
-                format: binary
-        default:
-          $ref: "#/components/responses/DefaultError"
-
-  /process-items/{id}/~actions/task--save-value-data:
+  /process-items/{id}/task/~actions/append-log:
     post:
-      summary: Save JSON data
+      summary: Append a log to the process item task
       description: |
-        Allow to save a JSON data validating that the data follow the related schema. If the data is invalid, then
-        the json form is marked as invalid.
-      operationId: actionsProcessItemTaskSaveValueData
+        A log entry is added to the task. If the number of log entries is reached, the oldest log entry is removed.
+      operationId: appendProcessItemTaskLog
       tags:
         - apiRestExternalV20240614ProcessItems
         - processItem
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
       requestBody:
-        description: Command to save the JSON value.
+        description: Log to be created.
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ProcessItemTaskSaveValueDataParams"
+              $ref: "#/components/schemas/ProcessItemTaskAppendLogParams"
+        x-ms-requestBody-name: params
+      responses:
+        "200":
+          description: Task with log entry added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessItem"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /process-items/{id}/task/data:
+    put:
+      summary: Save JSON data
+      description: |
+        Allow to save a JSON data validating that the data follow the related schema. If the data is invalid, then
+        the json form is marked as invalid.
+      operationId: updateProcessItemTaskData
+      tags:
+        - apiRestExternalV20240614ProcessItems
+        - processItem
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      requestBody:
+        description: Params used to update the JSON value.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProcessItemTaskDataUpdateParams"
+        x-ms-requestBody-name: params
+      responses:
+        "200":
+          description: Response with the task with json data saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessItem"
+        default:
+          $ref: "#/components/responses/DefaultError"
+    patch:
+      summary: Patch JSON data
+      description: |
+        Allow to patch a JSON data validating that the data follow the related schema. If the data is invalid, then
+        the json is marked as invalid.
+      operationId: patchProcessItemTaskData
+      tags:
+        - apiRestExternalV20240614ProcessItems
+        - processItem
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      requestBody:
+        description: Params to save the JSON value.
+        required: true
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: "#/components/schemas/JsonPatch"
         x-ms-requestBody-name: params
       responses:
         "200":
@@ -849,12 +925,12 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /process-items/{id}/~actions/task--save-value-document:
+  /process-items/{id}/task/data/~actions/upload-document:
     post:
-      summary: Save a JSON document
+      summary: Upload a document associated with the process item task data
       description: |
         Save a document in the task to later be linked into the JSON data.
-      operationId: actionsProcessItemTaskSaveValueDocument
+      operationId: uploadProcessItemTaskDataDocument
       tags:
         - apiRestExternalV20240614ProcessItems
         - processItem
@@ -900,11 +976,11 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /process-items/{id}/~actions/task--download-value-document:
+  /process-items/{id}/task/data/~actions/download-document:
     get:
       summary: Download document
       description: Given a task, download a document from a json form data.
-      operationId: actionsProcessItemTaskDownloadValueDocument
+      operationId: downloadProcessItemTaskDataDocument
       tags:
         - apiRestExternalV20240614ProcessItems
         - processItem
@@ -927,32 +1003,40 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /process-items/{id}/~actions/task--append-log:
-    post:
-      summary: Append a log to the process item task
+  /process-items/{id}/task/data/~actions/download-webform-as-document:
+    get:
+      summary: Download a Form rendered as PDF or Zip of PDFs (when the element is multiple)
       description: |
-        A log entry is added to the task. If the number of log entries is reached, the oldest log entry is removed.
-      operationId: actionsProcessItemTaskAppendLog
+        Given a task, generate a PDF from a Form type element with the data filled in, if any. If there are multiple form values, they are packed into a ZIP.
+
+        Important!: To use this feature, please contact to kuflow@kuflow.com
+      operationId: downloadProcessItemTaskDataWebformAsDocument
       tags:
         - apiRestExternalV20240614ProcessItems
         - processItem
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
-      requestBody:
-        description: Log to be created.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ProcessItemTaskAppendLogParams"
-        x-ms-requestBody-name: params
+        - name: propertyPath
+          description: |
+            JSON pointer to the property with the error. See: https://datatracker.ietf.org/doc/html/rfc6901
+
+            ie: /user/name or /users/1/name
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         "200":
-          description: Task with log entry added
+          description: Form requested as PDF or ZIP of PDFs.
           content:
-            application/json:
+            "application/pdf":
               schema:
-                $ref: "#/components/schemas/ProcessItem"
+                type: string
+                format: binary
+            "application/zip":
+              schema:
+                type: string
+                format: binary
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -1290,7 +1374,8 @@ components:
         valid:
           type: boolean
           description: true if the data complain the related json schema.
-        data:
+          readOnly: true
+        value:
           type: object
           description: json value filled that complain with the related json schema.
           additionalProperties: true
@@ -1298,8 +1383,9 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/JsonValueError"
+          readOnly: true
       required:
-        - data
+        - value
 
     JsonValueError:
       type: object
@@ -1314,6 +1400,42 @@ components:
         type:
           type: string
           description: Error type.
+
+    JsonPatch:
+      type: array
+      items:
+        $ref: "#/components/schemas/JsonPatchOperation"
+      minItems: 1
+
+    JsonPatchOperation:
+      type: object
+      additionalProperties: false
+      properties:
+        op:
+          $ref: "#/components/schemas/JsonPatchOperationType"
+        from:
+          description: A JSON Pointer path used when op is "copy" or "move".
+          type: string
+        path:
+          description: A JSON Pointer path.
+          type: string
+        value:
+          description: The value to "add", "replace" or "test".
+          nullable: true
+      required:
+        - op
+        - path
+
+    JsonPatchOperationType:
+      type: string
+      description: The operation to perform.
+      enum:
+        - add
+        - remove
+        - replace
+        - move
+        - copy
+        - test
 
     DefaultError:
       description: Default error
@@ -1586,9 +1708,6 @@ components:
               type: string
               format: uuid
               readOnly: true
-            principalName: # TODO Export in page item ?
-              type: string
-              readOnly: true
             tenantId:
               type: string
               format: uuid
@@ -1669,7 +1788,7 @@ components:
           type: string
           format: email
 
-    ProcessSaveMetadataDataParams:
+    ProcessMetadataUpdateParams:
       description: Params to save metadata data.
       type: object
       properties:
@@ -1678,7 +1797,7 @@ components:
       required:
         - metadata
 
-    ProcessSaveEntityDataParams:
+    ProcessEntityUpdateParams:
       type: object
       properties:
         entity:
@@ -1829,7 +1948,7 @@ components:
       properties:
         taskDefinitionCode:
           type: string
-        value:
+        data:
           $ref: "#/components/schemas/JsonValue"
         ownerId:
           type: string
@@ -1840,13 +1959,13 @@ components:
       required:
         - taskDefinitionCode
 
-    ProcessItemTaskSaveValueDataParams:
+    ProcessItemTaskDataUpdateParams:
       type: object
       properties:
-        value:
+        data:
           $ref: "#/components/schemas/JsonValue"
       required:
-        - value
+        - data
 
     ProcessItemTaskAssignParams:
       description: Params to assign a process item task, only one option is required.
@@ -1889,7 +2008,7 @@ components:
           $ref: "#/components/schemas/ProcessItemTaskState"
         taskDefinition:
           $ref: "#/components/schemas/TaskDefinitionSummary"
-        value:
+        data:
           $ref: "#/components/schemas/JsonValue"
         logs:
           type: array

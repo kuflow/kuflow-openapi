@@ -7,7 +7,7 @@
       "type": "boolean",
       "default": "true"
     },
-    "data": {
+    "value": {
       "type": "object",
       "additionalProperties": true,
       "existingJavaType": "java.util.Map<String, Object>"

@@ -27,7 +27,7 @@
         "$ref": "process-item-task-log.json"
       }
     },
-    "value": {
+    "data": {
       "$ref": "json-value.json"
     }
   },
