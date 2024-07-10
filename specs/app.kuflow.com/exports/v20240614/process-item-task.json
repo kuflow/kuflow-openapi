@@ -28,7 +28,7 @@
       }
     },
     "data": {
-      "$ref": "json-value.json"
+      "$ref": "json-data.json"
     }
   },
   "required": ["id", "tenantId", "state", "taskDefinition"]
