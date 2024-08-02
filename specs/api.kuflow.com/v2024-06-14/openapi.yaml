@@ -502,7 +502,7 @@ paths:
           application/json-patch+json:
             schema:
               $ref: "#/components/schemas/JsonPatch"
-        x-ms-requestBody-name: params
+        x-ms-requestBody-name: jsonPatch
       responses:
         "200":
           description: Process with the metadata updated.
@@ -733,7 +733,7 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/ProcessItemCreateParams"
-        x-ms-requestBody-name: processItem
+        x-ms-requestBody-name: params
       responses:
         "200":
           description: Process Item already created.
@@ -1058,7 +1058,7 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/WorkerCreateParams"
-        x-ms-requestBody-name: worker
+        x-ms-requestBody-name: params
       responses:
         "200":
           description: Worker updated.
@@ -1937,6 +1937,12 @@ components:
         processId:
           type: string
           format: uuid
+        ownerId:
+          type: string
+          format: uuid
+        ownerEmail:
+          type: string
+          format: email
         task:
           $ref: "#/components/schemas/ProcessItemTaskCreateParams"
       required:
@@ -1950,12 +1956,6 @@ components:
           type: string
         data:
           $ref: "#/components/schemas/JsonValue"
-        ownerId:
-          type: string
-          format: uuid
-        ownerEmail:
-          type: string
-          format: email
       required:
         - taskDefinitionCode
 
@@ -1991,6 +1991,10 @@ components:
             processId:
               type: string
               format: uuid
+            ownerId:
+              description: Owner Principal ID.
+              type: string
+              format: uuid
             tenantId:
               description: Tenant ID.
               type: string
@@ -2014,10 +2018,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ProcessItemTaskLog"
-        ownerId:
-          description: Owner Principal ID.
-          type: string
-          format: uuid
       required:
         - state
         - taskDefinition
