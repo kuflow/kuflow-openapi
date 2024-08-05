@@ -1126,7 +1126,7 @@ paths:
     get:
       summary: Download robot code
       description: Given a robot, download the source code.
-      operationId: actionsRobotDownloadSourceCode
+      operationId: downloadRobotSourceCode
       tags:
         - apiRestExternalV20240614Robots
         - robot
@@ -1147,7 +1147,7 @@ paths:
     get:
       summary: Download robot asset
       description: Given a robot, download the requested asset.
-      operationId: actionsRobotDownloadAsset
+      operationId: downloadRobotAsset
       tags:
         - apiRestExternalV20240614Robots
         - robot
