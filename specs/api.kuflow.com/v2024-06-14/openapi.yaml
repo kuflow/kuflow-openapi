@@ -1003,14 +1003,14 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /process-items/{id}/task/data/~actions/download-webform-as-document:
+  /process-items/{id}/task/data/~actions/download-webforms-as-document:
     get:
       summary: Download a Form rendered as PDF or Zip of PDFs (when the element is multiple)
       description: |
         Given a task, generate a PDF from a Form type element with the data filled in, if any. If there are multiple form values, they are packed into a ZIP.
 
         Important!: To use this feature, please contact to kuflow@kuflow.com
-      operationId: downloadProcessItemTaskDataWebformAsDocument
+      operationId: downloadProcessItemTaskDataWebformsAsDocument
       tags:
         - apiRestExternalV20240614ProcessItems
         - processItem
