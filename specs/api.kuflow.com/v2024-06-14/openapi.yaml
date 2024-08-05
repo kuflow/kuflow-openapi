@@ -2002,6 +2002,7 @@ components:
             task:
               $ref: "#/components/schemas/ProcessItemTask"
           required:
+            - id
             - type
             - processId
 
