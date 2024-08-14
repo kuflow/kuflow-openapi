@@ -1908,6 +1908,8 @@ components:
               format: uuid
             task:
               $ref: "#/components/schemas/ProcessItemTaskPageItem"
+            message:
+              $ref: "#/components/schemas/ProcessItemMessagePageItem"
           required:
             - id
             - type
@@ -1922,9 +1924,16 @@ components:
         taskDefinition:
           $ref: "#/components/schemas/TaskDefinitionSummary"
       required:
-        - id
         - state
         - taskDefinition
+
+    ProcessItemMessagePageItem:
+      type: object
+      properties:
+        text:
+          type: string
+        dataStructureDataDefinitionCode:
+          type: string
 
     ProcessItemCreateParams:
       type: object
@@ -1945,6 +1954,8 @@ components:
           format: email
         task:
           $ref: "#/components/schemas/ProcessItemTaskCreateParams"
+        message:
+          $ref: "#/components/schemas/ProcessItemMessageCreateParams"
       required:
         - type
         - processId
@@ -1958,6 +1969,16 @@ components:
           $ref: "#/components/schemas/JsonValue"
       required:
         - taskDefinitionCode
+
+    ProcessItemMessageCreateParams:
+      type: object
+      properties:
+        text:
+          type: string
+        data:
+          $ref: "#/components/schemas/JsonValue"
+        dataStructureDataDefinitionCode:
+          type: string
 
     ProcessItemTaskDataUpdateParams:
       type: object
@@ -2001,6 +2022,8 @@ components:
               format: uuid
             task:
               $ref: "#/components/schemas/ProcessItemTask"
+            message:
+              $ref: "#/components/schemas/ProcessItemMessage"
           required:
             - id
             - type
@@ -2022,6 +2045,16 @@ components:
       required:
         - state
         - taskDefinition
+
+    ProcessItemMessage:
+      type: object
+      properties:
+        text:
+          type: string
+        data:
+          $ref: "#/components/schemas/JsonValue"
+        dataStructureDataDefinitionCode:
+          type: string
 
     ProcessItemTaskAppendLogParams:
       type: object
