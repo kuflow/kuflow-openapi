@@ -571,12 +571,15 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /processes/{id}/entity/~actions/upload-document:
+  /processes/{id}/~actions/upload-document:
     post:
-      summary: Upload an entity document
+      summary: Upload a temporal document into the process that later on must be linked with a process domain resource
       description: |
-        Save a document in the process to later be linked into the JSON data.
-      operationId: uploadProcessEntityDocument
+        Upload a temporal document into the process that later on must be linked with a process domain resource.
+        
+        Documents uploaded with this API will be deleted after 24 hours as long as they have not been linked to a
+        process or process item..
+      operationId: uploadProcessDocument
       tags:
         - apiRestExternalV20240614Processes
         - process
@@ -594,15 +597,6 @@ paths:
           required: true
           schema:
             type: string
-        - name: schemaPath
-          description: |
-            JSON Schema path related to the document. The uploaded document will be validated by the passed schema path.
-            
-            ie: "#/properties/file", "#/definitions/UserType/name"
-          in: query
-          required: true
-          schema:
-            type: string
       requestBody:
         description: Document to save.
         required: true
@@ -614,7 +608,7 @@ paths:
         x-ms-requestBody-name: file
       responses:
         "200":
-          description: Save document response
+          description: Document reference
           content:
             application/json:
               schema:
@@ -622,11 +616,11 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /processes/{id}/entity/~actions/download-document:
+  /processes/{id}/~actions/download-document:
     get:
-      summary: Download entity document
-      description: Given a process and a documentUri, download a document.
-      operationId: downloadProcessEntityDocument
+      summary: Download document
+      description: Given a document uri download a document.
+      operationId: downloadProcessDocument
       tags:
         - apiRestExternalV20240614Processes
         - process
@@ -922,84 +916,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ProcessItem"
-        default:
-          $ref: "#/components/responses/DefaultError"
-
-  /process-items/{id}/task/data/~actions/upload-document:
-    post:
-      summary: Upload a document associated with the process item task data
-      description: |
-        Save a document in the task to later be linked into the JSON data.
-      operationId: uploadProcessItemTaskDataDocument
-      tags:
-        - apiRestExternalV20240614ProcessItems
-        - processItem
-      parameters:
-        - $ref: "#/components/parameters/IdPathParam"
-        - name: fileContentType
-          description: Document content type
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: fileName
-          description: Document name
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: schemaPath
-          description: |
-            JSON Schema path related to the document. The uploaded document will be validated by the passed schema path.
-            
-            ie: "#/properties/file", "#/definitions/UserType/name"
-          in: query
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Document to save.
-        required: true
-        content:
-          application/octet-stream:
-            schema:
-              type: string
-              format: binary
-        x-ms-requestBody-name: file
-      responses:
-        "200":
-          description: Save document response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/DocumentReference"
-        default:
-          $ref: "#/components/responses/DefaultError"
-
-  /process-items/{id}/task/data/~actions/download-document:
-    get:
-      summary: Download document
-      description: Given a task, download a document from a json form data.
-      operationId: downloadProcessItemTaskDataDocument
-      tags:
-        - apiRestExternalV20240614ProcessItems
-        - processItem
-      parameters:
-        - $ref: "#/components/parameters/IdPathParam"
-        - name: documentUri
-          description: Document URI to download.
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Document requested
-          content:
-            "application/octet-stream":
-              schema:
-                type: string
-                format: binary
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -1509,12 +1425,6 @@ components:
     DocumentReference:
       type: object
       properties:
-        schemaPath:
-          type: string
-          description: |
-            JSON Schema path related to the document. The uploaded document will be validated by the passed schema path.
-
-            ie: "#/properties/file", "#/definitions/UserType/name"
         documentUri:
           type: string
           description: |
@@ -1522,7 +1432,6 @@ components:
             
             Example: `kuflow-file:uri=xxx-yyy-zzz;type=application/json;size=500;name=file.json;`
       required:
-        - schemaPath
         - documentUri
 
     Authentication:
