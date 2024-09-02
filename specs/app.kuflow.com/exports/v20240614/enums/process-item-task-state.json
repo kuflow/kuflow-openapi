@@ -1,7 +1,7 @@
 {
   "$id": "https://raw.githubusercontent.com/kuflow/kuflow-openapi/main/specs/app.kuflow.com/exports/v20240614/enums/proces-item-task-state.json",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "javaType": "com.kuflow.api.export.v20240614.resource.enumeration.ProcessItemTaskState",
+  "javaType": "com.kuflow.server.gw.temporal.export.v20240614.resource.enumeration.ProcessItemTaskState",
   "type": "string",
   "enum": ["READY", "CLAIMED", "COMPLETED", "CANCELLED"]
 }
