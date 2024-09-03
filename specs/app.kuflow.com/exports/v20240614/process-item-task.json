@@ -3,14 +3,6 @@
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "type": "object",
   "properties": {
-    "id": {
-      "type": "string",
-      "format": "uuid"
-    },
-    "tenantId": {
-      "type": "string",
-      "format": "uuid"
-    },
     "state": {
       "$ref": "enums/process-item-task-state.json"
     },
@@ -31,5 +23,5 @@
       "$ref": "json-data.json"
     }
   },
-  "required": ["id", "tenantId", "state", "taskDefinition"]
+  "required": ["state", "taskDefinition"]
 }

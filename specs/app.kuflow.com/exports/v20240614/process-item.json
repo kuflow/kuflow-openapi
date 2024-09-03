@@ -19,6 +19,9 @@
     },
     "task": {
       "$ref": "process-item-task.json"
+    },
+    "message": {
+      "$ref": "process-item-message.json"
     }
   },
   "required": ["id", "type", "tenantId"]
