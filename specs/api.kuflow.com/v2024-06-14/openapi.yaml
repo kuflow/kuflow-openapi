@@ -1352,6 +1352,8 @@ components:
         - move
         - copy
         - test
+      x-ms-enum:
+        modelAsString: false
 
     DefaultError:
       description: Default error
