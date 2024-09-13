@@ -1841,6 +1841,7 @@ components:
       properties:
         text:
           type: string
+          description: Message text in Markdown format according to the specification https://spec.commonmark.org/
         dataStructureDataDefinitionCode:
           type: string
 
@@ -1884,6 +1885,7 @@ components:
       properties:
         text:
           type: string
+          description: Message text in Markdown format according to the specification https://spec.commonmark.org/
         data:
           $ref: "#/components/schemas/JsonValue"
         dataStructureDataDefinitionCode:
@@ -1960,6 +1962,7 @@ components:
       properties:
         text:
           type: string
+          description: Message text in Markdown format according to the specification https://spec.commonmark.org/
         data:
           $ref: "#/components/schemas/JsonValue"
         dataStructureDataDefinitionCode:
