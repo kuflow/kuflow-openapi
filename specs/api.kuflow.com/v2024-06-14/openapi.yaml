@@ -199,6 +199,39 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
+  /tenants:
+    get:
+      summary: Find all accessible Tenants
+      description: |
+        List all the Tenants that the credentials used has access to.
+
+        Available sort query values: id, name
+      operationId: findTenants
+      tags:
+        - apiRestExternalV20240614Tenants
+        - tenant
+      parameters:
+        - $ref: "#/components/parameters/SizeQueryParam"
+        - $ref: "#/components/parameters/PageQueryParam"
+        - $ref: "#/components/parameters/SortQueryParam"
+        - name: tenantId
+          description: Filter by an array of tenant ids.
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+      responses:
+        "200":
+          description: Tenants found paginated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantPage"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
   /tenant-users:
     get:
       summary: Find all accessible Tenant Users
@@ -1573,6 +1606,30 @@ components:
         name:
           type: string
 
+    TenantPage:
+      allOf:
+        - $ref: "#/components/schemas/Page"
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: "#/components/schemas/TenantPageItem"
+          required:
+            - content
+
+    TenantPageItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+      required:
+        - id
+        - name
+
     TenantUser:
       allOf:
         - $ref: "#/components/schemas/AbstractAudited"
@@ -2186,6 +2243,10 @@ components:
               type: string
               minLength: 1
               maxLength: 4000
+            sourceType:
+              $ref: "#/components/schemas/RobotSourceType"
+            sourceFile:
+              $ref: "#/components/schemas/RobotSourceFile"
             tenantId:
               description: Tenant ID.
               type: string
@@ -2194,6 +2255,8 @@ components:
             - id
             - code
             - name
+            - sourceType
+            - sourceFile
             - tenantId
 
     Robot:
