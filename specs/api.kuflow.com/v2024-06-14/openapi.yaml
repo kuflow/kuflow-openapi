@@ -62,6 +62,12 @@ tags:
       description: Find out more about our principal model.
       url: "https://docs.kuflow.com/fine-grained-concepts/users-groups-roles"
     x-displayName: Principal
+  - name: tenant
+    description: Operations about tenants.
+    externalDocs:
+      description: Find out more about our tenant model.
+      url: "https://docs.kuflow.com"
+    x-displayName: Tenant
   - name: tenantUser
     description: Operations about tenant users.
     externalDocs:
@@ -109,6 +115,7 @@ x-tagGroups:
   - name: General
     tags:
       - principal
+      - tenant
       - tenantUser
       - process
       - processItem
@@ -214,14 +221,7 @@ paths:
         - $ref: "#/components/parameters/SizeQueryParam"
         - $ref: "#/components/parameters/PageQueryParam"
         - $ref: "#/components/parameters/SortQueryParam"
-        - name: tenantId
-          description: Filter by an array of tenant ids.
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-              format: uuid
+        - $ref: "#/components/parameters/TenantIdQueryParam"
       responses:
         "200":
           description: Tenants found paginated.
@@ -229,6 +229,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TenantPage"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /tenants/{id}:
+    get:
+      summary: Get a Tenant by ID
+      description: Returns the requested Tenant when has access to do it.
+      operationId: retrieveTenant
+      tags:
+        - apiRestExternalV20240614Tenants
+        - tenant
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tenant"
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -1605,6 +1625,33 @@ components:
           $ref: "#/components/schemas/PrincipalType"
         name:
           type: string
+
+    TenantPricingPlan:
+      description: Tenant pricing plan
+      type: string
+      enum:
+        - FREE
+        - PREMIUM
+        - UNLIMITED
+      x-ms-enum:
+        modelAsString: false
+
+    Tenant:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+            plan:
+              $ref: "#/components/schemas/TenantPricingPlan"
+          required:
+            - id
+            - name
+            - plan
 
     TenantPage:
       allOf:
