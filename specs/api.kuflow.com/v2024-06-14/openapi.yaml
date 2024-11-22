@@ -2337,14 +2337,6 @@ components:
         - PYTHON
         - PYTHON_PIP
         - NODEJS
-      x-ms-enum:
-        values:
-          - value: PYTHON
-            name: Python
-          - value: PYTHON_PIP
-            name: PythonPip
-          - value: NODEJS
-            name: NodeJS
 
     RobotAssetPlatform:
       type: string
@@ -2353,14 +2345,6 @@ components:
         - WINDOWS
         - MAC_OS
         - LINUX
-      x-ms-enum:
-        values:
-          - value: WINDOWS
-            name: Windows
-          - value: MAC_OS
-            name: MacOS
-          - value: LINUX
-            name: Linux
 
     RobotAssetArchitecture:
       type: string
@@ -2368,12 +2352,6 @@ components:
       enum:
         - X86_32
         - X86_64
-      x-ms-enum:
-        values:
-          - value: X86_32
-            name: X86Bit32
-          - value: X86_64
-            name: X86Bit64
       x-enum-varnames:
         - X86_32
         - X86_64
