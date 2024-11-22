@@ -739,7 +739,7 @@ paths:
               $ref: "#/components/schemas/ProcessItemTaskState"
           style: form
           explode: true
-        - name: taskDefinitionCode
+        - name: processItemDefinitionCode
           description:  Filter by an array of task definition codes.
           in: query
           schema:
@@ -1405,8 +1405,6 @@ components:
         - move
         - copy
         - test
-      x-ms-enum:
-        modelAsString: false
 
     DefaultError:
       description: Default error
@@ -1454,8 +1452,6 @@ components:
         - RUNNING
         - COMPLETED
         - CANCELLED
-      x-ms-enum:
-        modelAsString: false
 
     ProcessItemType:
       description: Process Item Type
@@ -1463,8 +1459,7 @@ components:
       enum:
         - TASK
         - MESSAGE
-      x-ms-enum:
-        modelAsString: false
+        - THREAD
 
     ProcessItemTaskState:
       description: Process Item Task state
@@ -1474,8 +1469,6 @@ components:
         - CLAIMED
         - COMPLETED
         - CANCELLED
-      x-ms-enum:
-        modelAsString: false
 
     DocumentReference:
       type: object
@@ -1513,8 +1506,6 @@ components:
       enum:
         - ENGINE_TOKEN
         - ENGINE_CERTIFICATE
-      x-ms-enum:
-        modelAsString: false
 
     AuthenticationEngineToken:
       type: object
@@ -1584,8 +1575,6 @@ components:
         - USER
         - APPLICATION
         - SYSTEM
-      x-ms-enum:
-        modelAsString: false
 
     PrincipalUser:
       type: object
@@ -1633,8 +1622,6 @@ components:
         - FREE
         - PREMIUM
         - UNLIMITED
-      x-ms-enum:
-        modelAsString: false
 
     Tenant:
       allOf:
@@ -1755,8 +1742,8 @@ components:
               format: uuid
             state:
               $ref: "#/components/schemas/ProcessState"
-            processDefinition:
-              $ref: "#/components/schemas/ProcessDefinitionSummary"
+            processDefinitionRef:
+              $ref: "#/components/schemas/ProcessDefinitionRef"
             initiatorId:
               description: Principal ID.
               type: string
@@ -1768,7 +1755,7 @@ components:
           required:
             - id
             - state
-            - processDefinition
+            - processDefinitionRef
             - initiator
             - tenantId
 
@@ -1831,8 +1818,8 @@ components:
               format: uuid
             state:
               $ref: "#/components/schemas/ProcessState"
-            processDefinition:
-              $ref: "#/components/schemas/ProcessDefinitionSummary"
+            processDefinitionRef:
+              $ref: "#/components/schemas/ProcessDefinitionRef"
             metadata:
               $ref: "#/components/schemas/JsonValue"
             entity:
@@ -1870,24 +1857,6 @@ components:
             type: string
             format: uuid
 
-    ProcessDefinitionSummary:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        version:
-          type: string
-          format: uuid
-        name:
-          type: string
-          minLength: 1
-          maxLength: 50
-      required:
-        - id
-        - version
-        - name
-
     ProcessItemPage:
       allOf:
         - $ref: "#/components/schemas/Page"
@@ -1921,6 +1890,8 @@ components:
               description: Tenant ID.
               type: string
               format: uuid
+            processItemDefinitionRef:
+              $ref: "#/components/schemas/ProcessItemDefinitionRef"
             task:
               $ref: "#/components/schemas/ProcessItemTaskPageItem"
             message:
@@ -1936,11 +1907,8 @@ components:
       properties:
         state:
           $ref: "#/components/schemas/ProcessItemTaskState"
-        taskDefinition:
-          $ref: "#/components/schemas/TaskDefinitionSummary"
       required:
         - state
-        - taskDefinition
 
     ProcessItemMessagePageItem:
       type: object
@@ -1968,6 +1936,8 @@ components:
         ownerEmail:
           type: string
           format: email
+        processItemDefinitionCode:
+          type: string
         task:
           $ref: "#/components/schemas/ProcessItemTaskCreateParams"
         message:
@@ -1979,12 +1949,8 @@ components:
     ProcessItemTaskCreateParams:
       type: object
       properties:
-        taskDefinitionCode:
-          type: string
         data:
           $ref: "#/components/schemas/JsonValue"
-      required:
-        - taskDefinitionCode
 
     ProcessItemMessageCreateParams:
       type: object
@@ -2037,6 +2003,8 @@ components:
               description: Tenant ID.
               type: string
               format: uuid
+            processItemDefinitionRef:
+              $ref: "#/components/schemas/ProcessItemDefinitionRef"
             task:
               $ref: "#/components/schemas/ProcessItemTask"
             message:
@@ -2051,8 +2019,6 @@ components:
       properties:
         state:
           $ref: "#/components/schemas/ProcessItemTaskState"
-        taskDefinition:
-          $ref: "#/components/schemas/TaskDefinitionSummary"
         data:
           $ref: "#/components/schemas/JsonValue"
         logs:
@@ -2111,10 +2077,21 @@ components:
         - INFO
         - WARN
         - ERROR
-      x-ms-enum:
-        modelAsString: false
 
-    TaskDefinitionSummary:
+    ProcessDefinitionRef:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        version:
+          type: string
+          format: uuid
+      required:
+        - id
+        - version
+
+    ProcessItemDefinitionRef:
       type: object
       properties:
         id:
@@ -2125,15 +2102,10 @@ components:
           format: uuid
         code:
           type: string
-        name:
-          type: string
-          minLength: 1
-          maxLength: 50
       required:
         - id
         - version
         - code
-        - name
 
     Worker:
       allOf:
@@ -2251,8 +2223,6 @@ components:
       enum:
         - READY
         - DEFAULT
-      x-ms-enum:
-        modelAsString: false
 
     RobotPage:
       allOf:
@@ -2359,8 +2329,6 @@ components:
       enum:
         - PACKAGE
         - UNKNOWN
-      x-ms-enum:
-        modelAsString: false
 
     RobotAssetType:
       type: string
@@ -2370,7 +2338,6 @@ components:
         - PYTHON_PIP
         - NODEJS
       x-ms-enum:
-        modelAsString: false
         values:
           - value: PYTHON
             name: Python
@@ -2387,7 +2354,6 @@ components:
         - MAC_OS
         - LINUX
       x-ms-enum:
-        modelAsString: false
         values:
           - value: WINDOWS
             name: Windows
@@ -2403,7 +2369,6 @@ components:
         - X86_32
         - X86_64
       x-ms-enum:
-        modelAsString: false
         values:
           - value: X86_32
             name: X86Bit32
@@ -2475,8 +2440,6 @@ components:
         - PROCESS.STATE_CHANGED
         - PROCESS_ITEM.CREATED
         - PROCESS_ITEM.TASK_STATE_CHANGED
-      x-ms-enum:
-        modelAsString: false
       x-enum-varnames:
         - PROCESS__CREATED
         - PROCESS__STATE_CHANGED
@@ -2551,10 +2514,10 @@ components:
           format: uuid
         processItemType:
           $ref: "#/components/schemas/ProcessItemType"
-        processItemTaskCode:
-          type: string
         processItemState:
           $ref: "#/components/schemas/ProcessItemTaskState"
+        processItemDefinitionCode:
+          type: string
       required:
         - processId
         - processItemId
@@ -2582,16 +2545,16 @@ components:
           format: uuid
         processItemType:
           $ref: "#/components/schemas/ProcessItemType"
-        processItemTaskCode:
-          type: string
         processItemState:
           $ref: "#/components/schemas/ProcessItemTaskState"
+        processItemDefinitionCode:
+          type: string
       required:
         - processId
         - processItemId
         - processItemType
-        - processItemTaskCode
         - processItemState
+        - processItemDefinitionCode
 
   responses:
     DefaultError:

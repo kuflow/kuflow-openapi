@@ -3,5 +3,5 @@
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "javaType": "com.kuflow.server.gw.temporal.workflow.export.v20240614.resource.enumeration.ProcessItemType",
   "type": "string",
-  "enum": ["TASK", "MESSAGE"]
+  "enum": ["TASK", "MESSAGE", "THREAD"]
 }

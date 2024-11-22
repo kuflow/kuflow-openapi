@@ -20,15 +20,15 @@
     "state": {
       "$ref": "enums/process-state.json"
     },
-    "processDefinition": {
-      "$ref": "process-definition-summary.json"
+    "processDefinitionRef": {
+      "$ref": "process-definition-ref.json"
     },
     "initiatorId": {
       "type": "string",
       "format": "uuid"
     },
     "relatedProcess": {
-      "$ref": "process-summary.json"
+      "$ref": "process-ref.json"
     },
     "processItems": {
       "type": "array",

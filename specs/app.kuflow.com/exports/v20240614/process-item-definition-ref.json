@@ -1,5 +1,5 @@
 {
-  "$id": "https://raw.githubusercontent.com/kuflow/kuflow-openapi/main/specs/app.kuflow.com/exports/v20240614/process-definition-summary.json",
+  "$id": "https://raw.githubusercontent.com/kuflow/kuflow-openapi/main/specs/app.kuflow.com/exports/v20240614/process-item-definition-ref.json",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "type": "object",
   "properties": {
@@ -7,13 +7,13 @@
       "type": "string",
       "format": "uuid"
     },
-    "name": {
-      "type": "string"
-    },
     "version": {
       "type": "string",
       "format": "uuid"
+    },
+    "code": {
+      "type": "string"
     }
   },
-  "required": ["id", "name", "version"]
+  "required": ["id", "version", "code"]
 }

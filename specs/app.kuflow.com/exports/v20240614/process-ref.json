@@ -1,0 +1,19 @@
+{
+  "$id": "https://raw.githubusercontent.com/kuflow/kuflow-openapi/main/specs/app.kuflow.com/exports/v20240614/process-ref.json",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "processDefinitionRef": {
+      "$ref": "process-definition-ref.json"
+    },
+    "initiatorId": {
+      "type": "string",
+      "format": "uuid"
+    }
+  },
+  "required": ["id", "processDefinitionRef", "initiatorId"]
+}

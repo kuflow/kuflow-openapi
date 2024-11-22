@@ -6,9 +6,6 @@
     "state": {
       "$ref": "enums/process-item-task-state.json"
     },
-    "taskDefinition": {
-      "$ref": "task-definition-summary.json"
-    },
     "ownerId": {
       "type": "string",
       "format": "uuid"
@@ -23,5 +20,5 @@
       "$ref": "json-data.json"
     }
   },
-  "required": ["state", "taskDefinition"]
+  "required": ["state"]
 }

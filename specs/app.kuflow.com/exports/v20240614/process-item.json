@@ -17,6 +17,13 @@
       "type": "string",
       "format": "uuid"
     },
+    "processItemThreadId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "processItemDefinitionRef": {
+      "$ref": "process-item-definition-ref.json"
+    },
     "task": {
       "$ref": "process-item-task.json"
     },
