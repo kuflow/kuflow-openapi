@@ -110,6 +110,12 @@ tags:
       description: Find out more about our authentication process.
       url: "https://docs.kuflow.com/developers/authentication"
     x-displayName: Authentication
+  - name: vault
+    description: Operations for handling vault operations.
+    externalDocs:
+      description: Find out more about our vault operation.
+      url: "https://docs.kuflow.com/developers/vault" # TODO ADD DOCUMENTATION
+    x-displayName: Vault
 
 x-tagGroups:
   - name: General
@@ -121,6 +127,9 @@ x-tagGroups:
       - processItem
       - worker
       - robot
+  - name: Vault
+    tags:
+      - vault
   - name: Authentication management
     tags:
       - authentication
@@ -151,6 +160,56 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Authentication"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /vault/codec/~actions/encode:
+    post:
+      summary: Encode the requested payloads.
+      operationId: codecEncode
+      tags:
+        - apiRestExternalV20240614Vaults
+        - vault
+      requestBody:
+        description: Payloads to encode.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VaultCodecPayloads"
+        x-ms-requestBody-name: vaultCodecEncodeParams
+      responses:
+        "200":
+          description: Payloads encoded.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VaultCodecPayloads"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /vault/codec/~actions/decode:
+    post:
+      summary: Decode the requested payloads.
+      operationId: codecDecode
+      tags:
+        - apiRestExternalV20240614Vaults
+        - vault
+      requestBody:
+        description: Payloads to decode.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VaultCodecPayloads"
+        x-ms-requestBody-name: vaultCodecDecodeParams
+      responses:
+        "200":
+          description: Payload decoded.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VaultCodecPayloads"
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -2533,6 +2592,33 @@ components:
         - processItemType
         - processItemState
         - processItemDefinitionCode
+
+    VaultCodecPayload:
+      type: object
+      properties:
+        metadata:
+          description: Payload data.
+          type: object
+          additionalProperties:
+            type: string
+            format: byte
+        data:
+          description: Payload data
+          type: string
+          format: byte
+      required:
+        - data
+
+    VaultCodecPayloads:
+      type: object
+      properties:
+        payloads:
+          type: array
+          items:
+            $ref: "#/components/schemas/VaultCodecPayload"
+          minItems: 1
+      required:
+        - payloads
 
   responses:
     DefaultError:
