@@ -113,8 +113,8 @@ tags:
   - name: vault
     description: Operations for handling vault operations.
     externalDocs:
-      description: Find out more about our vault operation.
-      url: "https://docs.kuflow.com/developers/vault" # TODO ADD DOCUMENTATION
+      description: Find out more about our vault operations.
+      url: "https://docs.kuflow.com"
     x-displayName: Vault
 
 x-tagGroups:
