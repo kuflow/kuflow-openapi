@@ -2612,6 +2612,10 @@ components:
     VaultCodecPayloads:
       type: object
       properties:
+        tenantId:
+          type: string
+          format: uuid
+          description: Tenant id. This attribute is required when an OAuth2 authentication is used.
         payloads:
           type: array
           items:
