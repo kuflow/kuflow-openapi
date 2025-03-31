@@ -110,12 +110,12 @@ tags:
       description: Find out more about our authentication process.
       url: "https://docs.kuflow.com/developers/authentication"
     x-displayName: Authentication
-  - name: vault
-    description: Operations for handling vault operations.
+  - name: kms
+    description: Operations for handling Key Management System operations.
     externalDocs:
-      description: Find out more about our vault operations.
+      description: Find out more about our Key Management System operations.
       url: "https://docs.kuflow.com"
-    x-displayName: Vault
+    x-displayName: kms
 
 x-tagGroups:
   - name: General
@@ -127,9 +127,9 @@ x-tagGroups:
       - processItem
       - worker
       - robot
-  - name: Vault
+  - name: Key Management System
     tags:
-      - vault
+      - kms
   - name: Authentication management
     tags:
       - authentication
@@ -163,53 +163,22 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /vault/codec/~actions/encode:
-    post:
-      summary: Encode the requested payloads.
-      operationId: codecEncode
+  /kms/keys/{id}:
+    get:
+      summary: Get the requested key id.
+      operationId: retrieveKmsKey
       tags:
-        - apiRestExternalV20240614Vaults
-        - vault
-      requestBody:
-        description: Payloads to encode.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/VaultCodecPayloads"
-        x-ms-requestBody-name: vaultCodecEncodeParams
+        - apiRestExternalV20240614Kms
+        - kms
+      parameters:
+        - $ref: "#/components/parameters/IdStringPathParam"
       responses:
         "200":
-          description: Payloads encoded.
+          description: KMS Key.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/VaultCodecPayloads"
-        default:
-          $ref: "#/components/responses/DefaultError"
-
-  /vault/codec/~actions/decode:
-    post:
-      summary: Decode the requested payloads.
-      operationId: codecDecode
-      tags:
-        - apiRestExternalV20240614Vaults
-        - vault
-      requestBody:
-        description: Payloads to decode.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/VaultCodecPayloads"
-        x-ms-requestBody-name: vaultCodecDecodeParams
-      responses:
-        "200":
-          description: Payload decoded.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/VaultCodecPayloads"
+                $ref: "#/components/schemas/KmsKey"
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -1247,6 +1216,15 @@ components:
       schema:
         type: string
         format: uuid
+      x-ms-parameter-location: method
+
+    IdStringPathParam:
+      name: id
+      description: The resource ID.
+      in: path
+      required: true
+      schema:
+        type: string
       x-ms-parameter-location: method
 
     SizeQueryParam:
@@ -2593,36 +2571,19 @@ components:
         - processItemState
         - processItemDefinitionCode
 
-    VaultCodecPayload:
+    KmsKey:
       type: object
       properties:
-        metadata:
-          description: Payload data.
-          type: object
-          additionalProperties:
-            type: string
-            format: byte
-        data:
-          description: Payload data
+        id:
+          description: Key Id
+          type: string
+        value:
+          description: Encryption/decryption key
           type: string
           format: byte
       required:
-        - data
-
-    VaultCodecPayloads:
-      type: object
-      properties:
-        tenantId:
-          type: string
-          format: uuid
-          description: Tenant id. This attribute is required when an OAuth2 authentication is used.
-        payloads:
-          type: array
-          items:
-            $ref: "#/components/schemas/VaultCodecPayload"
-          minItems: 1
-      required:
-        - payloads
+        - id
+        - value
 
   responses:
     DefaultError:
