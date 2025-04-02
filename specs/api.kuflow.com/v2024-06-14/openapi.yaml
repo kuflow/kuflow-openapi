@@ -163,7 +163,7 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /kms/keys/{id}:
+  /kms/keys/{keyId}:
     get:
       summary: Get the requested key id.
       operationId: retrieveKmsKey
@@ -171,7 +171,7 @@ paths:
         - apiRestExternalV20240614Kms
         - kms
       parameters:
-        - $ref: "#/components/parameters/IdStringPathParam"
+        - $ref: "#/components/parameters/KeyIdPathParam"
       responses:
         "200":
           description: KMS Key.
@@ -1218,8 +1218,8 @@ components:
         format: uuid
       x-ms-parameter-location: method
 
-    IdStringPathParam:
-      name: id
+    KeyIdPathParam:
+      name: keyId
       description: The resource ID.
       in: path
       required: true
