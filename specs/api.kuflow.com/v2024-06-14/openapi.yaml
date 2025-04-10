@@ -1697,14 +1697,6 @@ components:
         name:
           type: string
 
-    GroupType:
-      type: string
-      enum:
-        - TENANT_OWNER
-        - TENANT_ADMINISTRATOR
-        - TENANT_USER
-        - OTHERS
-
     GroupPage:
       allOf:
         - $ref: "#/components/schemas/Page"
@@ -1723,8 +1715,6 @@ components:
         id:
           type: string
           format: uuid
-        type:
-          $ref: "#/components/schemas/GroupType"
         name:
           type: string
         tenantId:
