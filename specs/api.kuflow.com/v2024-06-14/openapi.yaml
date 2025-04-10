@@ -255,12 +255,6 @@ paths:
         - $ref: "#/components/parameters/SizeQueryParam"
         - $ref: "#/components/parameters/PageQueryParam"
         - $ref: "#/components/parameters/SortQueryParam"
-        - name: type
-          description: Filter groups by type.
-          in: query
-          schema:
-            $ref: "#/components/schemas/GroupType"
-        - $ref: "#/components/parameters/GroupIdQueryParam"
         - $ref: "#/components/parameters/TenantIdQueryParam"
         - $ref: "#/components/parameters/PrincipalIdQueryParam"
       responses:
