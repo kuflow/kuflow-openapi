@@ -1721,6 +1721,10 @@ components:
           description: Tenant ID.
           type: string
           format: uuid
+      required:
+        - id
+        - name
+        - tenantId
 
     TenantPricingPlan:
       description: Tenant pricing plan
