@@ -79,7 +79,7 @@ tags:
     externalDocs:
       description: Find out more about our principal model.
       url: "https://docs.kuflow.com"
-    x-displayName: Principal
+    x-displayName: Group
   - name: process
     description: Operations about processes.
     externalDocs:
