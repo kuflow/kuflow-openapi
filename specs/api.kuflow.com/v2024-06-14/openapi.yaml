@@ -1352,7 +1352,6 @@ components:
         type: string
         format: uuid
       style: form
-      explode: true
       x-ms-parameter-location: method
 
     RobotContextQueryParam:
