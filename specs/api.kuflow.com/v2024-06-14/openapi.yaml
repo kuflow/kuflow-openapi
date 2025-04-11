@@ -74,6 +74,12 @@ tags:
       description: Find out more about our principal model.
       url: "https://docs.kuflow.com"
     x-displayName: Tenant User
+  - name: group
+    description: Operations about user groups.
+    externalDocs:
+      description: Find out more about our principal model.
+      url: "https://docs.kuflow.com"
+    x-displayName: Group
   - name: process
     description: Operations about processes.
     externalDocs:
@@ -231,6 +237,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Principal"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /groups:
+    get:
+      summary: Find all accessible Groups
+      description: |
+        List all the Groups that have been created and the used credentials has access.
+
+        Available sort query values: id, name
+      operationId: findGroups
+      tags:
+        - apiRestExternalV20240614Groups
+        - group
+      parameters:
+        - $ref: "#/components/parameters/SizeQueryParam"
+        - $ref: "#/components/parameters/PageQueryParam"
+        - $ref: "#/components/parameters/SortQueryParam"
+        - $ref: "#/components/parameters/TenantIdQueryParam"
+        - $ref: "#/components/parameters/PrincipalIdQueryParam"
+      responses:
+        "200":
+          description: Groups found paginated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupPage"
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -1310,6 +1343,18 @@ components:
       explode: true
       x-ms-parameter-location: method
 
+    PrincipalIdQueryParam:
+      name: principalId
+      description: Filter by principalId.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+      style: form
+      explode: true
+      x-ms-parameter-location: method
+
     RobotContextQueryParam:
       name: filterContext
       description: Filter by the specified context.
@@ -1651,6 +1696,35 @@ components:
           $ref: "#/components/schemas/PrincipalType"
         name:
           type: string
+
+    GroupPage:
+      allOf:
+        - $ref: "#/components/schemas/Page"
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: "#/components/schemas/GroupPageItem"
+          required:
+            - content
+
+    GroupPageItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        tenantId:
+          description: Tenant ID.
+          type: string
+          format: uuid
+      required:
+        - id
+        - name
+        - tenantId
 
     TenantPricingPlan:
       description: Tenant pricing plan
