@@ -257,6 +257,7 @@ paths:
         - $ref: "#/components/parameters/SortQueryParam"
         - $ref: "#/components/parameters/TenantIdQueryParam"
         - $ref: "#/components/parameters/PrincipalIdQueryParam"
+        - $ref: "#/components/parameters/GroupIdQueryParam"
       responses:
         "200":
           description: Groups found paginated.
