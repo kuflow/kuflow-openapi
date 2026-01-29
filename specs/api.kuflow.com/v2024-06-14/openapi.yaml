@@ -92,6 +92,12 @@ tags:
       description: Find out more about our process item model.
       url: "https://docs.kuflow.com"
     x-displayName: Process Item
+  - name: businessArtifact
+    description: Operations about business artifacts.
+    externalDocs:
+      description: Find out more about our business artifact model.
+      url: "https://docs.kuflow.com"
+    x-displayName: Business Artifact
   - name: worker
     description: Operations about workers.
     externalDocs:
@@ -131,6 +137,7 @@ x-tagGroups:
       - tenantUser
       - process
       - processItem
+      - businessArtifact
       - worker
       - robot
   - name: Key Management System
@@ -1068,6 +1075,178 @@ paths:
               schema:
                 type: string
                 format: binary
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /business-artifacts:
+    get:
+      summary: Find all accessible Business Artifacts
+      description: |
+        List all the Business Artifacts that have been created and the credentials has access.
+
+        Available sort query values: id, createdAt, lastModifiedAt
+      operationId: findBusinessArtifacts
+      tags:
+        - apiRestExternalV20240614BusinessArtifacts
+        - businessArtifact
+      parameters:
+        - $ref: "#/components/parameters/SizeQueryParam"
+        - $ref: "#/components/parameters/PageQueryParam"
+        - $ref: "#/components/parameters/SortQueryParam"
+        - $ref: "#/components/parameters/TenantIdQueryParam"
+        - name: businessArtifactDefinitionId
+          description: Filter by an array of business artifact definition ids.
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+          style: form
+          explode: true
+        - name: businessArtifactDefinitionCode
+          description: Filter by an array of business artifact definition codes.
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+      responses:
+        "200":
+          description: Business Artifacts found paginated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessArtifactPage"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+    post:
+      summary: Create a new Business Artifact
+      description: |
+        Creates a Business Artifact.
+
+        If you want the method to be idempotent, please specify the `id` field in the request body.
+      operationId: createBusinessArtifact
+      tags:
+        - apiRestExternalV20240614BusinessArtifacts
+        - businessArtifact
+      requestBody:
+        description: Business Artifact to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BusinessArtifactCreateParams"
+        x-ms-requestBody-name: businessArtifactCreateParams
+      responses:
+        "200":
+          description: Business Artifact already created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessArtifact"
+        "201":
+          description: Business Artifact created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessArtifact"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /business-artifacts/{id}:
+    get:
+      summary: Get a Business Artifact by ID
+      description: Returns the requested Business Artifact when has access to do it.
+      operationId: retrieveBusinessArtifact
+      tags:
+        - apiRestExternalV20240614BusinessArtifacts
+        - businessArtifact
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessArtifact"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+    delete:
+      summary: Delete a Business Artifact by ID
+      description: Deletes the requested Business Artifact.
+      operationId: deleteBusinessArtifact
+      tags:
+        - apiRestExternalV20240614BusinessArtifacts
+        - businessArtifact
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "204":
+          description: Business Artifact deleted
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /business-artifacts/{id}/data:
+    put:
+      summary: Save JSON data
+      description: |
+        Allow to save a JSON data validating that the data follow the related schema. If the data is invalid, then
+        the json is marked as invalid.
+      operationId: updateBusinessArtifactData
+      tags:
+        - apiRestExternalV20240614BusinessArtifacts
+        - businessArtifact
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      requestBody:
+        description: Params used to update the JSON value.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BusinessArtifactDataUpdateParams"
+        x-ms-requestBody-name: businessArtifactDataUpdateParams
+      responses:
+        "200":
+          description: Business Artifact with json data saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessArtifact"
+        default:
+          $ref: "#/components/responses/DefaultError"
+    patch:
+      summary: Patch JSON data
+      description: |
+        Allow to patch a JSON data validating that the data follow the related schema. If the data is invalid, then
+        the json is marked as invalid.
+      operationId: patchBusinessArtifactData
+      tags:
+        - apiRestExternalV20240614BusinessArtifacts
+        - businessArtifact
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      requestBody:
+        description: Params to save the JSON value.
+        required: true
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: "#/components/schemas/JsonPatch"
+        x-ms-requestBody-name: jsonPatch
+      responses:
+        "200":
+          description: Business Artifact with json data saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessArtifact"
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -2188,6 +2367,90 @@ components:
         - WARN
         - ERROR
 
+    BusinessArtifactPage:
+      allOf:
+        - $ref: "#/components/schemas/Page"
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: "#/components/schemas/BusinessArtifactPageItem"
+          required:
+            - content
+
+    BusinessArtifactPageItem:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              description: Business Artifact ID.
+              type: string
+              format: uuid
+            tenantId:
+              description: Tenant ID.
+              type: string
+              format: uuid
+            businessArtifactDefinitionRef:
+              $ref: "#/components/schemas/BusinessArtifactDefinitionRef"
+          required:
+            - id
+            - tenantId
+            - businessArtifactDefinitionRef
+
+    BusinessArtifactCreateParams:
+      description: |
+        Params to create a Business Artifact. Either `businessArtifactDefinitionId` or
+        `businessArtifactDefinitionCode` must be provided.
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        businessArtifactDefinitionId:
+          type: string
+          format: uuid
+        businessArtifactDefinitionCode:
+          type: string
+        data:
+          $ref: "#/components/schemas/JsonValue"
+      anyOf:
+        - required:
+            - businessArtifactDefinitionId
+        - required:
+            - businessArtifactDefinitionCode
+
+    BusinessArtifactDataUpdateParams:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/JsonValue"
+      required:
+        - data
+
+    BusinessArtifact:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              description: Business Artifact ID.
+              type: string
+              format: uuid
+            tenantId:
+              description: Tenant ID.
+              type: string
+              format: uuid
+            businessArtifactDefinitionRef:
+              $ref: "#/components/schemas/BusinessArtifactDefinitionRef"
+            data:
+              $ref: "#/components/schemas/JsonValue"
+          required:
+            - id
+            - tenantId
+            - businessArtifactDefinitionRef
+
     ProcessDefinitionRef:
       type: object
       properties:
@@ -2215,6 +2478,18 @@ components:
       required:
         - id
         - version
+        - code
+
+    BusinessArtifactDefinitionRef:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+      required:
+        - id
         - code
 
     Worker:
