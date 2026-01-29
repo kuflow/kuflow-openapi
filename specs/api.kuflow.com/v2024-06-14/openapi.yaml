@@ -2402,13 +2402,16 @@ components:
     BusinessArtifactCreateParams:
       description: |
         Params to create a Business Artifact. Either `businessArtifactDefinitionId` or
-        `businessArtifactDefinitionCode` must be provided.
+        `businessArtifactDefinitionCode` (with `tenantId`) must be provided.
       type: object
       properties:
         id:
           type: string
           format: uuid
         businessArtifactDefinitionId:
+          type: string
+          format: uuid
+        tenantId:
           type: string
           format: uuid
         businessArtifactDefinitionCode:
@@ -2419,6 +2422,7 @@ components:
         - required:
             - businessArtifactDefinitionId
         - required:
+            - tenantId
             - businessArtifactDefinitionCode
 
     BusinessArtifactDataUpdateParams:
