@@ -1250,6 +1250,57 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
+  /business-artifacts/{id}/~actions/upload-user-action-document:
+    post:
+      summary: Upload and save a document in a user action
+      description: |
+        Allow saving a user action document uploading the content.
+      operationId: uploadBusinessArtifactUserActionDocument
+      tags:
+        - apiRestExternalV20240614BusinessArtifacts
+        - businessArtifact
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - name: fileContentType
+          description: Document content type
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: fileName
+          description: Document name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: userActionValueId
+          description: User action value ID related to de document
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Document to save.
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+        x-ms-requestBody-name: file
+      responses:
+        "200":
+          description: Document Saved in user action.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessArtifact"
+        "304":
+          description: Untouched business artifact
+        default:
+          $ref: "#/components/responses/DefaultError"
+
   /workers:
     post:
       summary: Create or update a worker
