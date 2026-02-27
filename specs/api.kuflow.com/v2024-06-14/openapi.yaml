@@ -1301,6 +1301,81 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
+  /business-artifacts/{id}/~actions/upload-document:
+    post:
+      summary: | 
+        Upload a temporal document into the business artifact that later on must be linked with a business 
+        artifact domain resource
+      description: |
+        Upload a temporal document into the business artifact that later on must be linked with a business artifact 
+        domain resource.
+
+        Documents uploaded with this API will be deleted after 2 hours as long as they have not been linked to a 
+        business artifact.
+      operationId: uploadBusinessArtifactDocument
+      tags:
+        - apiRestExternalV20240614BusinessArtifacts
+        - businessArtifact
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - name: fileContentType
+          description: Document content type
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: fileName
+          description: Document name
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Document to save.
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+        x-ms-requestBody-name: file
+      responses:
+        "200":
+          description: Document reference
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentReference"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /business-artifacts/{id}/~actions/download-document:
+    get:
+      summary: Download document
+      description: Given a document uri download a document.
+      operationId: downloadBusinessArtifactDocument
+      tags:
+        - apiRestExternalV20240614BusinessArtifacts
+        - businessArtifact
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - name: documentUri
+          description: Document URI to download.
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Document requested
+          content:
+            "application/octet-stream":
+              schema:
+                type: string
+                format: binary
+        default:
+          $ref: "#/components/responses/DefaultError"
+
   /workers:
     post:
       summary: Create or update a worker
