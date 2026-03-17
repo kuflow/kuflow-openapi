@@ -1,5 +1,5 @@
 {
-  "$id": "https://app.kuflow.com/exports/v20240614/principal-application.json",
+  "$id": "https://app.kuflow.com/exports/v20240614/principal-api-key.json",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "type": "object",
   "properties": {

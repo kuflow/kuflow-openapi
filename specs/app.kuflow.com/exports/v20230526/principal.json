@@ -15,8 +15,8 @@
     "user": {
       "$ref": "#/definitions/principalUser"
     },
-    "application": {
-      "$ref": "#/definitions/principalApplication"
+    "apiKey": {
+      "$ref": "#/definitions/principalApiKey"
     }
   },
   "required": ["id", "type", "name"],
@@ -33,7 +33,7 @@
         }
       }
     },
-    "principalApplication": {
+    "principalApiKey": {
       "type": "object",
       "properties": {
         "id": {
