@@ -19,8 +19,8 @@
     "user": {
       "$ref": "principal-user.json"
     },
-    "application": {
-      "$ref": "principal-application.json"
+    "apiKey": {
+      "$ref": "principal-api-key.json"
     }
   },
   "required": ["$schema", "id", "type", "name"]
