@@ -497,6 +497,45 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
+  /processes/{id}/~actions/cancel-process-items:
+    post:
+      summary: Cancel Process Items
+      description: |
+        Cancel Process Items in a Process.
+
+        When processItemId query parameters are provided, only those specific
+        process items are cancelled. When omitted, all active process items
+        in the process are cancelled.
+
+        For task process items, tasks in a cancellable state (ready, claimed)
+        are set to 'cancelled'. Already cancelled tasks are treated as a no-op.
+        The Process itself is not affected.
+      operationId: cancelProcessProcessItems
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - name: processItemId
+          description: Optional list of process item IDs to cancel. If omitted, all active process items are cancelled.
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+          style: form
+          explode: true
+      responses:
+        "200":
+          description: Process Items cancelled.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Process"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
   /processes/{id}/~actions/change-initiator:
     post:
       summary: Change process initiator
