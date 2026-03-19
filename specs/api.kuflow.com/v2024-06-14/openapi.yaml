@@ -497,22 +497,35 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /processes/{id}/~actions/cancel-process-item:
+  /processes/{id}/~actions/cancel-process-items:
     post:
       summary: Cancel Process Items
       description: |
-        Cancel all active Process Items in a Process.
+        Cancel Process Items in a Process.
 
-        For task process items, all tasks in a cancellable state (ready, claimed)
-        are set to 'cancelled'. The Process itself is not affected.
+        When processItemId query parameters are provided, only those specific
+        process items are cancelled. When omitted, all active process items
+        in the process are cancelled.
 
-        Process items already in a terminal state are not modified.
-      operationId: cancelProcessProcessItem
+        For task process items, tasks in a cancellable state (ready, claimed)
+        are set to 'cancelled'. Already cancelled tasks are treated as a no-op.
+        The Process itself is not affected.
+      operationId: cancelProcessProcessItems
       tags:
         - apiRestExternalV20240614Processes
         - process
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
+        - name: processItemId
+          description: Optional list of process item IDs to cancel. If omitted, all active process items are cancelled.
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+          style: form
+          explode: true
       responses:
         "200":
           description: Process Items cancelled.
@@ -973,30 +986,6 @@ paths:
       responses:
         "200":
           description: Process Item Task completed
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProcessItem"
-        default:
-          $ref: "#/components/responses/DefaultError"
-
-  /process-items/{id}/~actions/cancel:
-    post:
-      summary: Cancel a Process Item
-      description: |
-        Cancel a Process Item. For task process items, the task state is set to 'cancelled'.
-
-        Only process items in a cancellable state (ready, claimed) can be cancelled.
-        If already cancelled, no action is taken.
-      operationId: cancelProcessItem
-      tags:
-        - apiRestExternalV20240614ProcessItems
-        - processItem
-      parameters:
-        - $ref: "#/components/parameters/IdPathParam"
-      responses:
-        "200":
-          description: Process Item cancelled.
           content:
             application/json:
               schema:
