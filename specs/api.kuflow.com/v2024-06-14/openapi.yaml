@@ -497,6 +497,32 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
+  /processes/{id}/~actions/cancel-process-item:
+    post:
+      summary: Cancel Process Items
+      description: |
+        Cancel all active Process Items in a Process.
+
+        For task process items, all tasks in a cancellable state (ready, claimed)
+        are set to 'cancelled'. The Process itself is not affected.
+
+        Process items already in a terminal state are not modified.
+      operationId: cancelProcessProcessItem
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: Process Items cancelled.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Process"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
   /processes/{id}/~actions/change-initiator:
     post:
       summary: Change process initiator
@@ -947,6 +973,30 @@ paths:
       responses:
         "200":
           description: Process Item Task completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessItem"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /process-items/{id}/~actions/cancel:
+    post:
+      summary: Cancel a Process Item
+      description: |
+        Cancel a Process Item. For task process items, the task state is set to 'cancelled'.
+
+        Only process items in a cancellable state (ready, claimed) can be cancelled.
+        If already cancelled, no action is taken.
+      operationId: cancelProcessItem
+      tags:
+        - apiRestExternalV20240614ProcessItems
+        - processItem
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: Process Item cancelled.
           content:
             application/json:
               schema:
