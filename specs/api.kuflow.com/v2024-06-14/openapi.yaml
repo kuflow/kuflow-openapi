@@ -388,25 +388,8 @@ paths:
         - $ref: "#/components/parameters/PageQueryParam"
         - $ref: "#/components/parameters/SortQueryParam"
         - $ref: "#/components/parameters/TenantIdQueryParam"
-        - name: processDefinitionId
-          description: Filter by an array of process definition ids.
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-              format: uuid
-          style: form
-          explode: true
-        - name: processDefinitionCode
-          description: Filter by an array of process definition codes.
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-          style: form
-          explode: true
+        - $ref: "#/components/parameters/ProcessDefinitionIdQueryParam"
+        - $ref: "#/components/parameters/ProcessDefinitionCodeQueryParam"
       responses:
         "200":
           description: Processes found paginated
@@ -878,25 +861,8 @@ paths:
               type: string
           style: form
           explode: true
-        - name: processDefinitionId
-          description: Filter by an array of process definition ids.
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-              format: uuid
-          style: form
-          explode: true
-        - name: processDefinitionCode
-          description: Filter by an array of process definition codes.
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-          style: form
-          explode: true
+        - $ref: "#/components/parameters/ProcessDefinitionIdQueryParam"
+        - $ref: "#/components/parameters/ProcessDefinitionCodeQueryParam"
         - $ref: "#/components/parameters/TenantIdQueryParam"
       responses:
         "200":
@@ -1723,6 +1689,33 @@ components:
     GroupCodeQueryParam:
       name: groupCode
       description: Filter by group codes.
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+      style: form
+      explode: true
+      x-ms-parameter-location: method
+
+    ProcessDefinitionIdQueryParam:
+      name: processDefinitionId
+      description: Filter by process definition ids.
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          format: uuid
+      style: form
+      explode: true
+      x-ms-parameter-location: method
+
+    ProcessDefinitionCodeQueryParam:
+      name: processDefinitionCode
+      description: Filter by process definition codes.
       in: query
       required: false
       schema:
