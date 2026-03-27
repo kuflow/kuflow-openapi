@@ -1903,7 +1903,6 @@ components:
           type: string
         value:
           description: The value to "add", "replace" or "test".
-          nullable: true
       required:
         - op
         - path
@@ -2548,26 +2547,21 @@ components:
         model:
           description: The AI model used for the assistance.
           type: string
-          nullable: true
         finishReason:
           description: The reason the AI model stopped generating.
           type: string
-          nullable: true
         promptTokens:
           description: The number of tokens in the prompt.
           type: integer
           format: int32
-          nullable: true
         completionTokens:
           description: The number of tokens in the AI completion.
           type: integer
           format: int32
-          nullable: true
         totalTokens:
           description: The total number of tokens used.
           type: integer
           format: int32
-          nullable: true
       required:
         - processItem
 
