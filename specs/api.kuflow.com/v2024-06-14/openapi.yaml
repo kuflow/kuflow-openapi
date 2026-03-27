@@ -216,6 +216,7 @@ paths:
           schema:
             $ref: "#/components/schemas/PrincipalType"
         - $ref: "#/components/parameters/GroupIdQueryParam"
+        - $ref: "#/components/parameters/GroupCodeQueryParam"
         - $ref: "#/components/parameters/TenantIdQueryParam"
       responses:
         "200":
@@ -265,6 +266,7 @@ paths:
         - $ref: "#/components/parameters/TenantIdQueryParam"
         - $ref: "#/components/parameters/PrincipalIdQueryParam"
         - $ref: "#/components/parameters/GroupIdQueryParam"
+        - $ref: "#/components/parameters/GroupCodeQueryParam"
       responses:
         "200":
           description: Groups found paginated.
@@ -337,6 +339,7 @@ paths:
         - $ref: "#/components/parameters/PageQueryParam"
         - $ref: "#/components/parameters/SortQueryParam"
         - $ref: "#/components/parameters/GroupIdQueryParam"
+        - $ref: "#/components/parameters/GroupCodeQueryParam"
         - $ref: "#/components/parameters/EmailQueryParam"
         - $ref: "#/components/parameters/TenantIdQueryParam"
       responses:
@@ -385,6 +388,8 @@ paths:
         - $ref: "#/components/parameters/PageQueryParam"
         - $ref: "#/components/parameters/SortQueryParam"
         - $ref: "#/components/parameters/TenantIdQueryParam"
+        - $ref: "#/components/parameters/ProcessDefinitionIdQueryParam"
+        - $ref: "#/components/parameters/ProcessDefinitionCodeQueryParam"
       responses:
         "200":
           description: Processes found paginated
@@ -856,6 +861,8 @@ paths:
               type: string
           style: form
           explode: true
+        - $ref: "#/components/parameters/ProcessDefinitionIdQueryParam"
+        - $ref: "#/components/parameters/ProcessDefinitionCodeQueryParam"
         - $ref: "#/components/parameters/TenantIdQueryParam"
       responses:
         "200":
@@ -1022,6 +1029,28 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
+  /process-items/{id}/task/~actions/ai-assistance:
+    post:
+      summary: Generate and apply AI assistance for a process item task
+      description: |
+        Allow to generate AI assistance for a task and apply the results. The AI prompt configuration
+        comes from the task definition. The response includes the updated process item and AI metadata.
+      operationId: generateProcessItemTaskAiAssistance
+      tags:
+        - apiRestExternalV20240614ProcessItems
+        - processItem
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: AI assistance generated and applied to the process item task.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessItemTaskAiAssistanceResponse"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
   /process-items/{id}/task/data:
     put:
       summary: Save JSON data
@@ -1150,6 +1179,25 @@ paths:
             type: array
             items:
               type: string
+          style: form
+          explode: true
+        - name: value
+          description: |
+            Filter by indexed field values. Each value is an expression with the format
+            `fieldCode operation value1 value2...` (space-separated).
+
+            Supported operations: `eq`, `le`, `ge`, `between`, `contains`, `in`.
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              pattern: '^\S+ (eq|le|ge|between|contains|in) \S+( \S+)*$'
+          example:
+            - "myField eq someValue"
+            - "amount ge 100"
+            - "amount between 10 20"
+            - "status in active inactive"
           style: form
           explode: true
       responses:
@@ -1660,6 +1708,46 @@ components:
       explode: true
       x-ms-parameter-location: method
 
+    GroupCodeQueryParam:
+      name: groupCode
+      description: Filter by group codes.
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+      style: form
+      explode: true
+      x-ms-parameter-location: method
+
+    ProcessDefinitionIdQueryParam:
+      name: processDefinitionId
+      description: Filter by process definition ids.
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          format: uuid
+      style: form
+      explode: true
+      x-ms-parameter-location: method
+
+    ProcessDefinitionCodeQueryParam:
+      name: processDefinitionCode
+      description: Filter by process definition codes.
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+      style: form
+      explode: true
+      x-ms-parameter-location: method
+
     EmailQueryParam:
       name: email
       description: Filter by email.
@@ -1815,7 +1903,6 @@ components:
           type: string
         value:
           description: The value to "add", "replace" or "test".
-          nullable: true
       required:
         - op
         - path
@@ -2060,6 +2147,8 @@ components:
           format: uuid
         name:
           type: string
+        code:
+          type: string
         tenantId:
           description: Tenant ID.
           type: string
@@ -2067,6 +2156,7 @@ components:
       required:
         - id
         - name
+        - code
         - tenantId
 
     TenantPricingPlan:
@@ -2214,6 +2304,9 @@ components:
             - tenantId
 
     ProcessCreateParams:
+      description: |
+        Params to create a Process. Either `processDefinitionId` or
+        `processDefinitionCode` (with `tenantId`) must be provided.
       type: object
       properties:
         id:
@@ -2222,6 +2315,11 @@ components:
         processDefinitionId:
           type: string
           format: uuid
+        tenantId:
+          type: string
+          format: uuid
+        processDefinitionCode:
+          type: string
         metadata:
           $ref: "#/components/schemas/JsonValue"
         initiatorId:
@@ -2230,8 +2328,12 @@ components:
         initiatorEmail:
           type: string
           format: email
-      required:
-        - processDefinitionId
+      anyOf:
+        - required:
+            - processDefinitionId
+        - required:
+            - tenantId
+            - processDefinitionCode
 
     ProcessChangeInitiatorParams:
       description: Params to change the process initiator, only one option is required.
@@ -2436,6 +2538,33 @@ components:
           type: string
           format: email
 
+    ProcessItemTaskAiAssistanceResponse:
+      description: Response of an AI assistance action applied to a process item task.
+      type: object
+      properties:
+        processItem:
+          $ref: "#/components/schemas/ProcessItem"
+        model:
+          description: The AI model used for the assistance.
+          type: string
+        finishReason:
+          description: The reason the AI model stopped generating.
+          type: string
+        promptTokens:
+          description: The number of tokens in the prompt.
+          type: integer
+          format: int32
+        completionTokens:
+          description: The number of tokens in the AI completion.
+          type: integer
+          format: int32
+        totalTokens:
+          description: The total number of tokens used.
+          type: integer
+          format: int32
+      required:
+        - processItem
+
     ProcessItem:
       allOf:
         - $ref: "#/components/schemas/AbstractAudited"
@@ -2629,9 +2758,12 @@ components:
         version:
           type: string
           format: uuid
+        code:
+          type: string
       required:
         - id
         - version
+        - code
 
     ProcessItemDefinitionRef:
       type: object
