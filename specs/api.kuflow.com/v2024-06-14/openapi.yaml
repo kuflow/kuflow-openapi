@@ -1029,6 +1029,28 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
+  /process-items/{id}/task/~actions/ai-assistance:
+    post:
+      summary: Generate and apply AI assistance for a process item task
+      description: |
+        Allow to generate AI assistance for a task and apply the results. The AI prompt configuration
+        comes from the task definition. The response includes the updated process item and AI metadata.
+      operationId: generateProcessItemTaskAiAssistance
+      tags:
+        - apiRestExternalV20240614ProcessItems
+        - processItem
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: AI assistance generated and applied to the process item task.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessItemTaskAiAssistanceResponse"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
   /process-items/{id}/task/data:
     put:
       summary: Save JSON data
@@ -2516,6 +2538,38 @@ components:
         ownerEmail:
           type: string
           format: email
+
+    ProcessItemTaskAiAssistanceResponse:
+      description: Response of an AI assistance action applied to a process item task.
+      type: object
+      properties:
+        processItem:
+          $ref: "#/components/schemas/ProcessItem"
+        model:
+          description: The AI model used for the assistance.
+          type: string
+          nullable: true
+        finishReason:
+          description: The reason the AI model stopped generating.
+          type: string
+          nullable: true
+        promptTokens:
+          description: The number of tokens in the prompt.
+          type: integer
+          format: int32
+          nullable: true
+        completionTokens:
+          description: The number of tokens in the AI completion.
+          type: integer
+          format: int32
+          nullable: true
+        totalTokens:
+          description: The total number of tokens used.
+          type: integer
+          format: int32
+          nullable: true
+      required:
+        - processItem
 
     ProcessItem:
       allOf:
