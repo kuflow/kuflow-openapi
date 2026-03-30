@@ -1109,6 +1109,36 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
+  /process-items/{id}/task/context-data:
+    put:
+      summary: Save JSON context data
+      description: |
+        Allow to save a JSON context data validating that the data follow the related schema. If the data is invalid, then
+        the json form is marked as invalid.
+      operationId: updateProcessItemTaskContextData
+      tags:
+        - apiRestExternalV20240614ProcessItems
+        - processItem
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      requestBody:
+        description: Params used to update the JSON context data value.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProcessItemTaskContextDataUpdateParams"
+        x-ms-requestBody-name: processItemTaskContextDataUpdateParams
+      responses:
+        "200":
+          description: Response with the task with json context data saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessItem"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
   /process-items/{id}/task/data/~actions/download-webforms-as-document:
     get:
       summary: Download a Form rendered as PDF or Zip of PDFs (when the element is multiple)
@@ -2507,6 +2537,8 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/JsonValue"
+        contextData:
+          $ref: "#/components/schemas/JsonValue"
 
     ProcessItemMessageCreateParams:
       type: object
@@ -2520,6 +2552,14 @@ components:
           type: string
 
     ProcessItemTaskDataUpdateParams:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/JsonValue"
+      required:
+        - data
+
+    ProcessItemTaskContextDataUpdateParams:
       type: object
       properties:
         data:
@@ -2603,6 +2643,8 @@ components:
         state:
           $ref: "#/components/schemas/ProcessItemTaskState"
         data:
+          $ref: "#/components/schemas/JsonValue"
+        contextData:
           $ref: "#/components/schemas/JsonValue"
         logs:
           type: array
