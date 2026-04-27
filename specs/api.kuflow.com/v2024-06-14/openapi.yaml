@@ -1029,13 +1029,15 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /process-items/{id}/task/~actions/ai-assistance:
-    post:
-      summary: Generate and apply AI assistance for a process item task
+  /process-items/{id}/task/ai-assistance:
+    get:
+      summary: Get the current AI assistance run status for a process item task
       description: |
-        Allow to generate AI assistance for a task and apply the results. The AI prompt configuration
-        comes from the task definition. The response includes the updated process item and AI metadata.
-      operationId: generateProcessItemTaskAiAssistance
+        Return the status of the latest AI assistance run for the given process item task.
+
+        Poll this endpoint after calling `generateProcessItemTaskAiAssistance` to determine when the
+        run has finished. Returns 404 when no run has ever been triggered for the task.
+      operationId: retrieveProcessItemTaskAiAssistance
       tags:
         - apiRestExternalV20240614ProcessItems
         - processItem
@@ -1043,11 +1045,35 @@ paths:
         - $ref: "#/components/parameters/IdPathParam"
       responses:
         "200":
-          description: AI assistance generated and applied to the process item task.
+          description: Current AI assistance run status.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ProcessItemTaskAiAssistanceResponse"
+                $ref: "#/components/schemas/ProcessItemTaskAiAssistance"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /process-items/{id}/task/~actions/ai-assistance:
+    post:
+      summary: Trigger AI assistance for a process item task
+      description: |
+        Schedule an asynchronous AI assistance run for a task. The AI prompt configuration comes
+        from the task definition. The request returns immediately with the current process item
+        state. Poll `retrieveProcessItemTaskAiAssistance` to track progress and retrieve
+        completion metadata such as model and finishReason.
+      operationId: generateProcessItemTaskAiAssistance
+      tags:
+        - apiRestExternalV20240614ProcessItems
+        - processItem
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "202":
+          description: AI assistance run accepted and scheduled.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessItem"
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -2578,32 +2604,60 @@ components:
           type: string
           format: email
 
-    ProcessItemTaskAiAssistanceResponse:
-      description: Response of an AI assistance action applied to a process item task.
+    ProcessItemTaskAiAssistanceState:
+      type: string
+      description: State of an AI assistance run.
+      enum:
+        - PENDING
+        - COMPLETED
+        - FAILED
+
+    ProcessItemTaskAiAssistance:
+      description: Status of the latest AI assistance run for a process item task.
       type: object
       properties:
-        processItem:
-          $ref: "#/components/schemas/ProcessItem"
+        state:
+          $ref: "#/components/schemas/ProcessItemTaskAiAssistanceState"
+        correlationId:
+          description: Identifier of this specific run.
+          type: string
+          format: uuid
+        embeddingPending:
+          description: Number of document embeddings still queued. Only present when state is PENDING.
+          type: integer
+          format: int32
+        embeddingProcessing:
+          description: Number of document embeddings actively processing. Only present when state is PENDING.
+          type: integer
+          format: int32
+        retryAfterSeconds:
+          description: Suggested number of seconds to wait before polling again. Only present when state is PENDING.
+          type: integer
+          format: int32
         model:
-          description: The AI model used for the assistance.
+          description: The AI model used for the assistance. Only present when state is COMPLETED.
           type: string
         finishReason:
-          description: The reason the AI model stopped generating.
+          description: The reason the AI model stopped generating. Only present when state is COMPLETED.
           type: string
-        promptTokens:
-          description: The number of tokens in the prompt.
-          type: integer
-          format: int32
-        completionTokens:
-          description: The number of tokens in the AI completion.
-          type: integer
-          format: int32
-        totalTokens:
-          description: The total number of tokens used.
-          type: integer
-          format: int32
+        errorCode:
+          description: Error code. Only present when state is FAILED.
+          type: string
+        errorMessage:
+          description: Human-readable error description. Only present when state is FAILED.
+          type: string
+        startedAt:
+          description: When this run was started.
+          type: string
+          format: date-time
+        finishedAt:
+          description: When this run finished (COMPLETED or FAILED). Absent while PENDING.
+          type: string
+          format: date-time
       required:
-        - processItem
+        - state
+        - correlationId
+        - startedAt
 
     ProcessItem:
       allOf:
