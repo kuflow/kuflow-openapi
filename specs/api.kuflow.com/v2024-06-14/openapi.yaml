@@ -1055,12 +1055,15 @@ paths:
 
   /process-items/{id}/task/~actions/ai-assistance:
     post:
-      summary: Trigger AI assistance for a process item task
+      summary: Trigger or poll AI assistance for a process item task
       description: |
-        Schedule an asynchronous AI assistance run for a task. The AI prompt configuration comes
-        from the task definition. The request returns immediately with the current process item
-        state. Poll `retrieveProcessItemTaskAiAssistance` to track progress and retrieve
-        completion metadata such as model and finishReason.
+        Trigger an asynchronous AI assistance run for a task and return its current state.
+
+        - If a run is already PENDING, returns its current state without starting a new one
+          (use this endpoint as the client poll).
+        - Otherwise, schedules a new run and returns the initial PENDING state.
+
+        The AI prompt configuration comes from the task definition.
       operationId: generateProcessItemTaskAiAssistance
       tags:
         - apiRestExternalV20240614ProcessItems
@@ -1068,12 +1071,12 @@ paths:
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
       responses:
-        "202":
-          description: AI assistance run accepted and scheduled.
+        "200":
+          description: Current AI assistance run status.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ProcessItem"
+                $ref: "#/components/schemas/ProcessItemTaskAiAssistance"
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -2618,10 +2621,6 @@ components:
       properties:
         state:
           $ref: "#/components/schemas/ProcessItemTaskAiAssistanceState"
-        correlationId:
-          description: Identifier of this specific run.
-          type: string
-          format: uuid
         embeddingPending:
           description: Number of document embeddings still queued. Only present when state is PENDING.
           type: integer
@@ -2656,7 +2655,6 @@ components:
           format: date-time
       required:
         - state
-        - correlationId
         - startedAt
 
     ProcessItem:
