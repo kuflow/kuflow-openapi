@@ -1029,14 +1029,14 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /process-items/{id}/task/ai-assistance:
+  /process-items/{id}/task/~actions/ai-assistance:
     get:
       summary: Get the current AI assistance run status for a process item task
       description: |
         Return the status of the latest AI assistance run for the given process item task.
 
-        Poll this endpoint after calling `generateProcessItemTaskAiAssistance` to determine when the
-        run has finished. Returns 404 when no run has ever been triggered for the task.
+        Poll this endpoint after triggering `generateProcessItemTaskAiAssistance` to determine when
+        the run has finished. Returns 404 when no run has ever been triggered for the task.
       operationId: retrieveProcessItemTaskAiAssistance
       tags:
         - apiRestExternalV20240614ProcessItems
@@ -1052,8 +1052,6 @@ paths:
                 $ref: "#/components/schemas/ProcessItemTaskAiAssistance"
         default:
           $ref: "#/components/responses/DefaultError"
-
-  /process-items/{id}/task/~actions/ai-assistance:
     post:
       summary: Trigger or poll AI assistance for a process item task
       description: |
@@ -1072,7 +1070,13 @@ paths:
         - $ref: "#/components/parameters/IdPathParam"
       responses:
         "200":
-          description: Current AI assistance run status.
+          description: A run was already PENDING; current state returned without scheduling a new one.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessItemTaskAiAssistance"
+        "202":
+          description: A new run has been accepted and scheduled; initial PENDING state returned.
           content:
             application/json:
               schema:
