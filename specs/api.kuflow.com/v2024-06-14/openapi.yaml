@@ -1055,11 +1055,19 @@ paths:
     post:
       summary: Trigger or poll AI assistance for a process item task
       description: |
-        Trigger an asynchronous AI assistance run for a task and return its current state.
+        Trigger an asynchronous AI assistance run for a task and return its current state, identified
+        by a client-supplied `requestId` (UUID). The `requestId` makes the call idempotent and lets a
+        client launch successive AI assistance attempts on the same task — one at a time.
 
-        - If a run is already PENDING, returns its current state without starting a new one
-          (use this endpoint as the client poll).
-        - Otherwise, schedules a new run and returns the initial PENDING state.
+        Behavior given the latest persisted run (if any) for the process item:
+
+        - No prior run → schedules a new run and returns the initial PENDING state (202).
+        - The stored `requestId` matches the incoming one → returns the current state of that run
+          without scheduling a new one (200). Use this to poll your own attempt.
+        - The stored `requestId` differs and the run is in a final state (COMPLETED or FAILED) →
+          schedules a new run on the same record, replacing the previous result (202).
+        - The stored `requestId` differs and the run is still PENDING → rejected with 409, since
+          another AI assistance attempt is already in progress on this task.
 
         The AI prompt configuration comes from the task definition.
       operationId: generateProcessItemTaskAiAssistance
@@ -1068,9 +1076,17 @@ paths:
         - processItem
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
+      requestBody:
+        description: Params identifying this AI assistance attempt.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProcessItemTaskAiAssistanceGenerateParams"
+        x-ms-requestBody-name: processItemTaskAiAssistanceGenerateParams
       responses:
         "200":
-          description: A run was already PENDING; current state returned without scheduling a new one.
+          description: The stored `requestId` matches; current state returned without scheduling a new run.
           content:
             application/json:
               schema:
@@ -2611,6 +2627,21 @@ components:
           type: string
           format: email
 
+    ProcessItemTaskAiAssistanceGenerateParams:
+      description: Params identifying a logical AI assistance attempt for a process item task.
+      type: object
+      properties:
+        requestId:
+          description: |
+            Client-supplied UUID identifying this logical AI assistance attempt. Use the same
+            `requestId` to poll an in-flight or completed run. Use a new `requestId` to start a
+            fresh run once the previous one has reached a final state. While a run is PENDING,
+            calling this endpoint with a different `requestId` is rejected with 409.
+          type: string
+          format: uuid
+      required:
+        - requestId
+
     ProcessItemTaskAiAssistanceState:
       type: string
       description: State of an AI assistance run.
@@ -2623,6 +2654,11 @@ components:
       description: Status of the latest AI assistance run for a process item task.
       type: object
       properties:
+        requestId:
+          description: |
+            Client-supplied UUID identifying the logical AI assistance attempt this run represents.
+          type: string
+          format: uuid
         state:
           $ref: "#/components/schemas/ProcessItemTaskAiAssistanceState"
         embeddingPending:
@@ -2658,6 +2694,7 @@ components:
           type: string
           format: date-time
       required:
+        - requestId
         - state
         - startedAt
 
