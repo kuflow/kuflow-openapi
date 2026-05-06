@@ -1489,6 +1489,39 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
+  /business-artifacts/{id}/actions/{actionId}/~actions/cancel:
+    post:
+      summary: Cancel a Business Artifact action
+      description: |
+        Cancel a Business Artifact action.
+
+        Only meaningful for asynchronous actions still in `REQUESTED` state. The
+        action's status is set to `CANCELED`. If the action is already in a
+        terminal state, no transition occurs.
+      operationId: cancelBusinessArtifactAction
+      tags:
+        - apiRestExternalV20240614BusinessArtifacts
+        - businessArtifact
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - name: actionId
+          description: The Business Artifact action ID.
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          x-ms-parameter-location: method
+      responses:
+        "200":
+          description: Business Artifact action cancelled.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessArtifactActionValue"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
   /business-artifacts/{id}/~actions/prepare-create-artifact:
     post:
       summary: Prepare the data for a CREATE_BUSINESS_ARTIFACT action
@@ -2944,7 +2977,7 @@ components:
       description: |
         A Business Artifact action invocation. The populated sub-field
         (`startWorkflow`, `startProcess`, `downloadable`, `createArtifact`) is
-        dictated by `businessArtifactActionDefinitionRef`.
+        dictated by `type`.
       allOf:
         - $ref: "#/components/schemas/AbstractAudited"
         - type: object
@@ -2958,8 +2991,6 @@ components:
               $ref: "#/components/schemas/BusinessArtifactActionValueStatus"
             businessArtifactActionDefinitionRef:
               $ref: "#/components/schemas/BusinessArtifactActionDefinitionRef"
-            archived:
-              type: boolean
             startWorkflow:
               $ref: "#/components/schemas/BusinessArtifactActionValueStartWorkflow"
             startProcess:
@@ -2975,18 +3006,25 @@ components:
             - businessArtifactActionDefinitionRef
 
     BusinessArtifactActionValueStartWorkflow:
+      description: Action value details for actions of type START_WORKFLOW.
       type: object
       properties:
         input:
           $ref: "#/components/schemas/JsonValue"
 
     BusinessArtifactActionValueStartProcess:
+      description: |
+        Action value details for actions of type START_PROCESS. Actions of this
+        type complete synchronously, so all fields are present in the invoke
+        response.
       type: object
       properties:
         processDefinitionId:
+          description: ID of the Process Definition that was instantiated.
           type: string
           format: uuid
         processId:
+          description: ID of the Process created by this action.
           type: string
           format: uuid
       required:
@@ -2994,21 +3032,33 @@ components:
         - processId
 
     BusinessArtifactActionValueDownloadable:
+      description: Action value details for actions of type DOWNLOADABLE.
       type: object
       properties:
         input:
           $ref: "#/components/schemas/JsonValue"
         documentUri:
+          description: URI of the generated document. Only present when status is COMPLETED.
           type: string
         documentExpired:
+          description: Whether the generated document has expired. Only present when status is COMPLETED.
           type: boolean
 
     BusinessArtifactActionValueCreateArtifact:
+      description: |
+        Action value details for actions of type CREATE_BUSINESS_ARTIFACT.
+        Actions of this type complete synchronously, so the populated value and
+        the created Business Artifact ID are present in the invoke response.
       type: object
       properties:
         businessArtifactDefinitionRef:
           $ref: "#/components/schemas/BusinessArtifactDefinitionRef"
+        businessArtifactId:
+          description: ID of the Business Artifact created by this action. Only present when status is COMPLETED.
+          type: string
+          format: uuid
         value:
+          description: Form value applied to the new Business Artifact.
           type: object
           additionalProperties: true
       required:
