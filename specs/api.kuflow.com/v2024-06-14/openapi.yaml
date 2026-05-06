@@ -1461,7 +1461,7 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /business-artifacts/{id}/actions/{actionId}:
+  /business-artifacts/{id}/actions/{actionValueId}:
     get:
       summary: Get a Business Artifact action by ID
       description: Returns a Business Artifact action by its ID.
@@ -1471,7 +1471,7 @@ paths:
         - businessArtifact
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
-        - name: actionId
+        - name: actionValueId
           description: The Business Artifact action ID.
           in: path
           required: true
@@ -1489,7 +1489,7 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /business-artifacts/{id}/actions/{actionId}/~actions/cancel:
+  /business-artifacts/{id}/actions/{actionValueId}/~actions/cancel:
     post:
       summary: Cancel a Business Artifact action
       description: |
