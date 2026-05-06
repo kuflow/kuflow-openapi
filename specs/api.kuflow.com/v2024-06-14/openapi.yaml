@@ -1489,9 +1489,9 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /business-artifacts/{id}/~actions/preview-create-artifact:
+  /business-artifacts/{id}/~actions/prepare-create-artifact:
     post:
-      summary: Preview the data for a CREATE_BUSINESS_ARTIFACT action
+      summary: Prepare the data for a CREATE_BUSINESS_ARTIFACT action
       description: |
         Compute the pre-filled value that a `CREATE_BUSINESS_ARTIFACT` action would produce
         for this Business Artifact, without invoking the action or persisting any state.
@@ -1499,27 +1499,27 @@ paths:
         Use it to populate a form that the user can review and edit. Once the user submits,
         the filled value is sent back via `createBusinessArtifactAction` (in the
         `createArtifact.value` field).
-      operationId: previewBusinessArtifactCreateArtifact
+      operationId: prepareBusinessArtifactCreateArtifact
       tags:
         - apiRestExternalV20240614BusinessArtifacts
         - businessArtifact
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
       requestBody:
-        description: Params identifying the CREATE_BUSINESS_ARTIFACT action to preview.
+        description: Params identifying the CREATE_BUSINESS_ARTIFACT action to prepare.
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/BusinessArtifactCreateArtifactPreviewParams"
-        x-ms-requestBody-name: businessArtifactCreateArtifactPreviewParams
+              $ref: "#/components/schemas/BusinessArtifactCreateArtifactPrepareParams"
+        x-ms-requestBody-name: businessArtifactCreateArtifactPrepareParams
       responses:
         "200":
           description: Pre-filled value for the create-artifact form.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BusinessArtifactCreateArtifactPreview"
+                $ref: "#/components/schemas/BusinessArtifactCreateArtifactPrepare"
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -3070,7 +3070,7 @@ components:
       description: |
         Params for invoking an action of type CREATE_BUSINESS_ARTIFACT. The `value` is
         the (potentially user-edited) form previously obtained via the
-        `previewBusinessArtifactCreateArtifact` operation.
+        `prepareBusinessArtifactCreateArtifact` operation.
       type: object
       properties:
         value:
@@ -3078,8 +3078,8 @@ components:
           type: object
           additionalProperties: true
 
-    BusinessArtifactCreateArtifactPreviewParams:
-      description: Params identifying a CREATE_BUSINESS_ARTIFACT action to preview.
+    BusinessArtifactCreateArtifactPrepareParams:
+      description: Params identifying a CREATE_BUSINESS_ARTIFACT action to prepare.
       type: object
       properties:
         businessArtifactActionDefinitionCode:
@@ -3087,22 +3087,20 @@ components:
       required:
         - businessArtifactActionDefinitionCode
 
-    BusinessArtifactCreateArtifactPreview:
+    BusinessArtifactCreateArtifactPrepare:
       description: |
         Pre-filled value for a CREATE_BUSINESS_ARTIFACT action. Returned by the
-        preview operation; nothing is persisted on the server.
+        prepare operation; nothing is persisted on the server.
       type: object
       properties:
-        businessArtifactDefinitionId:
-          description: ID of the Business Artifact Definition that the action would create.
-          type: string
-          format: uuid
+        businessArtifactDefinitionRef:
+          $ref: "#/components/schemas/BusinessArtifactDefinitionRef"
         value:
           description: Pre-filled form value computed from the action definition.
           type: object
           additionalProperties: true
       required:
-        - businessArtifactDefinitionId
+        - businessArtifactDefinitionRef
 
     BusinessArtifactActionValueStatus:
       description: Status of a Business Artifact action value.
