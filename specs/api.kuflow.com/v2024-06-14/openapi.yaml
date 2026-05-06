@@ -1451,17 +1451,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BusinessArtifactActionValue"
+                $ref: "#/components/schemas/BusinessArtifactAction"
         "201":
           description: Business Artifact action created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BusinessArtifactActionValue"
+                $ref: "#/components/schemas/BusinessArtifactAction"
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /business-artifacts/{id}/actions/{actionValueId}:
+  /business-artifacts/{id}/actions/{actionId}:
     get:
       summary: Get a Business Artifact action by ID
       description: Returns a Business Artifact action by its ID.
@@ -1471,7 +1471,7 @@ paths:
         - businessArtifact
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
-        - name: actionValueId
+        - name: actionId
           description: The Business Artifact action ID.
           in: path
           required: true
@@ -1485,11 +1485,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BusinessArtifactActionValue"
+                $ref: "#/components/schemas/BusinessArtifactAction"
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /business-artifacts/{id}/actions/{actionValueId}/~actions/cancel:
+  /business-artifacts/{id}/actions/{actionId}/~actions/cancel:
     post:
       summary: Cancel a Business Artifact action
       description: |
@@ -1504,7 +1504,7 @@ paths:
         - businessArtifact
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
-        - name: actionValueId
+        - name: actionId
           description: The Business Artifact action ID.
           in: path
           required: true
@@ -1518,7 +1518,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BusinessArtifactActionValue"
+                $ref: "#/components/schemas/BusinessArtifactAction"
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -2973,7 +2973,7 @@ components:
             - tenantId
             - businessArtifactDefinitionRef
 
-    BusinessArtifactActionValue:
+    BusinessArtifactAction:
       description: |
         A Business Artifact action invocation. The populated sub-field
         (`startWorkflow`, `startProcess`, `downloadable`, `createArtifact`) is
@@ -2988,33 +2988,33 @@ components:
             type:
               $ref: "#/components/schemas/BusinessArtifactActionType"
             status:
-              $ref: "#/components/schemas/BusinessArtifactActionValueStatus"
+              $ref: "#/components/schemas/BusinessArtifactActionStatus"
             businessArtifactActionDefinitionRef:
               $ref: "#/components/schemas/BusinessArtifactActionDefinitionRef"
             startWorkflow:
-              $ref: "#/components/schemas/BusinessArtifactActionValueStartWorkflow"
+              $ref: "#/components/schemas/BusinessArtifactActionStartWorkflow"
             startProcess:
-              $ref: "#/components/schemas/BusinessArtifactActionValueStartProcess"
+              $ref: "#/components/schemas/BusinessArtifactActionStartProcess"
             downloadable:
-              $ref: "#/components/schemas/BusinessArtifactActionValueDownloadable"
+              $ref: "#/components/schemas/BusinessArtifactActionDownloadable"
             createArtifact:
-              $ref: "#/components/schemas/BusinessArtifactActionValueCreateArtifact"
+              $ref: "#/components/schemas/BusinessArtifactActionCreateArtifact"
           required:
             - id
             - type
             - status
             - businessArtifactActionDefinitionRef
 
-    BusinessArtifactActionValueStartWorkflow:
-      description: Action value details for actions of type START_WORKFLOW.
+    BusinessArtifactActionStartWorkflow:
+      description: Action details for actions of type START_WORKFLOW.
       type: object
       properties:
         input:
           $ref: "#/components/schemas/JsonValue"
 
-    BusinessArtifactActionValueStartProcess:
+    BusinessArtifactActionStartProcess:
       description: |
-        Action value details for actions of type START_PROCESS. Actions of this
+        Action details for actions of type START_PROCESS. Actions of this
         type complete synchronously, so all fields are present in the invoke
         response.
       type: object
@@ -3031,8 +3031,8 @@ components:
         - processDefinitionId
         - processId
 
-    BusinessArtifactActionValueDownloadable:
-      description: Action value details for actions of type DOWNLOADABLE.
+    BusinessArtifactActionDownloadable:
+      description: Action details for actions of type DOWNLOADABLE.
       type: object
       properties:
         input:
@@ -3044,9 +3044,9 @@ components:
           description: Whether the generated document has expired. Only present when status is COMPLETED.
           type: boolean
 
-    BusinessArtifactActionValueCreateArtifact:
+    BusinessArtifactActionCreateArtifact:
       description: |
-        Action value details for actions of type CREATE_BUSINESS_ARTIFACT.
+        Action details for actions of type CREATE_BUSINESS_ARTIFACT.
         Actions of this type complete synchronously, so the populated value and
         the created Business Artifact ID are present in the invoke response.
       type: object
@@ -3151,8 +3151,8 @@ components:
       required:
         - businessArtifactDefinitionRef
 
-    BusinessArtifactActionValueStatus:
-      description: Status of a Business Artifact action value.
+    BusinessArtifactActionStatus:
+      description: Status of a Business Artifact action.
       type: string
       enum:
         - REQUESTED
