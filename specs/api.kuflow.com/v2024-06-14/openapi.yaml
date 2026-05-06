@@ -1504,7 +1504,7 @@ paths:
         - businessArtifact
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
-        - name: actionId
+        - name: actionValueId
           description: The Business Artifact action ID.
           in: path
           required: true
