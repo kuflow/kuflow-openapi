@@ -3006,14 +3006,13 @@ components:
     BusinessArtifactActionValueCreateArtifact:
       type: object
       properties:
-        businessArtifactDefinitionId:
-          type: string
-          format: uuid
+        businessArtifactDefinitionRef:
+          $ref: "#/components/schemas/BusinessArtifactDefinitionRef"
         value:
           type: object
           additionalProperties: true
       required:
-        - businessArtifactDefinitionId
+        - businessArtifactDefinitionRef
 
     BusinessArtifactActionCreateParams:
       description: |
