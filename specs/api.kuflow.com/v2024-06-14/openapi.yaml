@@ -932,6 +932,77 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
+  /process-items/{id}/~actions/ai-assistance:
+    get:
+      summary: Get the current AI assistance run status for a process item
+      description: |
+        Return the status of the latest AI assistance run for the given process item.
+
+        Poll this endpoint after triggering `generateProcessItemAiAssistance` to determine when
+        the run has finished. Returns 404 when no run has ever been triggered for the process item.
+      operationId: retrieveProcessItemAiAssistance
+      tags:
+        - apiRestExternalV20240614ProcessItems
+        - processItem
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: Current AI assistance run status.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessItemAiAssistance"
+        default:
+          $ref: "#/components/responses/DefaultError"
+    post:
+      summary: Trigger or poll AI assistance for a process item
+      description: |
+        Trigger an asynchronous AI assistance run for a process item and return its current state, identified
+        by a client-supplied `requestId` (UUID). The `requestId` makes the call idempotent and lets a
+        client launch successive AI assistance attempts on the same process item — one at a time.
+
+        Behavior given the latest persisted run (if any) for the process item:
+
+        - No prior run → schedules a new run and returns the initial PENDING state (202).
+        - The stored `requestId` matches the incoming one → returns the current state of that run
+          without scheduling a new one (200). Use this to poll your own attempt.
+        - The stored `requestId` differs and the run is in a final state (COMPLETED or FAILED) →
+          schedules a new run on the same record, replacing the previous result (202).
+        - The stored `requestId` differs and the run is still PENDING → rejected with 409, since
+          another AI assistance attempt is already in progress on this process item.
+
+        The AI prompt configuration comes from the process item definition.
+      operationId: generateProcessItemAiAssistance
+      tags:
+        - apiRestExternalV20240614ProcessItems
+        - processItem
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      requestBody:
+        description: Params identifying this AI assistance attempt.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProcessItemAiAssistanceGenerateParams"
+        x-ms-requestBody-name: processItemAiAssistanceGenerateParams
+      responses:
+        "200":
+          description: The stored `requestId` matches; current state returned without scheduling a new run.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessItemAiAssistance"
+        "202":
+          description: A new run has been accepted and scheduled; initial PENDING state returned.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessItemAiAssistance"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
   /process-items/{id}/task/~actions/claim:
     post:
       summary: Claim a process item task
@@ -1026,77 +1097,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ProcessItem"
-        default:
-          $ref: "#/components/responses/DefaultError"
-
-  /process-items/{id}/task/~actions/ai-assistance:
-    get:
-      summary: Get the current AI assistance run status for a process item task
-      description: |
-        Return the status of the latest AI assistance run for the given process item task.
-
-        Poll this endpoint after triggering `generateProcessItemTaskAiAssistance` to determine when
-        the run has finished. Returns 404 when no run has ever been triggered for the task.
-      operationId: retrieveProcessItemTaskAiAssistance
-      tags:
-        - apiRestExternalV20240614ProcessItems
-        - processItem
-      parameters:
-        - $ref: "#/components/parameters/IdPathParam"
-      responses:
-        "200":
-          description: Current AI assistance run status.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProcessItemTaskAiAssistance"
-        default:
-          $ref: "#/components/responses/DefaultError"
-    post:
-      summary: Trigger or poll AI assistance for a process item task
-      description: |
-        Trigger an asynchronous AI assistance run for a task and return its current state, identified
-        by a client-supplied `requestId` (UUID). The `requestId` makes the call idempotent and lets a
-        client launch successive AI assistance attempts on the same task — one at a time.
-
-        Behavior given the latest persisted run (if any) for the process item:
-
-        - No prior run → schedules a new run and returns the initial PENDING state (202).
-        - The stored `requestId` matches the incoming one → returns the current state of that run
-          without scheduling a new one (200). Use this to poll your own attempt.
-        - The stored `requestId` differs and the run is in a final state (COMPLETED or FAILED) →
-          schedules a new run on the same record, replacing the previous result (202).
-        - The stored `requestId` differs and the run is still PENDING → rejected with 409, since
-          another AI assistance attempt is already in progress on this task.
-
-        The AI prompt configuration comes from the task definition.
-      operationId: generateProcessItemTaskAiAssistance
-      tags:
-        - apiRestExternalV20240614ProcessItems
-        - processItem
-      parameters:
-        - $ref: "#/components/parameters/IdPathParam"
-      requestBody:
-        description: Params identifying this AI assistance attempt.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ProcessItemTaskAiAssistanceGenerateParams"
-        x-ms-requestBody-name: processItemTaskAiAssistanceGenerateParams
-      responses:
-        "200":
-          description: The stored `requestId` matches; current state returned without scheduling a new run.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProcessItemTaskAiAssistance"
-        "202":
-          description: A new run has been accepted and scheduled; initial PENDING state returned.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProcessItemTaskAiAssistance"
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -2052,6 +2052,77 @@ components:
         - MESSAGE
         - THREAD
 
+    ProcessItemAiAssistanceGenerateParams:
+      description: Params identifying a logical AI assistance attempt for a process item.
+      type: object
+      properties:
+        requestId:
+          description: |
+            Client-supplied UUID identifying this logical AI assistance attempt. Use the same
+            `requestId` to poll an in-flight or completed run. Use a new `requestId` to start a
+            fresh run once the previous one has reached a final state. While a run is PENDING,
+            calling this endpoint with a different `requestId` is rejected with 409.
+          type: string
+          format: uuid
+      required:
+        - requestId
+
+    ProcessItemAiAssistanceState:
+      type: string
+      description: State of an AI assistance run.
+      enum:
+        - PENDING
+        - COMPLETED
+        - FAILED
+
+    ProcessItemAiAssistance:
+      description: Status of the latest AI assistance run for a process item.
+      type: object
+      properties:
+        requestId:
+          description: |
+            Client-supplied UUID identifying the logical AI assistance attempt this run represents.
+          type: string
+          format: uuid
+        state:
+          $ref: "#/components/schemas/ProcessItemAiAssistanceState"
+        embeddingPending:
+          description: Number of document embeddings still queued. Only present when state is PENDING.
+          type: integer
+          format: int32
+        embeddingProcessing:
+          description: Number of document embeddings actively processing. Only present when state is PENDING.
+          type: integer
+          format: int32
+        retryAfterSeconds:
+          description: Suggested number of seconds to wait before polling again. Only present when state is PENDING.
+          type: integer
+          format: int32
+        model:
+          description: The AI model used for the assistance. Only present when state is COMPLETED.
+          type: string
+        finishReason:
+          description: The reason the AI model stopped generating. Only present when state is COMPLETED.
+          type: string
+        errorCode:
+          description: Error code. Only present when state is FAILED.
+          type: string
+        errorMessage:
+          description: Human-readable error description. Only present when state is FAILED.
+          type: string
+        startedAt:
+          description: When this run was started.
+          type: string
+          format: date-time
+        finishedAt:
+          description: When this run finished (COMPLETED or FAILED). Absent while PENDING.
+          type: string
+          format: date-time
+      required:
+        - requestId
+        - state
+        - startedAt
+
     ProcessItemTaskState:
       description: Process Item Task state
       type: string
@@ -2626,77 +2697,6 @@ components:
         ownerEmail:
           type: string
           format: email
-
-    ProcessItemTaskAiAssistanceGenerateParams:
-      description: Params identifying a logical AI assistance attempt for a process item task.
-      type: object
-      properties:
-        requestId:
-          description: |
-            Client-supplied UUID identifying this logical AI assistance attempt. Use the same
-            `requestId` to poll an in-flight or completed run. Use a new `requestId` to start a
-            fresh run once the previous one has reached a final state. While a run is PENDING,
-            calling this endpoint with a different `requestId` is rejected with 409.
-          type: string
-          format: uuid
-      required:
-        - requestId
-
-    ProcessItemTaskAiAssistanceState:
-      type: string
-      description: State of an AI assistance run.
-      enum:
-        - PENDING
-        - COMPLETED
-        - FAILED
-
-    ProcessItemTaskAiAssistance:
-      description: Status of the latest AI assistance run for a process item task.
-      type: object
-      properties:
-        requestId:
-          description: |
-            Client-supplied UUID identifying the logical AI assistance attempt this run represents.
-          type: string
-          format: uuid
-        state:
-          $ref: "#/components/schemas/ProcessItemTaskAiAssistanceState"
-        embeddingPending:
-          description: Number of document embeddings still queued. Only present when state is PENDING.
-          type: integer
-          format: int32
-        embeddingProcessing:
-          description: Number of document embeddings actively processing. Only present when state is PENDING.
-          type: integer
-          format: int32
-        retryAfterSeconds:
-          description: Suggested number of seconds to wait before polling again. Only present when state is PENDING.
-          type: integer
-          format: int32
-        model:
-          description: The AI model used for the assistance. Only present when state is COMPLETED.
-          type: string
-        finishReason:
-          description: The reason the AI model stopped generating. Only present when state is COMPLETED.
-          type: string
-        errorCode:
-          description: Error code. Only present when state is FAILED.
-          type: string
-        errorMessage:
-          description: Human-readable error description. Only present when state is FAILED.
-          type: string
-        startedAt:
-          description: When this run was started.
-          type: string
-          format: date-time
-        finishedAt:
-          description: When this run finished (COMPLETED or FAILED). Absent while PENDING.
-          type: string
-          format: date-time
-      required:
-        - requestId
-        - state
-        - startedAt
 
     ProcessItem:
       allOf:
