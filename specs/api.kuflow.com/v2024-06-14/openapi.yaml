@@ -1416,54 +1416,143 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
-  /business-artifacts/{id}/~actions/upload-user-action-document:
+  /business-artifacts/{id}/actions:
     post:
-      summary: Upload and save a document in a user action
+      summary: Invoke a Business Artifact action
       description: |
-        Allow saving a user action document uploading the content.
-      operationId: uploadBusinessArtifactUserActionDocument
+        Invoke an action on a Business Artifact.
+
+        Whether the call returns synchronously or asynchronously depends on the action type:
+
+        - `START_WORKFLOW`, `DOWNLOADABLE`: dispatched to a background worker. The
+          response returns immediately with `status=REQUESTED`. Poll
+          `retrieveBusinessArtifactAction` for the final state.
+        - `START_PROCESS`, `CREATE_BUSINESS_ARTIFACT`: completed synchronously. The
+          response returns with `status=COMPLETED` (or an error status).
+
+        If you want the method to be idempotent, please specify the `id` field in the request body.
+      operationId: createBusinessArtifactAction
       tags:
         - apiRestExternalV20240614BusinessArtifacts
         - businessArtifact
       parameters:
         - $ref: "#/components/parameters/IdPathParam"
-        - name: fileContentType
-          description: Document content type
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: fileName
-          description: Document name
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: userActionValueId
-          description: User action value ID related to de document
-          in: query
+      requestBody:
+        description: Params identifying the action to invoke.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BusinessArtifactActionCreateParams"
+        x-ms-requestBody-name: businessArtifactActionCreateParams
+      responses:
+        "200":
+          description: Business Artifact action already created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessArtifactAction"
+        "201":
+          description: Business Artifact action created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessArtifactAction"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /business-artifacts/{id}/actions/{actionId}:
+    get:
+      summary: Get a Business Artifact action by ID
+      description: Returns a Business Artifact action by its ID.
+      operationId: retrieveBusinessArtifactAction
+      tags:
+        - apiRestExternalV20240614BusinessArtifacts
+        - businessArtifact
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - name: actionId
+          description: The Business Artifact action ID.
+          in: path
           required: true
           schema:
             type: string
             format: uuid
-      requestBody:
-        description: Document to save.
-        required: true
-        content:
-          application/octet-stream:
-            schema:
-              type: string
-              format: binary
-        x-ms-requestBody-name: file
+          x-ms-parameter-location: method
       responses:
         "200":
-          description: Document Saved in user action.
+          description: Successful operation
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BusinessArtifact"
-        "304":
-          description: Untouched business artifact
+                $ref: "#/components/schemas/BusinessArtifactAction"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /business-artifacts/{id}/actions/{actionId}/~actions/cancel:
+    post:
+      summary: Cancel a Business Artifact action
+      description: |
+        Cancel a Business Artifact action.
+
+        Only meaningful for asynchronous actions still in `REQUESTED` state. The
+        action's status is set to `CANCELED`. If the action is already in a
+        terminal state, no transition occurs.
+      operationId: cancelBusinessArtifactAction
+      tags:
+        - apiRestExternalV20240614BusinessArtifacts
+        - businessArtifact
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - name: actionId
+          description: The Business Artifact action ID.
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          x-ms-parameter-location: method
+      responses:
+        "200":
+          description: Business Artifact action cancelled.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessArtifactAction"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /business-artifacts/{id}/~actions/prepare-create-artifact:
+    post:
+      summary: Prepare the data for a CREATE_BUSINESS_ARTIFACT action
+      description: |
+        Compute the pre-filled value that a `CREATE_BUSINESS_ARTIFACT` action would produce
+        for this Business Artifact, without invoking the action or persisting any state.
+
+        Use it to populate a form that the user can review and edit. Once the user submits,
+        the filled value is sent back via `createBusinessArtifactAction` (in the
+        `createArtifact.value` field).
+      operationId: prepareBusinessArtifactCreateArtifact
+      tags:
+        - apiRestExternalV20240614BusinessArtifacts
+        - businessArtifact
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      requestBody:
+        description: Params identifying the CREATE_BUSINESS_ARTIFACT action to prepare.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BusinessArtifactCreateArtifactPrepareParams"
+        x-ms-requestBody-name: businessArtifactCreateArtifactPrepareParams
+      responses:
+        "200":
+          description: Pre-filled value for the create-artifact form.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessArtifactCreateArtifactPrepare"
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -2884,6 +2973,202 @@ components:
             - tenantId
             - businessArtifactDefinitionRef
 
+    BusinessArtifactAction:
+      description: |
+        A Business Artifact action invocation. The populated sub-field
+        (`startWorkflow`, `startProcess`, `downloadable`, `createArtifact`) is
+        dictated by `type`.
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            type:
+              $ref: "#/components/schemas/BusinessArtifactActionType"
+            status:
+              $ref: "#/components/schemas/BusinessArtifactActionStatus"
+            businessArtifactActionDefinitionRef:
+              $ref: "#/components/schemas/BusinessArtifactActionDefinitionRef"
+            startWorkflow:
+              $ref: "#/components/schemas/BusinessArtifactActionStartWorkflow"
+            startProcess:
+              $ref: "#/components/schemas/BusinessArtifactActionStartProcess"
+            downloadable:
+              $ref: "#/components/schemas/BusinessArtifactActionDownloadable"
+            createArtifact:
+              $ref: "#/components/schemas/BusinessArtifactActionCreateArtifact"
+          required:
+            - id
+            - type
+            - status
+            - businessArtifactActionDefinitionRef
+
+    BusinessArtifactActionStartWorkflow:
+      description: Action details for actions of type START_WORKFLOW.
+      type: object
+      properties:
+        input:
+          $ref: "#/components/schemas/JsonValue"
+
+    BusinessArtifactActionStartProcess:
+      description: |
+        Action details for actions of type START_PROCESS. Actions of this
+        type complete synchronously, so all fields are present in the invoke
+        response.
+      type: object
+      properties:
+        processDefinitionId:
+          description: ID of the Process Definition that was instantiated.
+          type: string
+          format: uuid
+        processId:
+          description: ID of the Process created by this action.
+          type: string
+          format: uuid
+      required:
+        - processDefinitionId
+        - processId
+
+    BusinessArtifactActionDownloadable:
+      description: Action details for actions of type DOWNLOADABLE.
+      type: object
+      properties:
+        input:
+          $ref: "#/components/schemas/JsonValue"
+        documentUri:
+          description: URI of the generated document. Only present when status is COMPLETED.
+          type: string
+        documentExpired:
+          description: Whether the generated document has expired. Only present when status is COMPLETED.
+          type: boolean
+
+    BusinessArtifactActionCreateArtifact:
+      description: |
+        Action details for actions of type CREATE_BUSINESS_ARTIFACT.
+        Actions of this type complete synchronously, so the populated value and
+        the created Business Artifact ID are present in the invoke response.
+      type: object
+      properties:
+        businessArtifactDefinitionRef:
+          $ref: "#/components/schemas/BusinessArtifactDefinitionRef"
+        businessArtifactId:
+          description: ID of the Business Artifact created by this action. Only present when status is COMPLETED.
+          type: string
+          format: uuid
+        value:
+          description: Form value applied to the new Business Artifact.
+          type: object
+          additionalProperties: true
+      required:
+        - businessArtifactDefinitionRef
+
+    BusinessArtifactActionCreateParams:
+      description: |
+        Params to invoke an action on a Business Artifact. The populated
+        sub-field (`startWorkflow`, `downloadable`, `startProcess`,
+        `createArtifact`) must match the type of the action identified by
+        `businessArtifactActionDefinitionCode`.
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        businessArtifactActionDefinitionCode:
+          type: string
+        startWorkflow:
+          $ref: "#/components/schemas/BusinessArtifactActionCreateParamsStartWorkflow"
+        downloadable:
+          $ref: "#/components/schemas/BusinessArtifactActionCreateParamsDownloadable"
+        startProcess:
+          $ref: "#/components/schemas/BusinessArtifactActionCreateParamsStartProcess"
+        createArtifact:
+          $ref: "#/components/schemas/BusinessArtifactActionCreateParamsCreateArtifact"
+      required:
+        - businessArtifactActionDefinitionCode
+
+    BusinessArtifactActionCreateParamsStartWorkflow:
+      description: Params for invoking an action of type START_WORKFLOW.
+      type: object
+      properties:
+        input:
+          description: Input passed to the workflow. Validated against the action's input schema.
+          type: object
+          additionalProperties: true
+
+    BusinessArtifactActionCreateParamsDownloadable:
+      description: Params for invoking an action of type DOWNLOADABLE.
+      type: object
+      properties:
+        input:
+          description: Input passed to the workflow that produces the downloadable. Validated against the action's input schema.
+          type: object
+          additionalProperties: true
+
+    BusinessArtifactActionCreateParamsStartProcess:
+      description: Params for invoking an action of type START_PROCESS.
+      type: object
+      properties:
+        metadata:
+          description: Metadata applied to the process created by this action.
+          type: object
+          additionalProperties: true
+
+    BusinessArtifactActionCreateParamsCreateArtifact:
+      description: |
+        Params for invoking an action of type CREATE_BUSINESS_ARTIFACT. The `value` is
+        the (potentially user-edited) form previously obtained via the
+        `prepareBusinessArtifactCreateArtifact` operation.
+      type: object
+      properties:
+        value:
+          description: Form value to be applied to the new Business Artifact.
+          type: object
+          additionalProperties: true
+
+    BusinessArtifactCreateArtifactPrepareParams:
+      description: Params identifying a CREATE_BUSINESS_ARTIFACT action to prepare.
+      type: object
+      properties:
+        businessArtifactActionDefinitionCode:
+          type: string
+      required:
+        - businessArtifactActionDefinitionCode
+
+    BusinessArtifactCreateArtifactPrepare:
+      description: |
+        Pre-filled value for a CREATE_BUSINESS_ARTIFACT action. Returned by the
+        prepare operation; nothing is persisted on the server.
+      type: object
+      properties:
+        businessArtifactDefinitionRef:
+          $ref: "#/components/schemas/BusinessArtifactDefinitionRef"
+        value:
+          description: Pre-filled form value computed from the action definition.
+          type: object
+          additionalProperties: true
+      required:
+        - businessArtifactDefinitionRef
+
+    BusinessArtifactActionStatus:
+      description: Status of a Business Artifact action.
+      type: string
+      enum:
+        - REQUESTED
+        - COMPLETED
+        - CANCELED
+        - ERROR
+
+    BusinessArtifactActionType:
+      description: Type of a Business Artifact action.
+      type: string
+      enum:
+        - START_WORKFLOW
+        - START_PROCESS
+        - DOWNLOADABLE
+        - CREATE_BUSINESS_ARTIFACT
+
     ProcessDefinitionRef:
       type: object
       properties:
@@ -2917,6 +3202,18 @@ components:
         - code
 
     BusinessArtifactDefinitionRef:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+      required:
+        - id
+        - code
+
+    BusinessArtifactActionDefinitionRef:
       type: object
       properties:
         id:
