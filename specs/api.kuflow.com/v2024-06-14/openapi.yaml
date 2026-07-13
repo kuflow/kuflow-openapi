@@ -2561,6 +2561,8 @@ components:
           type: string
         metadata:
           $ref: "#/components/schemas/JsonValue"
+        entity:
+          $ref: "#/components/schemas/JsonValue"
         initiatorId:
           type: string
           format: uuid
@@ -3112,6 +3114,14 @@ components:
       properties:
         metadata:
           description: Metadata applied to the process created by this action.
+          type: object
+          additionalProperties: true
+        entity:
+          description: |
+            Entity data applied to the process created by this action. Validated
+            against the process definition entity schema; validation errors are
+            recorded on the process entity value. Ignored if empty or if the
+            process definition has no entity structure.
           type: object
           additionalProperties: true
 
