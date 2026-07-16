@@ -2569,6 +2569,12 @@ components:
         initiatorEmail:
           type: string
           format: email
+        relatedProcessId:
+          description: |
+            Optional id of another process to which the created process is
+            related. Surfaced on read as `Process.processRelated.outcoming`.
+          type: string
+          format: uuid
       anyOf:
         - required:
             - processDefinitionId
