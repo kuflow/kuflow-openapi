@@ -390,6 +390,25 @@ paths:
         - $ref: "#/components/parameters/TenantIdQueryParam"
         - $ref: "#/components/parameters/ProcessDefinitionIdQueryParam"
         - $ref: "#/components/parameters/ProcessDefinitionCodeQueryParam"
+        - name: metadata
+          description: |
+            Filter by process metadata field values. Each value is an expression with the format
+            `fieldCode operation value1 value2...` (space-separated).
+
+            Supported operations: `eq`, `le`, `ge`, `between`, `contains`, `in`.
+
+            Filtering by metadata requires specifying exactly one `processDefinitionId` or `processDefinitionCode`.
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              pattern: '^\S+ (eq|le|ge|between|contains|in) \S+( \S+)*$'
+          example:
+            - "invoiceNumber eq INV-001"
+            - "amount ge 100"
+          style: form
+          explode: true
       responses:
         "200":
           description: Processes found paginated
