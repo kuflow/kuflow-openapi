@@ -390,6 +390,35 @@ paths:
         - $ref: "#/components/parameters/TenantIdQueryParam"
         - $ref: "#/components/parameters/ProcessDefinitionIdQueryParam"
         - $ref: "#/components/parameters/ProcessDefinitionCodeQueryParam"
+        - name: state
+          description: Filter by an array of process states.
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/ProcessState"
+          style: form
+          explode: true
+        - name: initiatorId
+          description: Filter by an array of initiator ids, Principal ID.
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+          style: form
+          explode: true
+        - name: initiatorEmail
+          description: Filter by an array of initiator emails.
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              format: email
+          style: form
+          explode: true
         - name: metadata
           description: |
             Filter by process metadata field values. Each value is an expression with the format
