@@ -502,6 +502,113 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
+  /processes/{id}/actions:
+    post:
+      summary: Invoke a Process action
+      description: |
+        Invoke an action on a Process.
+
+        Whether the call returns synchronously or asynchronously depends on the action type:
+
+        - `START_WORKFLOW`, `DOWNLOADABLE`: dispatched to a background worker. The
+          response returns immediately with `status=REQUESTED`. Poll
+          `retrieveProcessAction` for the final state.
+        - `START_RELATED_PROCESS`, `CREATE_TASK`, `CREATE_PROCESS_ITEM_MESSAGE`,
+          `CREATE_PROCESS_ITEM_THREAD`, `SEND_WORKFLOW_SIGNAL`: completed synchronously.
+          The response returns with `status=COMPLETED` (or an error status).
+
+        If you want the method to be idempotent, please specify the `id` field in the request body.
+      operationId: createProcessAction
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      requestBody:
+        description: Params identifying the action to invoke.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProcessActionCreateParams"
+        x-ms-requestBody-name: processActionCreateParams
+      responses:
+        "200":
+          description: Process action already created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessAction"
+        "201":
+          description: Process action created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessAction"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /processes/{id}/actions/{actionId}:
+    get:
+      summary: Get a Process action by ID
+      description: Returns a Process action by its ID.
+      operationId: retrieveProcessAction
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - name: actionId
+          description: The Process action ID.
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          x-ms-parameter-location: method
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessAction"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /processes/{id}/actions/{actionId}/~actions/cancel:
+    post:
+      summary: Cancel a Process action
+      description: |
+        Cancel a Process action.
+
+        Only meaningful for asynchronous actions still in `REQUESTED` state. The
+        action's status is set to `CANCELED`. If the action is already in a
+        terminal state, no transition occurs.
+      operationId: cancelProcessAction
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - name: actionId
+          description: The Process action ID.
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          x-ms-parameter-location: method
+      responses:
+        "200":
+          description: Process action cancelled.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessAction"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
   /processes/{id}/~actions/complete:
     post:
       summary: Complete a Process
@@ -2708,6 +2815,204 @@ components:
             type: string
             format: uuid
 
+    ProcessAction:
+      description: |
+        A Process action invocation. The populated sub-field (`downloadable`,
+        `startRelatedProcess`, `createTask`, `createProcessItemMessage`,
+        `createProcessItemThread`, `sendWorkflowSignal`) is dictated by `type`.
+        Actions of type START_WORKFLOW carry no additional details.
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            type:
+              $ref: "#/components/schemas/ProcessActionType"
+            status:
+              $ref: "#/components/schemas/ProcessActionStatus"
+            processActionDefinitionRef:
+              $ref: "#/components/schemas/ProcessActionDefinitionRef"
+            downloadable:
+              $ref: "#/components/schemas/ProcessActionDownloadable"
+            startRelatedProcess:
+              $ref: "#/components/schemas/ProcessActionStartRelatedProcess"
+            createTask:
+              $ref: "#/components/schemas/ProcessActionCreateTask"
+            createProcessItemMessage:
+              $ref: "#/components/schemas/ProcessActionCreateProcessItemMessage"
+            createProcessItemThread:
+              $ref: "#/components/schemas/ProcessActionCreateProcessItemThread"
+            sendWorkflowSignal:
+              $ref: "#/components/schemas/ProcessActionSendWorkflowSignal"
+          required:
+            - id
+            - type
+            - status
+            - processActionDefinitionRef
+
+    ProcessActionDownloadable:
+      description: Action details for actions of type DOWNLOADABLE.
+      type: object
+      properties:
+        documentUri:
+          description: URI of the generated document. Only present when status is COMPLETED.
+          type: string
+        documentExpired:
+          description: Whether the generated document has expired. Only present when status is COMPLETED.
+          type: boolean
+
+    ProcessActionStartRelatedProcess:
+      description: |
+        Action details for actions of type START_RELATED_PROCESS. Actions of
+        this type complete synchronously, so all fields are present in the
+        invoke response.
+      type: object
+      properties:
+        processDefinitionId:
+          description: ID of the Process Definition that was instantiated.
+          type: string
+          format: uuid
+        processId:
+          description: ID of the Process created by this action.
+          type: string
+          format: uuid
+      required:
+        - processDefinitionId
+        - processId
+
+    ProcessActionCreateTask:
+      description: |
+        Action details for actions of type CREATE_TASK. Actions of this type
+        complete synchronously, so the created Process Item ID is present in
+        the invoke response.
+      type: object
+      properties:
+        processItemId:
+          description: ID of the task Process Item created by this action.
+          type: string
+          format: uuid
+
+    ProcessActionCreateProcessItemMessage:
+      description: |
+        Action details for actions of type CREATE_PROCESS_ITEM_MESSAGE. Actions
+        of this type complete synchronously, so the created Process Item ID is
+        present in the invoke response.
+      type: object
+      properties:
+        processItemId:
+          description: ID of the message Process Item created by this action.
+          type: string
+          format: uuid
+
+    ProcessActionCreateProcessItemThread:
+      description: |
+        Action details for actions of type CREATE_PROCESS_ITEM_THREAD. Actions
+        of this type complete synchronously, so the created Process Item ID is
+        present in the invoke response.
+      type: object
+      properties:
+        processItemId:
+          description: ID of the thread Process Item created by this action.
+          type: string
+          format: uuid
+
+    ProcessActionSendWorkflowSignal:
+      description: Action details for actions of type SEND_WORKFLOW_SIGNAL.
+      type: object
+      properties:
+        signalName:
+          description: Name of the signal sent to the Process workflow.
+          type: string
+
+    ProcessActionCreateParams:
+      description: |
+        Params to invoke an action on a Process. The populated sub-field
+        (`createTask`, `createProcessItemMessage`, `startRelatedProcess`) must
+        match the type of the action identified by
+        `processActionDefinitionCode`; the remaining action types take no
+        params.
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        processActionDefinitionCode:
+          type: string
+        createTask:
+          $ref: "#/components/schemas/ProcessActionCreateParamsCreateTask"
+        createProcessItemMessage:
+          $ref: "#/components/schemas/ProcessActionCreateParamsCreateProcessItemMessage"
+        startRelatedProcess:
+          $ref: "#/components/schemas/ProcessActionCreateParamsStartRelatedProcess"
+      required:
+        - processActionDefinitionCode
+
+    ProcessActionCreateParamsCreateTask:
+      description: Params for invoking an action of type CREATE_TASK.
+      type: object
+      properties:
+        processItemThreadId:
+          description: ID of the thread Process Item the created task is attached to.
+          type: string
+          format: uuid
+
+    ProcessActionCreateParamsCreateProcessItemMessage:
+      description: |
+        Params for invoking an action of type CREATE_PROCESS_ITEM_MESSAGE.
+        Messages are created through the built-in `__KF_MESSAGE__` action
+        definition code.
+      type: object
+      properties:
+        text:
+          description: Text of the message to create.
+          type: string
+        processItemThreadId:
+          description: ID of the thread Process Item the created message is attached to.
+          type: string
+          format: uuid
+      required:
+        - text
+
+    ProcessActionCreateParamsStartRelatedProcess:
+      description: Params for invoking an action of type START_RELATED_PROCESS.
+      type: object
+      properties:
+        metadata:
+          description: Metadata applied to the process created by this action.
+          type: object
+          additionalProperties: true
+        entity:
+          description: |
+            Entity data applied to the process created by this action. Validated
+            against the process definition entity schema; validation errors are
+            recorded on the process entity value. Ignored if empty or if the
+            process definition has no entity structure.
+          type: object
+          additionalProperties: true
+
+    ProcessActionStatus:
+      description: Status of a Process action.
+      type: string
+      enum:
+        - REQUESTED
+        - COMPLETED
+        - CANCELED
+        - ERROR
+
+    ProcessActionType:
+      description: Type of a Process action.
+      type: string
+      enum:
+        - DOWNLOADABLE
+        - START_RELATED_PROCESS
+        - START_WORKFLOW
+        - CREATE_TASK
+        - CREATE_PROCESS_ITEM_MESSAGE
+        - CREATE_PROCESS_ITEM_THREAD
+        - SEND_WORKFLOW_SIGNAL
+
     ProcessItemPage:
       allOf:
         - $ref: "#/components/schemas/Page"
@@ -3247,6 +3552,18 @@ components:
       required:
         - id
         - version
+        - code
+
+    ProcessActionDefinitionRef:
+      type: object
+      properties:
+        id:
+          description: Not present when the action definition was removed from the process definition after the invocation.
+          type: string
+          format: uuid
+        code:
+          type: string
+      required:
         - code
 
     ProcessItemDefinitionRef:
