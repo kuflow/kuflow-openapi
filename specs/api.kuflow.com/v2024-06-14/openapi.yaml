@@ -609,6 +609,57 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
+  /processes/{id}/actions/{actionId}/~actions/upload-document:
+    post:
+      summary: Upload the document produced by a DOWNLOADABLE Process action
+      description: |
+        Upload the document produced by a `DOWNLOADABLE` action and complete the
+        action with it. Only meaningful for actions still in `REQUESTED` state.
+      operationId: uploadProcessActionDocument
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - name: actionId
+          description: The Process action ID.
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          x-ms-parameter-location: method
+        - name: fileContentType
+          description: Document content type
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: fileName
+          description: Document name
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Document to save.
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+        x-ms-requestBody-name: file
+      responses:
+        "200":
+          description: Process action completed with the uploaded document.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessAction"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
   /processes/{id}/~actions/complete:
     post:
       summary: Complete a Process
@@ -725,57 +776,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Process"
-        default:
-          $ref: "#/components/responses/DefaultError"
-
-  /processes/{id}/~actions/upload-user-action-document:
-    post:
-      summary: Upload and save a document in a user action
-      description: |
-        Allow saving a user action document uploading the content.
-      operationId: uploadProcessUserActionDocument
-      tags:
-        - apiRestExternalV20240614Processes
-        - process
-      parameters:
-        - $ref: "#/components/parameters/IdPathParam"
-        - name: fileContentType
-          description: Document content type
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: fileName
-          description: Document name
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: userActionValueId
-          description: User action value ID related to de document
-          in: query
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        description: Document to save.
-        required: true
-        content:
-          application/octet-stream:
-            schema:
-              type: string
-              format: binary
-        x-ms-requestBody-name: file
-      responses:
-        "200":
-          description: Document Saved in user action.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Process"
-        "304":
-          description: Untouched process
         default:
           $ref: "#/components/responses/DefaultError"
 
