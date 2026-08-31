@@ -518,6 +518,12 @@ paths:
           The response returns with `status=COMPLETED` (or an error status).
 
         If you want the method to be idempotent, please specify the `id` field in the request body.
+
+        Actions of type `SEND_WORKFLOW_SIGNAL` whose definition declares an input form accept a
+        `sendWorkflowSignal.input` payload: it is validated against the definition schema,
+        persisted on the action and delivered inside the workflow signal. The input is not part
+        of the idempotency key — replaying the same `id` with a different input returns the
+        original action untouched.
       operationId: createProcessAction
       tags:
         - apiRestExternalV20240614Processes
@@ -2925,12 +2931,14 @@ components:
         signalName:
           description: Name of the signal sent to the Process workflow.
           type: string
+        input:
+          $ref: "#/components/schemas/JsonValue"
 
     ProcessActionCreateParams:
       description: |
         Params to invoke an action on a Process. The populated sub-field
-        (`createTask`, `createProcessItemMessage`, `startRelatedProcess`) must
-        match the type of the action identified by
+        (`createTask`, `createProcessItemMessage`, `startRelatedProcess`,
+        `sendWorkflowSignal`) must match the type of the action identified by
         `processActionDefinitionCode`; the remaining action types take no
         params.
       type: object
@@ -2946,6 +2954,8 @@ components:
           $ref: "#/components/schemas/ProcessActionCreateParamsCreateProcessItemMessage"
         startRelatedProcess:
           $ref: "#/components/schemas/ProcessActionCreateParamsStartRelatedProcess"
+        sendWorkflowSignal:
+          $ref: "#/components/schemas/ProcessActionCreateParamsSendWorkflowSignal"
       required:
         - processActionDefinitionCode
 
@@ -2989,6 +2999,18 @@ components:
             against the process definition entity schema; validation errors are
             recorded on the process entity value. Ignored if empty or if the
             process definition has no entity structure.
+          type: object
+          additionalProperties: true
+
+    ProcessActionCreateParamsSendWorkflowSignal:
+      description: Params for invoking an action of type SEND_WORKFLOW_SIGNAL.
+      type: object
+      properties:
+        input:
+          description: |
+            Input delivered inside the workflow signal. Validated against the
+            action's input schema; only accepted when the action definition
+            declares one. The serialized input is limited to 200 KB.
           type: object
           additionalProperties: true
 
