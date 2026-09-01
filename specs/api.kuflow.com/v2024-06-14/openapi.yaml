@@ -1705,15 +1705,49 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/BusinessArtifactCreateArtifactPrepareParams"
-        x-ms-requestBody-name: businessArtifactCreateArtifactPrepareParams
+              $ref: "#/components/schemas/BusinessArtifactActionCreateArtifactPrepareParams"
+        x-ms-requestBody-name: businessArtifactActionCreateArtifactPrepareParams
       responses:
         "200":
           description: Pre-filled value for the create-artifact form.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BusinessArtifactCreateArtifactPrepare"
+                $ref: "#/components/schemas/BusinessArtifactActionCreateArtifactPrepare"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /business-artifacts/{id}/~actions/prepare-start-process:
+    post:
+      summary: Prepare the metadata for a START_PROCESS action
+      description: |
+        Compute the pre-filled metadata that a `START_PROCESS` action would apply to the
+        process it creates, without invoking the action or persisting any state.
+
+        Use it to populate a form that the user can review and edit. Once the user submits,
+        the filled metadata is sent back via `createBusinessArtifactAction` (in the
+        `startProcess.metadata` field).
+      operationId: prepareBusinessArtifactStartProcess
+      tags:
+        - apiRestExternalV20240614BusinessArtifacts
+        - businessArtifact
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      requestBody:
+        description: Params identifying the START_PROCESS action to prepare.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BusinessArtifactActionStartProcessPrepareParams"
+        x-ms-requestBody-name: businessArtifactActionStartProcessPrepareParams
+      responses:
+        "200":
+          description: Pre-filled metadata for the process creation form.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessArtifactActionStartProcessPrepare"
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -3494,7 +3528,11 @@ components:
       type: object
       properties:
         metadata:
-          description: Metadata applied to the process created by this action.
+          description: |
+            Metadata applied to the process created by this action. If empty or omitted, the
+            action's metadata expression (if any) is evaluated against this Business Artifact
+            and its result is applied instead. A non-empty value is applied as provided, with
+            no merging.
           type: object
           additionalProperties: true
         entity:
@@ -3518,7 +3556,7 @@ components:
           type: object
           additionalProperties: true
 
-    BusinessArtifactCreateArtifactPrepareParams:
+    BusinessArtifactActionCreateArtifactPrepareParams:
       description: Params identifying a CREATE_BUSINESS_ARTIFACT action to prepare.
       type: object
       properties:
@@ -3527,7 +3565,7 @@ components:
       required:
         - businessArtifactActionDefinitionCode
 
-    BusinessArtifactCreateArtifactPrepare:
+    BusinessArtifactActionCreateArtifactPrepare:
       description: |
         Pre-filled value for a CREATE_BUSINESS_ARTIFACT action. Returned by the
         prepare operation; nothing is persisted on the server.
@@ -3541,6 +3579,32 @@ components:
           additionalProperties: true
       required:
         - businessArtifactDefinitionRef
+
+    BusinessArtifactActionStartProcessPrepareParams:
+      description: Params identifying a START_PROCESS action to prepare.
+      type: object
+      properties:
+        businessArtifactActionDefinitionCode:
+          type: string
+      required:
+        - businessArtifactActionDefinitionCode
+
+    BusinessArtifactActionStartProcessPrepare:
+      description: |
+        Pre-filled metadata for a START_PROCESS action. Returned by the prepare
+        operation; nothing is persisted on the server.
+      type: object
+      properties:
+        processDefinitionId:
+          description: Process Definition the action will start.
+          type: string
+          format: uuid
+        metadata:
+          description: Pre-filled process metadata computed from the action definition.
+          type: object
+          additionalProperties: true
+      required:
+        - processDefinitionId
 
     BusinessArtifactActionStatus:
       description: Status of a Business Artifact action.
