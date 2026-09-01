@@ -1693,7 +1693,7 @@ paths:
         Use it to populate a form that the user can review and edit. Once the user submits,
         the filled value is sent back via `createBusinessArtifactAction` (in the
         `createArtifact.value` field).
-      operationId: prepareBusinessArtifactCreateArtifact
+      operationId: prepareBusinessArtifactActionCreateArtifact
       tags:
         - apiRestExternalV20240614BusinessArtifacts
         - businessArtifact
@@ -1727,7 +1727,7 @@ paths:
         Use it to populate a form that the user can review and edit. Once the user submits,
         the filled metadata is sent back via `createBusinessArtifactAction` (in the
         `startProcess.metadata` field).
-      operationId: prepareBusinessArtifactStartProcess
+      operationId: prepareBusinessArtifactActionStartProcess
       tags:
         - apiRestExternalV20240614BusinessArtifacts
         - businessArtifact
@@ -3548,7 +3548,7 @@ components:
       description: |
         Params for invoking an action of type CREATE_BUSINESS_ARTIFACT. The `value` is
         the (potentially user-edited) form previously obtained via the
-        `prepareBusinessArtifactCreateArtifact` operation.
+        `prepareBusinessArtifactActionCreateArtifact` operation.
       type: object
       properties:
         value:
