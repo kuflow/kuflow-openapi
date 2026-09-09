@@ -1418,6 +1418,16 @@ paths:
             - "status in active inactive"
           style: form
           explode: true
+        - name: includeDeleted
+          description: |
+            When `true`, deleted Business Artifacts are included in the results, with their `deletedAt`
+            and `deletedBy` fields set. Only honored when the request filters by exactly one
+            `businessArtifactDefinitionId` and the credentials hold manager rights over that Business
+            Artifact Definition; in any other case the flag is silently ignored.
+          in: query
+          schema:
+            type: boolean
+            default: false
       responses:
         "200":
           description: Business Artifacts found paginated.
@@ -1484,7 +1494,9 @@ paths:
 
     delete:
       summary: Delete a Business Artifact by ID
-      description: Deletes the requested Business Artifact.
+      description: |
+        Deletes the requested Business Artifact. The deletion is soft: the Business Artifact can be
+        brought back with the `restoreBusinessArtifact` operation.
       operationId: deleteBusinessArtifact
       tags:
         - apiRestExternalV20240614BusinessArtifacts
@@ -1494,6 +1506,28 @@ paths:
       responses:
         "204":
           description: Business Artifact deleted
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /business-artifacts/{id}/~actions/restore:
+    post:
+      summary: Restore a deleted Business Artifact by ID
+      description: |
+        Restore a previously deleted Business Artifact, the undo of the `deleteBusinessArtifact`
+        operation. If the Business Artifact is not deleted, no action is taken.
+      operationId: restoreBusinessArtifact
+      tags:
+        - apiRestExternalV20240614BusinessArtifacts
+        - businessArtifact
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: Business Artifact restored.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessArtifact"
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -3436,6 +3470,16 @@ components:
               format: uuid
             businessArtifactDefinitionRef:
               $ref: "#/components/schemas/BusinessArtifactDefinitionRef"
+            deletedBy:
+              description: Who deleted this Business Artifact, present only when it is deleted.
+              type: string
+              format: uuid
+              readOnly: true
+            deletedAt:
+              description: When this Business Artifact was deleted, present only when it is deleted.
+              type: string
+              format: date-time
+              readOnly: true
           required:
             - id
             - tenantId
@@ -3498,6 +3542,16 @@ components:
               $ref: "#/components/schemas/BusinessArtifactDefinitionRef"
             data:
               $ref: "#/components/schemas/JsonValue"
+            deletedBy:
+              description: Who deleted this Business Artifact, present only when it is deleted.
+              type: string
+              format: uuid
+              readOnly: true
+            deletedAt:
+              description: When this Business Artifact was deleted, present only when it is deleted.
+              type: string
+              format: date-time
+              readOnly: true
           required:
             - id
             - tenantId
