@@ -1418,16 +1418,16 @@ paths:
             - "status in active inactive"
           style: form
           explode: true
-        - name: includeDeleted
+        - name: deleted
           description: |
-            When `true`, deleted Business Artifacts are included in the results, with their `deletedAt`
-            and `deletedBy` fields set. Only honored when the request filters by exactly one
-            `businessArtifactDefinitionId` and the credentials hold manager rights over that Business
-            Artifact Definition; in any other case the flag is silently ignored.
+            Soft-deleted Business Artifacts filtering mode; when omitted, `EXCLUDE` applies. With `INCLUDE`
+            or `ONLY`, deleted Business Artifacts are returned with their `deletedAt` and `deletedBy`
+            fields set. Only honored when the request filters by exactly one `businessArtifactDefinitionId`
+            and the credentials hold manager rights over that Business Artifact Definition; in any other
+            case the filter silently falls back to `EXCLUDE`.
           in: query
           schema:
-            type: boolean
-            default: false
+            $ref: "#/components/schemas/DeletedQueryParam"
       responses:
         "200":
           description: Business Artifacts found paginated.
@@ -3790,6 +3790,18 @@ components:
         - START_PROCESS
         - DOWNLOADABLE
         - CREATE_BUSINESS_ARTIFACT
+
+    DeletedQueryParam:
+      description: |
+        Soft-deleted records filtering mode:
+        * EXCLUDE: only records that are not deleted (default)
+        * INCLUDE: both deleted and non-deleted records
+        * ONLY: only deleted records
+      type: string
+      enum:
+        - EXCLUDE
+        - INCLUDE
+        - ONLY
 
     ProcessDefinitionRef:
       type: object
