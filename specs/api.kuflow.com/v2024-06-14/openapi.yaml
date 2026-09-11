@@ -1422,9 +1422,11 @@ paths:
           description: |
             Soft-deleted Business Artifacts filtering mode; when omitted, `EXCLUDE` applies. With `INCLUDE`
             or `ONLY`, deleted Business Artifacts are returned with their `deletedAt` and `deletedBy`
-            fields set. Only honored when the request filters by exactly one `businessArtifactDefinitionId`
-            and the credentials hold manager rights over that Business Artifact Definition; in any other
-            case the filter silently falls back to `EXCLUDE`.
+            fields set. Only honored when the request identifies exactly one Business Artifact Definition —
+            by exactly one `businessArtifactDefinitionId`, or by exactly one `businessArtifactDefinitionCode`
+            together with exactly one `tenantId` (codes are unique per tenant) — and the credentials hold
+            manager rights over that Business Artifact Definition; in any other case the filter silently
+            falls back to `EXCLUDE`.
           in: query
           schema:
             $ref: "#/components/schemas/DeletedQueryParam"
