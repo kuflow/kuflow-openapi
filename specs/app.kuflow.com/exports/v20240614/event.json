@@ -38,5 +38,5 @@
       "existingJavaType": "java.util.Map<String,java.io.Serializable>"
     }
   },
-  "required": ["$schema", "id", "tenantId", "timestamp", "principal", "objectType", "objectId", "type"]
+  "required": ["$schema", "id", "tenantId", "timestamp", "principalId", "objectType", "objectId", "type"]
 }
