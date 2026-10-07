@@ -1018,6 +1018,9 @@ paths:
       description: |
         Create a Process Item and optionally fill its value.
 
+        To create a `TASK` or a `MESSAGE` inside a thread, set `processItemThreadId` to the id of a Process Item of
+        type `THREAD` that belongs to the same Process.
+
         If you want to add document type elements, you can pass a reference to an existing document type element
         indicating its 'uri'. This will copy that document into the element. In case you want to add a new document,
         please use the corresponding API method.
@@ -3227,6 +3230,10 @@ components:
             processId:
               type: string
               format: uuid
+            processItemThreadId:
+              description: ID of the thread Process Item this item is attached to, if any.
+              type: string
+              format: uuid
             ownerId:
               description: Principal ID.
               type: string
@@ -3273,6 +3280,13 @@ components:
         type:
           $ref: "#/components/schemas/ProcessItemType"
         processId:
+          type: string
+          format: uuid
+        processItemThreadId:
+          description: |
+            ID of the thread Process Item the created item is attached to. Only allowed for items
+            of type `TASK` or `MESSAGE`; it must reference a Process Item of type `THREAD` that
+            belongs to the same Process. It is not part of the idempotency key.
           type: string
           format: uuid
         ownerId:
@@ -3352,6 +3366,10 @@ components:
             type:
               $ref: "#/components/schemas/ProcessItemType"
             processId:
+              type: string
+              format: uuid
+            processItemThreadId:
+              description: ID of the thread Process Item this item is attached to, if any.
               type: string
               format: uuid
             ownerId:
