@@ -459,6 +459,16 @@ paths:
             - "amount ge 100"
           style: form
           explode: true
+        - name: deleted
+          description: |
+            Deleted Processes filtering mode; when omitted, `EXCLUDE` applies. With `INCLUDE` or `ONLY`, deleted
+            Processes are returned with their `deletedAt` and `deletedBy` fields set. They are only returned when the
+            request identifies exactly one Process Definition — by exactly one `processDefinitionId`, or by exactly one
+            `processDefinitionCode` together with exactly one `tenantId` (codes are unique per tenant) — and the
+            credentials can delete any Process of that definition; otherwise they are silently left out.
+          in: query
+          schema:
+            $ref: "#/components/schemas/DeletedQueryParam"
       responses:
         "200":
           description: Processes found paginated
@@ -506,7 +516,9 @@ paths:
   /processes/{id}:
     get:
       summary: Get a Process by ID
-      description: Returns the requested Process when has access to do it.
+      description: |
+        Returns the requested Process when has access to do it. A deleted Process is returned too, with its
+        `deletedAt` and `deletedBy` fields set.
       operationId: retrieveProcess
       tags:
         - apiRestExternalV20240614Processes
@@ -520,6 +532,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Process"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+    delete:
+      summary: Delete a Process by ID
+      description: |
+        Deletes the requested Process, and its Process Items with it. Only a finished Process (`COMPLETED` or
+        `CANCELLED`) with nothing in progress, neither tasks still to be done nor workflows of its actions still
+        running, can be deleted; otherwise it answers conflict. The deletion is soft: the Process is still returned
+        by id and with `deleted=INCLUDE|ONLY`, with its `deletedAt` and `deletedBy` fields set, but it cannot be
+        restored. Deleting a Process that is already deleted does nothing.
+      operationId: deleteProcess
+      tags:
+        - apiRestExternalV20240614Processes
+        - process
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "204":
+          description: Process deleted
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -1003,6 +1035,17 @@ paths:
         - $ref: "#/components/parameters/ProcessDefinitionIdQueryParam"
         - $ref: "#/components/parameters/ProcessDefinitionCodeQueryParam"
         - $ref: "#/components/parameters/TenantIdQueryParam"
+        - name: deleted
+          description: |
+            Deleted Process Items filtering mode; when omitted, `EXCLUDE` applies. The Process Items of a deleted
+            Process are deleted with it. With `INCLUDE` or `ONLY`, deleted Process Items are returned with their
+            `deletedAt` and `deletedBy` fields set. They are only returned when the request identifies exactly one
+            Process Definition — by exactly one `processDefinitionId`, or by exactly one `processDefinitionCode`
+            together with exactly one `tenantId` (codes are unique per tenant) — and the credentials can delete any
+            Process of that definition; otherwise they are silently left out.
+          in: query
+          schema:
+            $ref: "#/components/schemas/DeletedQueryParam"
       responses:
         "200":
           description: Process items found paginated.
@@ -1057,7 +1100,9 @@ paths:
   /process-items/{id}:
     get:
       summary: Get a process item given it ID
-      description: Allow to get a process item by ID.
+      description: |
+        Allow to get a process item by ID. A deleted Process Item (the ones of a deleted Process) is returned too,
+        with its `deletedAt` and `deletedBy` fields set.
       operationId: retrieveProcessItem
       tags:
         - apiRestExternalV20240614ProcessItems
@@ -2294,6 +2339,20 @@ components:
           type: string
           format: date-time
 
+    AbstractDeleted:
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            deletedBy:
+              description: Who deleted this model, present only when it is deleted.
+              type: string
+              format: uuid
+            deletedAt:
+              description: When this model was deleted, present only when it is deleted.
+              type: string
+              format: date-time
+
     Page:
       type: object
       properties:
@@ -2333,7 +2392,6 @@ components:
         valid:
           type: boolean
           description: true if the data complain the related json schema.
-          readOnly: true
         value:
           type: object
           description: json value filled that complain with the related json schema.
@@ -2342,7 +2400,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/JsonValueError"
-          readOnly: true
       required:
         - value
 
@@ -2776,7 +2833,6 @@ components:
             tenantId:
               type: string
               format: uuid
-              readOnly: true
           required:
             - id
             - principal
@@ -2802,15 +2858,12 @@ components:
             id:
               type: string
               format: uuid
-              readOnly: true
             principalId:
               type: string
               format: uuid
-              readOnly: true
             tenantId:
               type: string
               format: uuid
-              readOnly: true
           required:
             - id
             - principalId
@@ -2830,7 +2883,7 @@ components:
 
     ProcessPageItem:
       allOf:
-        - $ref: "#/components/schemas/AbstractAudited"
+        - $ref: "#/components/schemas/AbstractDeleted"
         - type: object
           properties:
             id:
@@ -2842,7 +2895,6 @@ components:
                 Process resource URI, e.g. usable as `targetUri` of the `uploadDocument` operation.
                 Format `ku:process/{id}`.
               type: string
-              readOnly: true
             state:
               $ref: "#/components/schemas/ProcessState"
             processDefinitionRef:
@@ -2932,7 +2984,7 @@ components:
 
     Process:
       allOf:
-        - $ref: "#/components/schemas/AbstractAudited"
+        - $ref: "#/components/schemas/AbstractDeleted"
         - type: object
           properties:
             id:
@@ -2944,7 +2996,6 @@ components:
                 Process resource URI, e.g. usable as `targetUri` of the `uploadDocument` operation.
                 Format `ku:process/{id}`.
               type: string
-              readOnly: true
             state:
               $ref: "#/components/schemas/ProcessState"
             processDefinitionRef:
@@ -3214,7 +3265,7 @@ components:
 
     ProcessItemPageItem:
       allOf:
-        - $ref: "#/components/schemas/AbstractAudited"
+        - $ref: "#/components/schemas/AbstractDeleted"
         - type: object
           properties:
             id:
@@ -3223,7 +3274,6 @@ components:
             uri:
               description: Process Item resource URI. Format `ku:process-item/{id}`.
               type: string
-              readOnly: true
             type:
               $ref: "#/components/schemas/ProcessItemType"
             processId:
@@ -3352,7 +3402,7 @@ components:
 
     ProcessItem:
       allOf:
-        - $ref: "#/components/schemas/AbstractAudited"
+        - $ref: "#/components/schemas/AbstractDeleted"
         - type: object
           properties:
             id:
@@ -3361,7 +3411,6 @@ components:
             uri:
               description: Process Item resource URI. Format `ku:process-item/{id}`.
               type: string
-              readOnly: true
             type:
               $ref: "#/components/schemas/ProcessItemType"
             processId:
@@ -3470,7 +3519,7 @@ components:
 
     BusinessArtifactPageItem:
       allOf:
-        - $ref: "#/components/schemas/AbstractAudited"
+        - $ref: "#/components/schemas/AbstractDeleted"
         - type: object
           properties:
             id:
@@ -3482,23 +3531,12 @@ components:
                 Business Artifact resource URI, e.g. usable as `targetUri` of the `uploadDocument`
                 operation. Format `ku:business-artifact/{id}`.
               type: string
-              readOnly: true
             tenantId:
               description: Tenant ID.
               type: string
               format: uuid
             businessArtifactDefinitionRef:
               $ref: "#/components/schemas/BusinessArtifactDefinitionRef"
-            deletedBy:
-              description: Who deleted this Business Artifact, present only when it is deleted.
-              type: string
-              format: uuid
-              readOnly: true
-            deletedAt:
-              description: When this Business Artifact was deleted, present only when it is deleted.
-              type: string
-              format: date-time
-              readOnly: true
           required:
             - id
             - tenantId
@@ -3540,7 +3578,7 @@ components:
 
     BusinessArtifact:
       allOf:
-        - $ref: "#/components/schemas/AbstractAudited"
+        - $ref: "#/components/schemas/AbstractDeleted"
         - type: object
           properties:
             id:
@@ -3552,7 +3590,6 @@ components:
                 Business Artifact resource URI, e.g. usable as `targetUri` of the `uploadDocument`
                 operation. Format `ku:business-artifact/{id}`.
               type: string
-              readOnly: true
             tenantId:
               description: Tenant ID.
               type: string
@@ -3561,16 +3598,6 @@ components:
               $ref: "#/components/schemas/BusinessArtifactDefinitionRef"
             data:
               $ref: "#/components/schemas/JsonValue"
-            deletedBy:
-              description: Who deleted this Business Artifact, present only when it is deleted.
-              type: string
-              format: uuid
-              readOnly: true
-            deletedAt:
-              description: When this Business Artifact was deleted, present only when it is deleted.
-              type: string
-              format: date-time
-              readOnly: true
           required:
             - id
             - tenantId
