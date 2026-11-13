@@ -1896,6 +1896,98 @@ paths:
         default:
           $ref: "#/components/responses/DefaultError"
 
+  /business-artifact-feed-items:
+    post:
+      summary: Create a Business Artifact Feed Item
+      description: |
+        Creates a thread or a message in the activity feed of a Business Artifact Definition, the feed shown next to
+        its list of Business Artifacts. The credentials need to manage the Business Artifact Definition.
+
+        A message goes to the top level of the feed, or into a thread when `businessArtifactFeedItemThreadId` is set.
+        Only the author of a thread adds messages to it, and a thread holds at most 1000 messages.
+
+        If you want the method to be idempotent, please specify the `id` field in the request body.
+      operationId: createBusinessArtifactFeedItem
+      tags:
+        - apiRestExternalV20240614BusinessArtifactFeedItems
+        - businessArtifact
+      requestBody:
+        description: Business Artifact Feed Item to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BusinessArtifactFeedItemCreateParams"
+        x-ms-requestBody-name: businessArtifactFeedItemCreateParams
+      responses:
+        "200":
+          description: Business Artifact Feed Item already created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessArtifactFeedItem"
+        "201":
+          description: Business Artifact Feed Item created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessArtifactFeedItem"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /business-artifact-feed-items/{id}:
+    get:
+      summary: Get a Business Artifact Feed Item by ID
+      description: Returns the requested Business Artifact Feed Item when has access to do it.
+      operationId: retrieveBusinessArtifactFeedItem
+      tags:
+        - apiRestExternalV20240614BusinessArtifactFeedItems
+        - businessArtifact
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessArtifactFeedItem"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+    put:
+      summary: Update a Business Artifact Feed Item
+      description: |
+        Replaces what can change of an existing Business Artifact Feed Item: the content, status and progress of a
+        thread, or the content of a message. It never creates an item. Only its author updates it.
+
+        A thread in a terminal status (`COMPLETED`, `FAILED`, `CANCELED`) is closed, and so are its messages: an update
+        that leaves it as it is succeeds, so a retried call is harmless, and any other change is rejected with a
+        conflict. The status of a thread cannot be removed once set.
+      operationId: updateBusinessArtifactFeedItem
+      tags:
+        - apiRestExternalV20240614BusinessArtifactFeedItems
+        - businessArtifact
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+      requestBody:
+        description: Params used to update the Business Artifact Feed Item.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BusinessArtifactFeedItemUpdateParams"
+        x-ms-requestBody-name: businessArtifactFeedItemUpdateParams
+      responses:
+        "200":
+          description: Business Artifact Feed Item updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessArtifactFeedItem"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
   /documents/~actions/upload:
     post:
       summary: Upload a temporal document
@@ -3836,6 +3928,189 @@ components:
         - START_PROCESS
         - DOWNLOADABLE
         - CREATE_BUSINESS_ARTIFACT
+
+    BusinessArtifactFeedItemCreateParams:
+      description: |
+        Params to create a Business Artifact Feed Item. Either `businessArtifactDefinitionId` or
+        `businessArtifactDefinitionCode` (with `tenantId`) must be provided. The populated sub-field (`thread`,
+        `message`) is dictated by `type`.
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          $ref: "#/components/schemas/BusinessArtifactFeedItemType"
+        tenantId:
+          type: string
+          format: uuid
+        businessArtifactDefinitionId:
+          type: string
+          format: uuid
+        businessArtifactDefinitionCode:
+          type: string
+        businessArtifactFeedItemThreadId:
+          description: |
+            ID of the thread in which the message is created; without it, the message is created at the top level of
+            the feed.
+            Only allowed for items of type `MESSAGE`; it must reference a thread of the same Business Artifact
+            Definition, written by the same credentials and not closed. It is not part of the idempotency key.
+          type: string
+          format: uuid
+        thread:
+          $ref: "#/components/schemas/BusinessArtifactFeedItemThreadParams"
+        message:
+          $ref: "#/components/schemas/BusinessArtifactFeedItemMessageParams"
+      required:
+        - type
+
+    BusinessArtifactFeedItemUpdateParams:
+      description: |
+        Params to update a Business Artifact Feed Item. The populated sub-field (`thread`, `message`) must match the
+        `type` of the item, and replaces what it had: a field left out is cleared.
+      type: object
+      properties:
+        thread:
+          $ref: "#/components/schemas/BusinessArtifactFeedItemThreadParams"
+        message:
+          $ref: "#/components/schemas/BusinessArtifactFeedItemMessageParams"
+
+    BusinessArtifactFeedItemThreadParams:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          description: Description in Markdown format according to the specification https://spec.commonmark.org/
+          type: string
+          maxLength: 4000
+        status:
+          $ref: "#/components/schemas/BusinessArtifactFeedItemStatus"
+        progress:
+          $ref: "#/components/schemas/BusinessArtifactFeedItemProgress"
+      required:
+        - title
+
+    BusinessArtifactFeedItemMessageParams:
+      type: object
+      properties:
+        text:
+          description: Message text in Markdown format according to the specification https://spec.commonmark.org/
+          type: string
+          minLength: 1
+          maxLength: 4000
+        level:
+          $ref: "#/components/schemas/BusinessArtifactFeedItemMessageLevel"
+      required:
+        - text
+
+    BusinessArtifactFeedItem:
+      description: |
+        An item of the activity feed of a Business Artifact Definition. The populated sub-field (`thread`, `message`) is
+        dictated by `type`. `createdBy` is its author.
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            type:
+              $ref: "#/components/schemas/BusinessArtifactFeedItemType"
+            tenantId:
+              description: Tenant ID.
+              type: string
+              format: uuid
+            businessArtifactDefinitionRef:
+              $ref: "#/components/schemas/BusinessArtifactDefinitionRef"
+            businessArtifactFeedItemThreadId:
+              description: ID of the thread this message is in, if any.
+              type: string
+              format: uuid
+            thread:
+              $ref: "#/components/schemas/BusinessArtifactFeedItemThread"
+            message:
+              $ref: "#/components/schemas/BusinessArtifactFeedItemMessage"
+          required:
+            - id
+            - type
+            - tenantId
+            - businessArtifactDefinitionRef
+
+    BusinessArtifactFeedItemThread:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          description: Description in Markdown format according to the specification https://spec.commonmark.org/
+          type: string
+        status:
+          $ref: "#/components/schemas/BusinessArtifactFeedItemStatus"
+        progress:
+          $ref: "#/components/schemas/BusinessArtifactFeedItemProgress"
+        startedAt:
+          description: First time the thread went `RUNNING`.
+          type: string
+          format: date-time
+        finishedAt:
+          description: When the thread reached a terminal status.
+          type: string
+          format: date-time
+
+    BusinessArtifactFeedItemMessage:
+      type: object
+      properties:
+        text:
+          description: Message text in Markdown format according to the specification https://spec.commonmark.org/
+          type: string
+        level:
+          $ref: "#/components/schemas/BusinessArtifactFeedItemMessageLevel"
+      required:
+        - level
+
+    BusinessArtifactFeedItemProgress:
+      description: Progress of a thread. Without `total`, the progress is indeterminate.
+      type: object
+      properties:
+        completed:
+          type: integer
+          format: int32
+          minimum: 0
+        total:
+          type: integer
+          format: int32
+          minimum: 1
+      required:
+        - completed
+
+    BusinessArtifactFeedItemType:
+      description: Type of a Business Artifact Feed Item.
+      type: string
+      enum:
+        - THREAD
+        - MESSAGE
+
+    BusinessArtifactFeedItemStatus:
+      description: |
+        Status of a thread. `COMPLETED`, `FAILED` and `CANCELED` are terminal: they close the thread.
+      type: string
+      enum:
+        - PENDING
+        - RUNNING
+        - COMPLETED
+        - FAILED
+        - CANCELED
+
+    BusinessArtifactFeedItemMessageLevel:
+      description: Level of a message, `INFO` when not given.
+      type: string
+      enum:
+        - INFO
+        - WARN
+        - ERROR
 
     DeletedQueryParam:
       description: |
