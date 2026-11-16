@@ -1904,7 +1904,9 @@ paths:
         its list of Business Artifacts. The credentials need to manage the Business Artifact Definition.
 
         A message goes to the top level of the feed, or into a thread when `businessArtifactFeedItemThreadId` is set.
-        Only the author of a thread adds messages to it, and a thread holds at most 1000 messages.
+        Only the author of a thread adds messages to it.
+
+        A thread or a message may have a `status` and a `progress`, to tell how the work it describes goes.
 
         If you want the method to be idempotent, please specify the `id` field in the request body.
       operationId: createBusinessArtifactFeedItem
@@ -1958,12 +1960,12 @@ paths:
     put:
       summary: Update a Business Artifact Feed Item
       description: |
-        Replaces what can change of an existing Business Artifact Feed Item: the content, status and progress of a
-        thread, or the content of a message. It never creates an item. Only its author updates it.
+        Replaces what can change of an existing Business Artifact Feed Item: its content, status and progress. It never
+        creates an item. Only its author updates it.
 
-        A thread in a terminal status (`COMPLETED`, `FAILED`, `CANCELED`) is closed, and so are its messages: an update
-        that leaves it as it is succeeds, so a retried call is harmless, and any other change is rejected with a
-        conflict. The status of a thread cannot be removed once set.
+        An item in a terminal status (`COMPLETED`, `FAILED`, `CANCELED`) is closed, and so are the messages of a closed
+        thread: an update that leaves it as it is succeeds, so a retried call is harmless, and any other change is
+        rejected with a conflict. The status of an item cannot be removed once set.
       operationId: updateBusinessArtifactFeedItem
       tags:
         - apiRestExternalV20240614BusinessArtifactFeedItems
@@ -3957,6 +3959,10 @@ components:
             Definition, written by the same credentials and not closed. It is not part of the idempotency key.
           type: string
           format: uuid
+        status:
+          $ref: "#/components/schemas/BusinessArtifactFeedItemStatus"
+        progress:
+          $ref: "#/components/schemas/BusinessArtifactFeedItemProgress"
         thread:
           $ref: "#/components/schemas/BusinessArtifactFeedItemThreadParams"
         message:
@@ -3967,9 +3973,13 @@ components:
     BusinessArtifactFeedItemUpdateParams:
       description: |
         Params to update a Business Artifact Feed Item. The populated sub-field (`thread`, `message`) must match the
-        `type` of the item, and replaces what it had: a field left out is cleared.
+        `type` of the item. They replace what it had: a field left out is cleared.
       type: object
       properties:
+        status:
+          $ref: "#/components/schemas/BusinessArtifactFeedItemStatus"
+        progress:
+          $ref: "#/components/schemas/BusinessArtifactFeedItemProgress"
         thread:
           $ref: "#/components/schemas/BusinessArtifactFeedItemThreadParams"
         message:
@@ -3986,10 +3996,6 @@ components:
           description: Description in Markdown format according to the specification https://spec.commonmark.org/
           type: string
           maxLength: 4000
-        status:
-          $ref: "#/components/schemas/BusinessArtifactFeedItemStatus"
-        progress:
-          $ref: "#/components/schemas/BusinessArtifactFeedItemProgress"
       required:
         - title
 
@@ -4029,6 +4035,18 @@ components:
               description: ID of the thread this message is in, if any.
               type: string
               format: uuid
+            status:
+              $ref: "#/components/schemas/BusinessArtifactFeedItemStatus"
+            progress:
+              $ref: "#/components/schemas/BusinessArtifactFeedItemProgress"
+            startedAt:
+              description: First time the item went `RUNNING`.
+              type: string
+              format: date-time
+            finishedAt:
+              description: When the item reached a terminal status.
+              type: string
+              format: date-time
             thread:
               $ref: "#/components/schemas/BusinessArtifactFeedItemThread"
             message:
@@ -4047,18 +4065,6 @@ components:
         description:
           description: Description in Markdown format according to the specification https://spec.commonmark.org/
           type: string
-        status:
-          $ref: "#/components/schemas/BusinessArtifactFeedItemStatus"
-        progress:
-          $ref: "#/components/schemas/BusinessArtifactFeedItemProgress"
-        startedAt:
-          description: First time the thread went `RUNNING`.
-          type: string
-          format: date-time
-        finishedAt:
-          description: When the thread reached a terminal status.
-          type: string
-          format: date-time
 
     BusinessArtifactFeedItemMessage:
       type: object
@@ -4072,7 +4078,7 @@ components:
         - level
 
     BusinessArtifactFeedItemProgress:
-      description: Progress of a thread. Without `total`, the progress is indeterminate.
+      description: Progress of an item. Without `total`, the progress is indeterminate.
       type: object
       properties:
         completed:
@@ -4095,7 +4101,8 @@ components:
 
     BusinessArtifactFeedItemStatus:
       description: |
-        Status of a thread. `COMPLETED`, `FAILED` and `CANCELED` are terminal: they close the thread.
+        Status of an item. `COMPLETED`, `FAILED` and `CANCELED` are terminal: they close the item, and a closed thread
+        closes its messages.
       type: string
       enum:
         - PENDING
