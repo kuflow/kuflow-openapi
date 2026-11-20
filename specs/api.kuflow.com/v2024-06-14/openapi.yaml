@@ -3509,6 +3509,10 @@ components:
           $ref: "#/components/schemas/ProcessItemDefinitionTaskAiAssistance"
 
     ProcessItemDefinitionTaskFormOrigin:
+      description: |
+        Where the form of a task comes from: STRUCTURE_DATA, a form of the definition, the one of
+        structureDataDefinitionCode. ELEMENTS is deprecated: the elements of such a task are not part of the definition
+        returned.
       type: string
       enum:
         - ELEMENTS
