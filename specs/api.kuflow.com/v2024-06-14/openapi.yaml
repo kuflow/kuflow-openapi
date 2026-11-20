@@ -419,6 +419,7 @@ paths:
         - $ref: "#/components/parameters/TenantIdQueryParam"
         - $ref: "#/components/parameters/ProcessDefinitionCodeQueryParam"
         - $ref: "#/components/parameters/ProcessDefinitionStateQueryParam"
+        - $ref: "#/components/parameters/ProcessDefinitionNameQueryParam"
       responses:
         "200":
           description: Process Definitions found paginated.
@@ -2437,6 +2438,17 @@ components:
       explode: true
       x-ms-parameter-location: method
 
+    ProcessDefinitionNameQueryParam:
+      name: name
+      description: |
+        Filter by the process definitions whose name has every word of this text, in any order, without regard to
+        case or accents.
+      in: query
+      required: false
+      schema:
+        type: string
+      x-ms-parameter-location: method
+
     ProcessDefinitionVersionQueryParam:
       name: version
       description: The id of a version of the process definition. Without it, its latest version.
@@ -3339,13 +3351,19 @@ components:
         - processDefinitionId
 
     ProcessDefinitionActionDefinitionProcessItem:
+      description: |
+        The task or thread that the action creates, by its code. When the version does not have it, by its id: KuFlow
+        does not offer the action in the processes of that version. Actions belong to the process definition, and
+        tasks and threads to each version.
       type: object
       properties:
         processItemDefinitionCode:
-          description: The code of the task or thread that the action creates.
+          description: The code of the task or thread that the action creates, when the version has it.
           type: string
-      required:
-        - processItemDefinitionCode
+        processItemDefinitionId:
+          description: The id of the task or thread that the action creates, when the version does not have it.
+          type: string
+          format: uuid
 
     ProcessDefinitionActionDefinitionSendWorkflowSignal:
       type: object
