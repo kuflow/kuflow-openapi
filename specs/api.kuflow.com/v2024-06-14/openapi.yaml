@@ -95,6 +95,12 @@ tags:
       description: Find out more about our principal model.
       url: "https://docs.kuflow.com"
     x-displayName: Group
+  - name: processDefinition
+    description: Operations about process definitions.
+    externalDocs:
+      description: Find out more about our process model.
+      url: "https://docs.kuflow.com"
+    x-displayName: Process Definition
   - name: process
     description: Operations about processes.
     externalDocs:
@@ -156,6 +162,7 @@ x-tagGroups:
       - principal
       - tenant
       - tenantUser
+      - processDefinition
       - process
       - processItem
       - businessArtifact
@@ -391,6 +398,62 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TenantUser"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /process-definitions:
+    get:
+      summary: Find the Process Definitions that the credentials administer
+      description: |
+        List the live Process Definitions that the credentials used can update, each one at its latest version: the
+        draft when there is one, otherwise the current one. Archived ones are not listed, nor the ones with a task
+        whose form is made of elements, a deprecated kind of form.
+
+        Available sort query values: name, code
+      operationId: findProcessDefinitions
+      tags:
+        - apiRestExternalV20240614ProcessDefinitions
+        - processDefinition
+      parameters:
+        - $ref: "#/components/parameters/SizeQueryParam"
+        - $ref: "#/components/parameters/PageQueryParam"
+        - $ref: "#/components/parameters/SortQueryParam"
+        - $ref: "#/components/parameters/TenantIdQueryParam"
+        - $ref: "#/components/parameters/ProcessDefinitionCodeQueryParam"
+        - $ref: "#/components/parameters/ProcessDefinitionStateQueryParam"
+        - $ref: "#/components/parameters/ProcessDefinitionNameQueryParam"
+      responses:
+        "200":
+          description: Process Definitions found paginated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessDefinitionPage"
+        default:
+          $ref: "#/components/responses/DefaultError"
+
+  /process-definitions/{id}:
+    get:
+      summary: Get a Process Definition by ID
+      description: |
+        Returns the whole Process Definition when the credentials used can update it: its forms, its tasks and threads,
+        its actions, schedulers and permissions, and its workflow. Without `version`, at its latest version: the draft
+        when there is one, otherwise the current one. An archived one is not found, nor one whose version has a task
+        whose form is made of elements, a deprecated kind of form.
+      operationId: retrieveProcessDefinition
+      tags:
+        - apiRestExternalV20240614ProcessDefinitions
+        - processDefinition
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - $ref: "#/components/parameters/ProcessDefinitionVersionQueryParam"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessDefinition"
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -2359,6 +2422,41 @@ components:
       explode: true
       x-ms-parameter-location: method
 
+    ProcessDefinitionStateQueryParam:
+      name: state
+      description: Filter by process definition states.
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: "#/components/schemas/ProcessDefinitionState"
+      style: form
+      explode: true
+      x-ms-parameter-location: method
+
+    ProcessDefinitionNameQueryParam:
+      name: name
+      description: |
+        Filter by the process definitions whose name has every word of this text, in any order, without regard to
+        case or accents.
+      in: query
+      required: false
+      schema:
+        type: string
+        maxLength: 200
+      x-ms-parameter-location: method
+
+    ProcessDefinitionVersionQueryParam:
+      name: version
+      description: The id of a version of the process definition. Without it, its latest version.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+      x-ms-parameter-location: method
+
     EmailQueryParam:
       name: email
       description: Filter by email.
@@ -2957,6 +3055,502 @@ components:
             - id
             - principalId
             - tenantId
+
+    ProcessDefinitionState:
+      description: |
+        State of a Process Definition: DRAFT if it was never published, PUBLISHED if processes can be created from it,
+        and UNPUBLISHED if no process can be created from it anymore.
+      type: string
+      enum:
+        - DRAFT
+        - PUBLISHED
+        - UNPUBLISHED
+
+    ProcessDefinitionVersionState:
+      description: |
+        State of a version of a Process Definition: DRAFT while it is being edited, CURRENT for the one that new
+        processes use, and SUPERSEDED once a later one was published.
+      type: string
+      enum:
+        - DRAFT
+        - CURRENT
+        - SUPERSEDED
+
+    ProcessDefinitionVersion:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        state:
+          $ref: "#/components/schemas/ProcessDefinitionVersionState"
+      required:
+        - id
+        - state
+
+    ProcessDefinitionPage:
+      allOf:
+        - $ref: "#/components/schemas/Page"
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: "#/components/schemas/ProcessDefinitionPageItem"
+          required:
+            - content
+
+    ProcessDefinitionPageItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+        name:
+          type: string
+        tenantId:
+          type: string
+          format: uuid
+        state:
+          $ref: "#/components/schemas/ProcessDefinitionState"
+        version:
+          $ref: "#/components/schemas/ProcessDefinitionVersion"
+      required:
+        - id
+        - code
+        - name
+        - tenantId
+        - state
+        - version
+
+    ProcessDefinition:
+      description: |
+        A whole Process Definition at one of its versions. Its parts refer to each other by code: the forms of the
+        definition and of its tasks, and the task or thread of an action.
+      allOf:
+        - $ref: "#/components/schemas/AbstractAudited"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            code:
+              type: string
+            name:
+              type: string
+            description:
+              type: string
+            tenantId:
+              type: string
+              format: uuid
+            state:
+              $ref: "#/components/schemas/ProcessDefinitionState"
+            version:
+              $ref: "#/components/schemas/ProcessDefinitionVersion"
+            revision:
+              description: |
+                A hash of the whole definition at this version. Any change in it gives another one, including a change
+                in its permissions or its schedulers.
+              type: string
+            encrypted:
+              type: boolean
+            idSequentialSupport:
+              type: boolean
+            startAvailableDate:
+              type: string
+              format: date-time
+            endAvailableDate:
+              type: string
+              format: date-time
+            workflowEngine:
+              $ref: "#/components/schemas/ProcessDefinitionWorkflowEngine"
+            workflowTaskQueue:
+              type: string
+            workflowType:
+              type: string
+            workflowDefinition:
+              description: |
+                The serverless workflow, as JSON. Only with a SERVERLESS_WORKFLOW or SERVERLESS_WORKFLOW_V2 engine.
+              type: object
+              additionalProperties: true
+            metadataStructureDataDefinitionCode:
+              description: The code of the form of the metadata of its processes.
+              type: string
+            entityStructureDataDefinitionCode:
+              description: The code of the form of the entity of its processes.
+              type: string
+            rbacEntries:
+              type: array
+              items:
+                $ref: "#/components/schemas/ProcessDefinitionRbacEntry"
+            actionDefinitions:
+              type: array
+              items:
+                $ref: "#/components/schemas/ProcessDefinitionActionDefinition"
+            schedulers:
+              type: array
+              items:
+                $ref: "#/components/schemas/ProcessDefinitionScheduler"
+            workflowCompleteRoles:
+              type: array
+              items:
+                type: string
+            structureDataDefinitionEntries:
+              description: The forms of the definition and of its tasks.
+              type: array
+              items:
+                $ref: "#/components/schemas/ProcessDefinitionStructureDataDefinitionEntry"
+            processItemDefinitions:
+              description: Its tasks and threads.
+              type: array
+              items:
+                $ref: "#/components/schemas/ProcessItemDefinition"
+          required:
+            - id
+            - code
+            - name
+            - tenantId
+            - state
+            - version
+            - revision
+            - workflowEngine
+            - rbacEntries
+            - actionDefinitions
+            - schedulers
+            - workflowCompleteRoles
+            - structureDataDefinitionEntries
+            - processItemDefinitions
+
+    ProcessDefinitionWorkflowEngine:
+      description: What runs the processes of a Process Definition.
+      type: string
+      enum:
+        - TEMPORAL
+        - WEBHOOK
+        - SERVERLESS_WORKFLOW
+        - SERVERLESS_WORKFLOW_V2
+        - NONE
+
+    ProcessDefinitionRbacEntry:
+      description: |
+        The assignment of a role of a Process Definition, or of one of its tasks or threads, to a principal. A role
+        with no principal comes once, without principalType.
+      type: object
+      properties:
+        role:
+          description: The code of the role, or of the role that a custom role belongs to.
+          type: string
+        roleName:
+          type: string
+        roleArchived:
+          type: boolean
+        principalType:
+          $ref: "#/components/schemas/ProcessDefinitionRbacPrincipalType"
+        principalId:
+          description: The id of the principal, also when it no longer exists.
+          type: string
+          format: uuid
+        groupCode:
+          description: With a GROUP principal that exists.
+          type: string
+        apiKeyCode:
+          description: With an API_KEY principal that exists.
+          type: string
+        tenantUserEmail:
+          description: With a TENANT_USER principal that exists.
+          type: string
+        expression:
+          description: With an EXPRESSION principal.
+          type: string
+      required:
+        - role
+
+    ProcessDefinitionRbacPrincipalType:
+      type: string
+      enum:
+        - TENANT_USER
+        - GROUP
+        - API_KEY
+        - PROCESS_INITIATOR
+        - EXPRESSION
+
+    ProcessDefinitionActionDefinition:
+      description: |
+        An action that the users of a process can run. The populated sub-field (`downloadable`, `startWorkflow`,
+        `startRelatedProcess`, `createTask`, `createProcessItemThread`, `sendWorkflowSignal`) is dictated by `type`.
+        Actions of type CREATE_PROCESS_ITEM_MESSAGE carry no additional details.
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          $ref: "#/components/schemas/ProcessActionType"
+        code:
+          type: string
+        name:
+          type: string
+        executeAtStartup:
+          type: boolean
+        requireConfirmation:
+          type: boolean
+        confirmationDescription:
+          type: string
+        availabilityExpression:
+          description: A jq expression over the process that says when the action is available.
+          type: string
+        icon:
+          type: string
+        roles:
+          description: The roles that can run it.
+          type: array
+          items:
+            type: string
+        downloadable:
+          $ref: "#/components/schemas/ProcessDefinitionActionDefinitionWorkflow"
+        startWorkflow:
+          $ref: "#/components/schemas/ProcessDefinitionActionDefinitionWorkflow"
+        startRelatedProcess:
+          $ref: "#/components/schemas/ProcessDefinitionActionDefinitionStartRelatedProcess"
+        createTask:
+          $ref: "#/components/schemas/ProcessDefinitionActionDefinitionProcessItem"
+        createProcessItemThread:
+          $ref: "#/components/schemas/ProcessDefinitionActionDefinitionProcessItem"
+        sendWorkflowSignal:
+          $ref: "#/components/schemas/ProcessDefinitionActionDefinitionSendWorkflowSignal"
+      required:
+        - id
+        - type
+        - code
+        - name
+        - roles
+
+    ProcessDefinitionActionDefinitionWorkflow:
+      description: The workflow that an action of type DOWNLOADABLE or START_WORKFLOW starts.
+      type: object
+      properties:
+        taskQueue:
+          type: string
+        workflowType:
+          type: string
+
+    ProcessDefinitionActionDefinitionStartRelatedProcess:
+      type: object
+      properties:
+        processDefinitionId:
+          description: The Process Definition of the process that the action starts.
+          type: string
+          format: uuid
+        processDefinitionCode:
+          description: Its code, while it exists.
+          type: string
+      required:
+        - processDefinitionId
+
+    ProcessDefinitionActionDefinitionProcessItem:
+      description: |
+        The task or thread that the action creates, by its code. When the version does not have it, by its id: KuFlow
+        does not offer the action in the processes of that version. Actions belong to the process definition, and
+        tasks and threads to each version. Empty when the action does not say which task or thread it creates.
+      type: object
+      properties:
+        processItemDefinitionCode:
+          description: The code of the task or thread that the action creates, when the version has it.
+          type: string
+        processItemDefinitionId:
+          description: The id of the task or thread that the action creates, when the version does not have it.
+          type: string
+          format: uuid
+
+    ProcessDefinitionActionDefinitionSendWorkflowSignal:
+      type: object
+      properties:
+        signalName:
+          type: string
+        inputDefinition:
+          $ref: "#/components/schemas/ProcessDefinitionJsonDefinition"
+      required:
+        - signalName
+
+    ProcessDefinitionScheduler:
+      description: A schedule that starts processes of the Process Definition.
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        active:
+          type: boolean
+        frequency:
+          type: object
+          properties:
+            cronExpression:
+              type: string
+            timeZone:
+              type: string
+        policy:
+          type: object
+          properties:
+            overlapPolicy:
+              $ref: "#/components/schemas/ProcessDefinitionSchedulerOverlapPolicy"
+        metadata:
+          description: The metadata of the processes that it starts.
+          type: object
+          additionalProperties: true
+      required:
+        - id
+        - active
+
+    ProcessDefinitionSchedulerOverlapPolicy:
+      type: string
+      enum:
+        - SKIP
+        - ALLOW_ALL
+
+    ProcessDefinitionStructureDataDefinitionEntry:
+      description: A form of the Process Definition.
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+        name:
+          type: string
+        jsonDefinition:
+          $ref: "#/components/schemas/ProcessDefinitionJsonDefinition"
+      required:
+        - id
+        - code
+        - name
+        - jsonDefinition
+
+    ProcessDefinitionJsonDefinition:
+      description: A form, with its parts as JSON.
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/ProcessDefinitionFormType"
+        schema:
+          type: object
+          additionalProperties: true
+        uiSchema:
+          type: object
+          additionalProperties: true
+        sampleData:
+          type: object
+          additionalProperties: true
+        i18n:
+          type: object
+          additionalProperties: true
+        template:
+          description: A Handlebars template.
+          type: string
+      required:
+        - type
+        - schema
+
+    ProcessDefinitionFormType:
+      type: string
+      enum:
+        - FORMIO
+        - JSON_FORMS
+
+    ProcessItemDefinition:
+      description: A task or a thread of a Process Definition.
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+        name:
+          type: string
+        type:
+          $ref: "#/components/schemas/ProcessItemDefinitionType"
+        description:
+          type: string
+        notifications:
+          $ref: "#/components/schemas/ProcessItemDefinitionNotifications"
+        rbacEntries:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProcessDefinitionRbacEntry"
+        task:
+          $ref: "#/components/schemas/ProcessItemDefinitionTask"
+      required:
+        - id
+        - code
+        - name
+        - type
+        - rbacEntries
+
+    ProcessItemDefinitionType:
+      type: string
+      enum:
+        - TASK
+        - THREAD
+
+    ProcessItemDefinitionNotifications:
+      description: Which notifications of a task are sent.
+      type: object
+      properties:
+        processItemTaskCreatedCandidates:
+          type: boolean
+        processItemTaskAssignedOwner:
+          type: boolean
+        processItemTaskPendingReminderListed:
+          type: boolean
+        processItemTaskPendingReminder:
+          type: boolean
+
+    ProcessItemDefinitionTask:
+      description: What only a task has.
+      type: object
+      properties:
+        structureDataDefinitionCode:
+          description: The code of the form of the task.
+          type: string
+        contextDefinitionCode:
+          description: The code of the form of the context of the task.
+          type: string
+        robot:
+          $ref: "#/components/schemas/ProcessItemDefinitionTaskRobot"
+        aiAssistance:
+          $ref: "#/components/schemas/ProcessItemDefinitionTaskAiAssistance"
+
+    ProcessItemDefinitionTaskRobot:
+      description: The robot that runs the task.
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+        name:
+          type: string
+        operation:
+          type: string
+        canStartWhenTaskIsClaimed:
+          type: boolean
+        canCompleteTask:
+          type: boolean
+      required:
+        - id
+        - code
+
+    ProcessItemDefinitionTaskAiAssistance:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        prompt:
+          type: string
 
     ProcessPage:
       allOf:
