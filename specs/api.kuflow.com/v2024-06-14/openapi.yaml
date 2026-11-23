@@ -43,8 +43,9 @@ info:
 
     * `ku:` URIs identify KuFlow resources, e.g. `ku:process/{processId}` or
       `ku:business-artifact/{businessArtifactId}`. Resources that can be referenced this way expose their
-      URI in a read-only `uri` field. Documents owned by a resource extend its URI, e.g.
-      `ku:process/{processId}/document/{documentId}`.
+      URI in a read-only `uri` field. Documents stored in a resource extend its URI, e.g.
+      `ku:business-artifact/{businessArtifactId}/value-document/{documentId}`. A document uploaded and not
+      linked yet has a URI of its own, `ku:storage-staging/{id}`.
     * `kuflow-file:` values are document references: they wrap a `ku:` document URI together with its
       metadata using the format `kuflow-file:uri=<ku-uri>;type=<media-type>;size=<bytes>;name=<file-name>;`.
 
@@ -902,14 +903,13 @@ paths:
 
   /processes/{id}/~actions/upload-document:
     post:
-      summary: Upload a temporal document into the process that later on must be linked with a process domain resource
+      summary: Upload a temporal document that later on must be linked with a domain resource
       description: |
-        Upload a temporal document into the process that later on must be linked with a process domain resource.
+        Upload a temporal document that later on must be linked with a domain resource. It behaves as the
+        `uploadDocument` operation: the process of the path must be readable by the credentials, but the document
+        is not bound to it and can be linked to any resource the credentials can update.
 
-        Documents uploaded with this API will be deleted after 2 hours as long as they have not been linked to a
-        process or process item.
-
-        **Deprecated:** use the `uploadDocument` operation with `targetUri=ku:process/{processId}` instead.
+        **Deprecated:** use the `uploadDocument` operation instead.
       operationId: uploadProcessDocument
       deprecated: true
       tags:
@@ -1814,18 +1814,13 @@ paths:
 
   /business-artifacts/{id}/~actions/upload-document:
     post:
-      summary: | 
-        Upload a temporal document into the business artifact that later on must be linked with a business 
-        artifact domain resource
+      summary: Upload a temporal document that later on must be linked with a domain resource
       description: |
-        Upload a temporal document into the business artifact that later on must be linked with a business artifact 
-        domain resource.
+        Upload a temporal document that later on must be linked with a domain resource. It behaves as the
+        `uploadDocument` operation: the business artifact of the path must be readable by the credentials, but the
+        document is not bound to it and can be linked to any resource the credentials can update.
 
-        Documents uploaded with this API will be deleted after 2 hours as long as they have not been linked to a
-        business artifact.
-
-        **Deprecated:** use the `uploadDocument` operation with `targetUri=ku:business-artifact/{businessArtifactId}`
-        instead.
+        **Deprecated:** use the `uploadDocument` operation instead.
       operationId: uploadBusinessArtifactDocument
       deprecated: true
       tags:
@@ -1994,16 +1989,16 @@ paths:
     post:
       summary: Upload a temporal document
       description: |
-        Upload a temporal document that later on must be linked with a domain resource of its target.
+        Upload a temporal document that later on must be linked with a domain resource.
 
-        The target resource is identified by `targetUri`:
+        The document belongs to the credentials that upload it, and its reference has the URI
+        `ku:storage-staging/{id}`. Only those credentials can download it and link it, by sending its reference in
+        the data of any resource they can update: the entity of a process, the data of a task, the value of a
+        business artifact or the result of a downloadable action. The permission on that resource is checked when the
+        data is saved. Linking copies the document into the resource, which gets a reference of its own; the uploaded
+        document can be linked only once, and a save sent again with the same reference is accepted.
 
-          * `ku:process/{processId}`: the document is deleted after 2 hours as long as it has not been
-            linked to the process or to one of its process items.
-          * `ku:business-artifact/{businessArtifactId}`: the document is deleted after 2 hours as long
-            as it has not been linked to the business artifact.
-
-        A target the credentials cannot read answers `404`.
+        Documents not linked are deleted after 2 hours.
       operationId: uploadDocument
       tags:
         - apiRestExternalV20240614Documents
@@ -2011,10 +2006,10 @@ paths:
       parameters:
         - name: targetUri
           description: |
-            URI of the resource the document is uploaded for. Supported forms are `ku:process/{id}`
-            and `ku:business-artifact/{id}`.
+            Ignored: the document can be linked to any resource the credentials can update.
           in: query
-          required: true
+          required: false
+          deprecated: true
           schema:
             type: string
         - name: fileContentType
@@ -2691,7 +2686,7 @@ components:
 
             Format: `kuflow-file:uri=<ku-uri>;type=<media-type>;size=<bytes>;name=<file-name>;`
 
-            Example: `kuflow-file:uri=ku:process/xxx/document/yyy;type=application/json;size=500;name=file.json;`
+            Example: `kuflow-file:uri=ku:storage-staging/xxx;type=application/json;size=500;name=file.json;`
 
             Operations that receive a document uri accept both this full form and the inner `ku:`
             document uri.
@@ -2986,8 +2981,7 @@ components:
               format: uuid
             uri:
               description: |
-                Process resource URI, e.g. usable as `targetUri` of the `uploadDocument` operation.
-                Format `ku:process/{id}`.
+                Process resource URI. Format `ku:process/{id}`.
               type: string
             state:
               $ref: "#/components/schemas/ProcessState"
@@ -3087,8 +3081,7 @@ components:
               format: uuid
             uri:
               description: |
-                Process resource URI, e.g. usable as `targetUri` of the `uploadDocument` operation.
-                Format `ku:process/{id}`.
+                Process resource URI. Format `ku:process/{id}`.
               type: string
             state:
               $ref: "#/components/schemas/ProcessState"
@@ -3622,8 +3615,7 @@ components:
               format: uuid
             uri:
               description: |
-                Business Artifact resource URI, e.g. usable as `targetUri` of the `uploadDocument`
-                operation. Format `ku:business-artifact/{id}`.
+                Business Artifact resource URI. Format `ku:business-artifact/{id}`.
               type: string
             tenantId:
               description: Tenant ID.
@@ -3681,8 +3673,7 @@ components:
               format: uuid
             uri:
               description: |
-                Business Artifact resource URI, e.g. usable as `targetUri` of the `uploadDocument`
-                operation. Format `ku:business-artifact/{id}`.
+                Business Artifact resource URI. Format `ku:business-artifact/{id}`.
               type: string
             tenantId:
               description: Tenant ID.
