@@ -405,7 +405,8 @@ paths:
       summary: Find the Process Definitions that the credentials administer
       description: |
         List the live Process Definitions that the credentials used can update, each one at its latest version: the
-        draft when there is one, otherwise the current one. Archived ones are not listed.
+        draft when there is one, otherwise the current one. Archived ones are not listed, nor the ones with a task
+        whose form is made of elements, a deprecated kind of form.
 
         Available sort query values: name, code
       operationId: findProcessDefinitions
@@ -436,7 +437,8 @@ paths:
       description: |
         Returns the whole Process Definition when the credentials used can update it: its forms, its tasks and threads,
         its actions, schedulers and permissions, and its workflow. Without `version`, at its latest version: the draft
-        when there is one, otherwise the current one.
+        when there is one, otherwise the current one. An archived one is not found, nor one whose version has a task
+        whose form is made of elements, a deprecated kind of form.
       operationId: retrieveProcessDefinition
       tags:
         - apiRestExternalV20240614ProcessDefinitions
@@ -3174,7 +3176,8 @@ components:
             workflowType:
               type: string
             workflowDefinition:
-              description: The serverless workflow, as JSON. Only with a SERVERLESS_WORKFLOW engine.
+              description: |
+                The serverless workflow, as JSON. Only with a SERVERLESS_WORKFLOW or SERVERLESS_WORKFLOW_V2 engine.
               type: object
               additionalProperties: true
             metadataStructureDataDefinitionCode:
@@ -3355,7 +3358,7 @@ components:
       description: |
         The task or thread that the action creates, by its code. When the version does not have it, by its id: KuFlow
         does not offer the action in the processes of that version. Actions belong to the process definition, and
-        tasks and threads to each version.
+        tasks and threads to each version. Empty when the action does not say which task or thread it creates.
       type: object
       properties:
         processItemDefinitionCode:
