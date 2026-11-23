@@ -2447,6 +2447,7 @@ components:
       required: false
       schema:
         type: string
+        maxLength: 200
       x-ms-parameter-location: method
 
     ProcessDefinitionVersionQueryParam:
@@ -3500,13 +3501,13 @@ components:
       description: Which notifications of a task are sent.
       type: object
       properties:
-        PROCESS_ITEM_TASK_CREATED_CANDIDATES:
+        processItemTaskCreatedCandidates:
           type: boolean
-        PROCESS_ITEM_TASK_ASSIGNED_OWNER:
+        processItemTaskAssignedOwner:
           type: boolean
-        PROCESS_ITEM_TASK_PENDING_REMINDER_LISTED:
+        processItemTaskPendingReminderListed:
           type: boolean
-        PROCESS_ITEM_TASK_PENDING_REMINDER:
+        processItemTaskPendingReminder:
           type: boolean
 
     ProcessItemDefinitionTask:
