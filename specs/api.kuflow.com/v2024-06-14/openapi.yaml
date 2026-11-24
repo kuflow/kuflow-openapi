@@ -456,6 +456,47 @@ paths:
                 $ref: "#/components/schemas/ProcessDefinition"
         default:
           $ref: "#/components/responses/DefaultError"
+    put:
+      summary: Update a Process Definition
+      description: |
+        Replaces the Process Definition with the one given, a whole document as `GET` returns it, when the credentials
+        used can update it. Its `revision` and its `version` have to be the ones that the definition has now, at its
+        latest version: otherwise the answer is a conflict (409), because it changed after it was read. A document equal
+        to the one that the definition has changes nothing and is not a conflict, whatever its revision.
+
+        Strict, and all or nothing: a property that is not known, a value that is not valid or a change outside what
+        can be changed yet is a bad request (400) with one error for each, whose location is the JSON Pointer of the
+        change in the document, and nothing is applied.
+
+        What can be changed yet: the content of the forms that the definition has (their `jsonDefinition`, but its
+        `type`). The changes go to the draft, which a published definition gets when it has none. Nothing is published.
+
+        With `dryRun`, nothing is applied, and the answer is the Process Definition as it would be. When the changes
+        would start a draft, the `id` of its version is not kept, nor is the `revision`.
+      operationId: updateProcessDefinition
+      tags:
+        - apiRestExternalV20240614ProcessDefinitions
+        - processDefinition
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - $ref: "#/components/parameters/DryRunQueryParam"
+      requestBody:
+        description: The whole Process Definition, as it has to be.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProcessDefinition"
+        x-ms-requestBody-name: processDefinition
+      responses:
+        "200":
+          description: The Process Definition updated, or as it would be with `dryRun`.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessDefinition"
+        default:
+          $ref: "#/components/responses/DefaultError"
 
   /processes:
     get:
@@ -2455,6 +2496,16 @@ components:
       schema:
         type: string
         format: uuid
+      x-ms-parameter-location: method
+
+    DryRunQueryParam:
+      name: dryRun
+      description: When true, nothing is applied, and the answer is what it would be.
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
       x-ms-parameter-location: method
 
     EmailQueryParam:
