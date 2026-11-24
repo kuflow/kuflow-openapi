@@ -471,7 +471,8 @@ paths:
         What can be changed yet: the content of the forms that the definition has (their `jsonDefinition`, but its
         `type`). The changes go to the draft, which a published definition gets when it has none. Nothing is published.
 
-        With `dryRun`, nothing is applied: the answer says what would change.
+        With `dryRun`, nothing is applied, and the answer is the Process Definition as it would be. When the changes
+        would start a draft, the `id` of its version is not kept, nor is the `revision`.
       operationId: updateProcessDefinition
       tags:
         - apiRestExternalV20240614ProcessDefinitions
@@ -489,11 +490,11 @@ paths:
         x-ms-requestBody-name: processDefinition
       responses:
         "200":
-          description: What changed, or what would change with `dryRun`.
+          description: The Process Definition updated, or as it would be with `dryRun`.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ProcessDefinitionUpdateResult"
+                $ref: "#/components/schemas/ProcessDefinition"
         default:
           $ref: "#/components/responses/DefaultError"
 
@@ -2499,7 +2500,7 @@ components:
 
     DryRunQueryParam:
       name: dryRun
-      description: When true, nothing is applied, and the answer says what would change.
+      description: When true, nothing is applied, and the answer is what it would be.
       in: query
       required: false
       schema:
@@ -3508,49 +3509,6 @@ components:
       enum:
         - FORMIO
         - JSON_FORMS
-
-    ProcessDefinitionUpdateResult:
-      description: |
-        What an update of a Process Definition changed, or would change with `dryRun`. When it was applied, also the
-        Process Definition after it, with its new revision and version.
-      type: object
-      properties:
-        dryRun:
-          description: True when nothing was applied.
-          type: boolean
-        changes:
-          description: |
-            What changes, compared with the document that the definition had: empty when the document given was equal
-            to it.
-          type: array
-          items:
-            $ref: "#/components/schemas/ProcessDefinitionChange"
-        processDefinition:
-          $ref: "#/components/schemas/ProcessDefinition"
-      required:
-        - dryRun
-        - changes
-
-    ProcessDefinitionChange:
-      description: |
-        A change of a Process Definition. When the length of an array changes, the change is the whole array.
-      type: object
-      properties:
-        path:
-          description: The JSON Pointer of what changes in the document.
-          type: string
-        operation:
-          $ref: "#/components/schemas/ProcessDefinitionChangeOperation"
-      required:
-        - path
-        - operation
-
-    ProcessDefinitionChangeOperation:
-      type: string
-      enum:
-        - ADD
-        - REMOVE
-        - REPLACE
 
     ProcessItemDefinition:
       description: A task or a thread of a Process Definition.
