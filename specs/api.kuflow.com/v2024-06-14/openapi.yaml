@@ -456,6 +456,46 @@ paths:
                 $ref: "#/components/schemas/ProcessDefinition"
         default:
           $ref: "#/components/responses/DefaultError"
+    put:
+      summary: Update a Process Definition
+      description: |
+        Replaces the Process Definition with the one given, a whole document as `GET` returns it, when the credentials
+        used can update it. Its `revision` and its `version` have to be the ones that the definition has now, at its
+        latest version: otherwise the answer is a conflict (409), because it changed after it was read. A document equal
+        to the one that the definition has changes nothing and is not a conflict, whatever its revision.
+
+        Strict, and all or nothing: a property that is not known, a value that is not valid or a change outside what
+        can be changed yet is a bad request (400) with one error for each, whose location is the JSON Pointer of the
+        change in the document, and nothing is applied.
+
+        What can be changed yet: the content of the forms that the definition has (their `jsonDefinition`, but its
+        `type`). The changes go to the draft, which a published definition gets when it has none. Nothing is published.
+
+        With `dryRun`, nothing is applied: the answer says what would change.
+      operationId: updateProcessDefinition
+      tags:
+        - apiRestExternalV20240614ProcessDefinitions
+        - processDefinition
+      parameters:
+        - $ref: "#/components/parameters/IdPathParam"
+        - $ref: "#/components/parameters/DryRunQueryParam"
+      requestBody:
+        description: The whole Process Definition, as it has to be.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProcessDefinition"
+        x-ms-requestBody-name: processDefinition
+      responses:
+        "200":
+          description: What changed, or what would change with `dryRun`.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessDefinitionUpdateResult"
+        default:
+          $ref: "#/components/responses/DefaultError"
 
   /processes:
     get:
@@ -2457,6 +2497,16 @@ components:
         format: uuid
       x-ms-parameter-location: method
 
+    DryRunQueryParam:
+      name: dryRun
+      description: When true, nothing is applied, and the answer says what would change.
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
+      x-ms-parameter-location: method
+
     EmailQueryParam:
       name: email
       description: Filter by email.
@@ -3458,6 +3508,49 @@ components:
       enum:
         - FORMIO
         - JSON_FORMS
+
+    ProcessDefinitionUpdateResult:
+      description: |
+        What an update of a Process Definition changed, or would change with `dryRun`. When it was applied, also the
+        Process Definition after it, with its new revision and version.
+      type: object
+      properties:
+        dryRun:
+          description: True when nothing was applied.
+          type: boolean
+        changes:
+          description: |
+            What changes, compared with the document that the definition had: empty when the document given was equal
+            to it.
+          type: array
+          items:
+            $ref: "#/components/schemas/ProcessDefinitionChange"
+        processDefinition:
+          $ref: "#/components/schemas/ProcessDefinition"
+      required:
+        - dryRun
+        - changes
+
+    ProcessDefinitionChange:
+      description: |
+        A change of a Process Definition. When the length of an array changes, the change is the whole array.
+      type: object
+      properties:
+        path:
+          description: The JSON Pointer of what changes in the document.
+          type: string
+        operation:
+          $ref: "#/components/schemas/ProcessDefinitionChangeOperation"
+      required:
+        - path
+        - operation
+
+    ProcessDefinitionChangeOperation:
+      type: string
+      enum:
+        - ADD
+        - REMOVE
+        - REPLACE
 
     ProcessItemDefinition:
       description: A task or a thread of a Process Definition.
