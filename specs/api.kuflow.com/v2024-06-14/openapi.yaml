@@ -459,14 +459,14 @@ paths:
     put:
       summary: Update a Process Definition
       description: |
-        Replaces the Process Definition with the one given, a whole document as `GET` returns it, when the credentials
-        used can update it. Its `revision` and its `version` have to be the ones that the definition has now, at its
-        latest version: otherwise the answer is a conflict (409), because it changed after it was read. A document equal
-        to the one that the definition has changes nothing and is not a conflict, whatever its revision.
+        Replaces the Process Definition with the one given, whole, as `GET` returns it, when the credentials used can
+        update it. Its `revision` and its `version` have to be the ones that the definition has now, at its latest
+        version: otherwise the answer is a conflict (409), because it changed after it was read. One equal to the one
+        that the definition has changes nothing and is not a conflict, whatever its revision.
 
         Strict, and all or nothing: a property that is not known, a value that is not valid or a change outside what
         can be changed yet is a bad request (400) with one error for each, whose location is the JSON Pointer of the
-        change in the document, and nothing is applied.
+        change in the Process Definition given, and nothing is applied.
 
         What can be changed yet, all of it in the draft, which a published definition gets when it has none:
         - Its forms (`structureDataDefinitionEntries`) and its tasks and threads (`processItemDefinitions`): add,
